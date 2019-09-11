@@ -1,10 +1,13 @@
 package com.codeoftheweb.salvo;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -22,8 +25,16 @@ public class SalvoController {
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @RequestMapping("/player")
+    private Map<String, Object> getPlayer(Authentication authentication) {
+        return (authentication == null) ? null : playerRepository.findByEmail(authentication.getName()).getMappedData();
+    }
+
     @RequestMapping("/players")
-    public List<Map<String, Object>> getPlayers() {
+    private List<Map<String, Object>> getPlayers() {
         return playerRepository.findAll()
                 .stream()
                 .map(x -> x.getMappedData())
@@ -31,7 +42,17 @@ public class SalvoController {
     }
 
     @RequestMapping("/games")
-    public List<Map<String, Object>> getGames() {
+    private Map<String, Object> getPlayerAndGames(Authentication authentication) {
+        boolean isGuest = (authentication == null) ? true : false;
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("player", isGuest ? null : playerRepository.findByEmail(authentication.getName()).getMappedData());
+        data.put("games", this.getGames());
+
+        return data;
+    }
+
+    private List<Map<String, Object>> getGames() {
         return gameRepository.findAll()
                 .stream()
                 .map(x -> x.getMappedData())
@@ -39,7 +60,28 @@ public class SalvoController {
     }
 
     @RequestMapping("/game_view/{nn}")
-    public Map<String, Object> getGameView(@PathVariable Long nn) {
+    private Map<String, Object> getGameView(@PathVariable Long nn) {
         return gamePlayerRepository.findById(nn).get().getMappedData();
+    }
+
+    @RequestMapping(path = "/register", method = RequestMethod.POST)
+    private ResponseEntity<Object> register(@RequestParam String name, @RequestParam String email, @RequestParam String password) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            return new ResponseEntity<>("Must fill all the fields.", HttpStatus.FORBIDDEN);
+        }
+
+        name = name.trim();
+        email = email.trim();
+
+        if (!email.contains("@") || email.contains(" ")) {
+            return new ResponseEntity<>("Invalid e-mail.", HttpStatus.FORBIDDEN);
+        }
+
+        if (playerRepository.findByEmail(email) != null) {
+            return new ResponseEntity<>("E-mail already in use.", HttpStatus.FORBIDDEN);
+        }
+
+        playerRepository.save(new Player(name, email, passwordEncoder.encode(password)));
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

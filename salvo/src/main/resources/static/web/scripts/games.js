@@ -1,6 +1,6 @@
 $(document).ready(function () {
     $.ajax("/api/players").done((data) => fillLeaderboardTable(data));
-    $.ajax("/api/games").done((data) => fillMatchesTable(data));
+    $.ajax("/api/games").done((data) => fillMatchesTable(data.games));
 });
 
 function fillTable(id, rows) {
@@ -35,7 +35,7 @@ function fillLeaderboardTable(data) {
         return (sumB > sumA) ? 1 : -1;
     });
 
-    let users = sortedData.map(x => x.email.split("@")[0]);
+    let users = sortedData.map(x => x.name);
     let total = sortedData.map(function(x) {
         if (x.scores.length == 0) {
             return 0;
@@ -63,9 +63,9 @@ function fillMatchesTable(data) {
     });
 
     let games = sortedData.map(x => x.id);
-    let players1 = sortedData.map(x => x.gamePlayers[0].player.email);
+    let players1 = sortedData.map(x => x.gamePlayers[0].player.name);
     let players2 = sortedData.map(function(x) {
-        return (x.gamePlayers.length > 1) ? x.gamePlayers[1].player.email : "N/A";
+        return (x.gamePlayers.length > 1) ? x.gamePlayers[1].player.name : "N/A";
     });
 
     let rows = [games, players1, players2];

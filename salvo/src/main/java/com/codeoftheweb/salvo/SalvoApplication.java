@@ -15,7 +15,14 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.WebAttributes;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @SpringBootApplication
@@ -25,13 +32,21 @@ public class SalvoApplication extends SpringBootServletInitializer {
 		SpringApplication.run(SalvoApplication.class, args);
 	}
 
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+	}
+
 	@Bean
 	public CommandLineRunner initData(PlayerRepository playerRepository, GameRepository gameRepository, SalvoRepository salvoRepository, GamePlayerRepository gamePlayerRepository, ShipRepository shipRepository, ScoreRepository scoreRepository){
 		return args -> {
-			Player player1 = playerRepository.save(new Player("Jack Bauer", "j.bauer@ctu.gov", "24"));
-			Player player2 = playerRepository.save(new Player("Chloe O'Brian", "c.obrian@ctu.gov", "42"));
-			Player player3 = playerRepository.save(new Player("Kim Bauer", "kim_bauer@gmail.com", "kb"));
-			Player player4 = playerRepository.save(new Player("Tony Almeida", "t.almeida@ctu.gov", "mole"));
+			Player player1 = playerRepository.save(new Player("Jack Bauer", "j.bauer@ctu.gov", passwordEncoder.encode("24")));
+			Player player2 = playerRepository.save(new Player("Chloe O'Brian", "c.obrian@ctu.gov", passwordEncoder.encode("42")));
+			Player player3 = playerRepository.save(new Player("Kim Bauer", "kim_bauer@gmail.com", passwordEncoder.encode("kb")));
+			Player player4 = playerRepository.save(new Player("Tony Almeida", "t.almeida@ctu.gov", passwordEncoder.encode("mole")));
 
 			Date date = new Date();
 			int offset = 3600;
@@ -172,30 +187,64 @@ public class SalvoApplication extends SpringBootServletInitializer {
 
 }
 
-@EnableWebSecurity
 @Configuration
 class WebSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
 	@Autowired
 	private PlayerRepository playerRepository;
 
+	@Override
 	public void init(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService( inputName -> {
-			Player player = playerRepository.findByEmail(inputName);
+		auth.userDetailsService( email -> {
+			Player player = playerRepository.findByEmail(email);
 
 			if (player != null) {
 				return new User(player.getEmail(), player.getPassword(), AuthorityUtils.createAuthorityList("USER"));
 			} else {
-				throw new UsernameNotFoundException("Unknown user: " + inputName);
+				throw new UsernameNotFoundException("Unknown user: " + email);
 			}
 		});
 	}
+
 }
 
+@Configuration
+@EnableWebSecurity
 class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().anyRequest().fullyAuthenticated().and().httpBasic();
+		http.authorizeRequests()
+				.antMatchers("/rest/**").denyAll()
+				.antMatchers("/api/game_view/**").hasAuthority("USER")
+				.antMatchers("/**").permitAll()
+				.anyRequest().permitAll();
+
+		http.formLogin()
+				.usernameParameter("email")
+				.passwordParameter("password")
+				.loginPage("/api/login");
+
+		http.logout().logoutUrl("/api/logout").permitAll();
+
+		http.headers().frameOptions().sameOrigin();
+
+		http.csrf().disable();
+
+		http.exceptionHandling().authenticationEntryPoint((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		http.formLogin().successHandler((req, res, exc) -> clearAuthenticationAttributes(req));
+
+		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
+
+		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+	}
+
+	private void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession session = request.getSession(false);
+
+		if (session != null) {
+			session.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+		}
 	}
 }
