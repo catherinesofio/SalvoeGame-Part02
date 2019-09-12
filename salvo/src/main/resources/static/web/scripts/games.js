@@ -1,6 +1,19 @@
 $(document).ready(function () {
     $.ajax("/api/players").done((data) => fillLeaderboardTable(data));
-    $.ajax("/api/games").done((data) => fillMatchesTable(data.games));
+    $.ajax("/api/games").done((data) => {
+        if (data.player != null) {
+            let matches = document.createElement("table");
+            matches.innerHTML = "<thead><tr><th>game</th><th>player 1</th><th>player 2</th></tr></thead><tbody id='matches-content'></tbody>";
+            document.body.appendChild(matches);
+
+            let newMatch = document.createElement("button");
+            newMatch.onclick = createGame;
+            newMatch.innerHTML = "create match";
+            document.body.appendChild(newMatch);
+
+            fillMatchesTable(data.games, data.player);
+        }
+    });
 });
 
 function fillTable(id, rows) {
@@ -54,7 +67,7 @@ function fillLeaderboardTable(data) {
     fillTable("leaderboard-content", rows);
 }
 
-function fillMatchesTable(data) {
+function fillMatchesTable(data, player) {
     let sortedData = data.sort(function(a, b) {
         let dateA = new Date(a.created);
         let dateB = new Date(b.created);
@@ -65,10 +78,44 @@ function fillMatchesTable(data) {
     let games = sortedData.map(x => x.id);
     let players1 = sortedData.map(x => x.gamePlayers[0].player.name);
     let players2 = sortedData.map(function(x) {
-        return (x.gamePlayers.length > 1) ? x.gamePlayers[1].player.name : "N/A";
+        return (x.gamePlayers.length > 1) ? x.gamePlayers[1].player.name : (x.gamePlayers[0].player.id != player.id) ? "<button id='" + x.id + "' onclick='joinGame(event)'>join</button>" : "N/A";
     });
 
-    let rows = [games, players1, players2];
+    let rows;
+    if (player != null) {
+        let count = sortedData.length;
+        let matches = sortedData.map(x => {
+            for(let i = x.gamePlayers.length - 1; i >= 0; i--){
+                if (x.gamePlayers[i].player.id == player.id) {
+                    return "<button id='" + x.gamePlayers[i].id + "' onclick='loadGame(event)'>PLAY</button>"
+                }
+
+                if (i == 0) {
+                    return "";
+                }
+            }
+         });
+        
+        rows = [games, players1, players2, matches];
+    } else {
+        rows = [games, players1, players2];
+    }
 
     fillTable("matches-content", rows);
+}
+
+function joinGame(e) {
+    e.preventDefault();
+
+    $.post("/api/game/" + e.target.getAttribute("id") + "/players").done(id => { window.location = "/web/game.html?gp=" + id; }).fail(() => alert("my bad dude"));
+}
+
+function loadGame(e) {
+    e.preventDefault();
+
+    window.location = "/web/game.html?gp=" + e.target.getAttribute("id");
+}
+
+function createGame() {
+    $.post("/api/games").done(gp => { window.location = "/web/game.html?gp=" + gp; }).fail(() => alert("my bad dude"));
 }

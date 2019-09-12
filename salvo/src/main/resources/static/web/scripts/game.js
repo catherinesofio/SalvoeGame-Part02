@@ -1,6 +1,6 @@
 $(document).ready(function() {
     let param = getParamObj(window.location.search);
-    $.ajax("/api/game_view/"+param.gp).done((data) => loadTables(data, param.gp));
+    $.ajax("/api/game_view/"+param.gp).done((data) => loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
 });
 
 function getParamObj(search) {

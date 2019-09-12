@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.sql.Array;
 import java.sql.Timestamp;
 import java.util.*;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Entity
@@ -40,6 +40,13 @@ public class Game {
 
     public void addScore(Score score) {
         this.scores.add(score);
+    }
+
+    public boolean containsPlayer(Player player) {
+        return gamePlayers.stream()
+                .map(x -> x.getPlayerId())
+                .collect(Collectors.toSet())
+                .contains(player.getId());
     }
 
     @JsonIgnore

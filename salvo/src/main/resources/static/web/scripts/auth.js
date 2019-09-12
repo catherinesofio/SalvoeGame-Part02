@@ -2,7 +2,7 @@ let navContent = [ "<ul><li><button onclick='openPopup(0)'>sign in</button></li>
                    "<ul><li><span id='username'></span></li><li><button onclick='triggerSignOut(event)'>sign out</button></li></ul>"];
 
 let popupContent = [ "<form id='form-signIn'><legend>sign in</legend><fieldset><label>e-mail</label><input type='text' name='email' /></fieldset><fieldset><label>password</label><input type='password' name='password' /></fieldset><button type='reset' onclick='triggerSignIn(event)'>sign in</button></form>",
-                     "<form id='form-signUp'><legend>sign up</legend><fieldset><label>name</label><input type='text' name='name' /></fieldset><fieldset><label>e-mail</label><input type='text' name='email' /></fieldset><fieldset><label>password</label><input type='password' name='password' /></fieldset><button type='button' onclick='triggerSignUp(event)'>sign up</button></form>"];
+                     "<form id='form-signUp'><legend>sign up</legend><fieldset><label>name</label><input type='text' name='name' /></fieldset><fieldset><label>e-mail</label><input type='text' name='email' /></fieldset><fieldset><label>password</label><input type='submit' name='password' /></fieldset><button type='button' onclick='triggerSignUp(event)'>sign up</button></form>"];
 
 let username = "";
 
@@ -46,7 +46,7 @@ function updateNav(state, user) {
 function triggerSignIn(e) {
     let form = e.target.form;
 
-    $.post("/api/login", { email: form["email"].value, password: form["password"].value }).done(() => { closePopup(); setUsername(); });
+    $.post("/api/login", { email: form["email"].value, password: form["password"].value }).done(() => { closePopup(); setUsername(); window.location.reload(); });
 }
 
 function triggerSignUp(e) {
@@ -56,7 +56,7 @@ function triggerSignUp(e) {
 }
 
 function triggerSignOut(e) {
-    $.post("/api/logout").done(() => updateNav(0, ""));
+    $.post("/api/logout").done(() => { updateNav(0, ""); window.location = "/web/games.html"; });
 }
 
 function openPopup(state) {
