@@ -1,4 +1,4 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
@@ -43,6 +43,10 @@ public class GamePlayer {
     public Long getPlayerId() { return this.player.getId(); }
 
     public Object getPlayerData() { return this.player.getMappedData(); }
+
+    public boolean hasPlacedShips() { return ships.isEmpty(); }
+
+    public void addShip(Ship ship) { this.ships.add(ship); }
 
     public void addSalvo(Salvo salvo) {
         this.salvoes.add(salvo);

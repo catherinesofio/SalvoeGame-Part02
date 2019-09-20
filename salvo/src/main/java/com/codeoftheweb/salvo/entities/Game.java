@@ -1,12 +1,12 @@
-package com.codeoftheweb.salvo;
+package com.codeoftheweb.salvo.entities;
 
+import com.codeoftheweb.salvo.utils.States;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.util.*;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @Entity
@@ -24,19 +24,23 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<Score> scores;
 
+    @OneToOne(mappedBy = "game", fetch = FetchType.EAGER)
+    private GameStateMachine state;
+
     public Game() { }
 
     public Game(Date creationDate) {
         this.creationDate = creationDate;
         this.gamePlayers = new HashSet<>();
         this.scores = new HashSet<>();
+        this.state = new GameStateMachine();
     }
 
     public Long getId() { return this.id; }
 
-    public void setCreationDate(Date creationDate) { this.creationDate = creationDate; }
-
     public Date getCreationDate() { return this.creationDate; }
+
+    public int getGamePlayers() { return this.gamePlayers.size(); }
 
     public void addScore(Score score) {
         this.scores.add(score);
@@ -73,11 +77,13 @@ public class Game {
             player.put("ships", gp.getShipsData());
             player.put("salvoes", gp.getSalvoesData());
             player.put("score", getPlayerScore(gp.getPlayerId()));
+            player.put("hasPlacedShips", gp.hasPlacedShips());
 
             players.add(player);
         }
 
         data.put("gamePlayers", players);
+        data.put("state", this.state.toString());
 
         return data;
     }

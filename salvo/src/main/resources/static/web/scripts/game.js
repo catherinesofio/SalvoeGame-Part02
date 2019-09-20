@@ -1,6 +1,20 @@
 $(document).ready(function() {
     let param = getParamObj(window.location.search);
-    $.ajax("/api/game_view/"+param.gp).done((data) => loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+    $.ajax("/api/game_view/"+param.gp).done(function (data) {
+        switch (data.state) {
+            case "WAITING":
+                loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+            break;
+
+            case "STARTED":
+                loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+            break;
+
+            case "FINISHED":
+                loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+            break;
+        };
+    }
 });
 
 function getParamObj(search) {
