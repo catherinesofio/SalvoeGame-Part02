@@ -1,7 +1,7 @@
 package com.codeoftheweb.salvo.utils;
 
-public enum States {
+public enum GameStates {
     WAITING,
-    STARTED,
+    PLAYING,
     FINISHED
 }

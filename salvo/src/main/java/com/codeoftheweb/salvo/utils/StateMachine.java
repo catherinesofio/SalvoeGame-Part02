@@ -1,21 +1,22 @@
 package com.codeoftheweb.salvo.utils;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
 
-public abstract class StateMachine {
+public class StateMachine<T, S> {
 
-    protected Map<Transitions, State> states;
-    protected Transitions currState;
-    protected Function changeEvent;
+    protected Long S;
+    protected Map<T, State> states;
+    protected State currState;
 
-    public StateMachine(Map<Transitions, State> states, Transitions initState) {
-        this.setStates(states, initState);
+    public StateMachine(S id, Map<T, State> states, T initState) {
+        this.configure(states, initState);
     }
 
-    protected void setStates(Map<Transitions, State> states, Transitions initState) {
-        this.states = states;
-        this.currState = initState;
-        this.changeEvent = states.get(initState).getChangeEvent();
+    private void configure(Map<T, State> states, T initState) {
+        this.states = new HashMap<>(states);
+        this.currState = this.states.get(initState);
+
+        currState.enter(S);
     }
 }

@@ -1,25 +1,24 @@
 package com.codeoftheweb.salvo.utils;
 
-import javax.swing.*;
-import java.util.Map;
+import java.util.function.Function;
 
-public class State {
+public class State<T, S> {
 
-    private Map<Transitions, State> transitions;
+    private T id;
+    private Function<S, Boolean> onEnter;
+    private Function<S, Boolean> onExit;
 
-    private Action<Transitions> onEnter;
-    private Action<Transitions> onExit;
-
-    public State(Map<Transitions, State> nextState, Action<Transitions> onEnter, Action<Transitions> onExit) {
-        this.transitions = nextState;
+    public State(T id, Function<S, Boolean> onEnter, Function<S, Boolean> onExit) {
+        this.id = id;
         this.onEnter = onEnter;
+        this.onExit = onExit;
     }
 
-    public void enter(Transitions input) {
-        onEnter(input);
+    public void enter(S obj) {
+        this.onEnter.apply(obj);
     }
 
-    public void exit(inpu) {
-        onEnter(input);
+    public void exit(S obj) {
+        this.onExit.apply(obj);
     }
 }

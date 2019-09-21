@@ -7,11 +7,11 @@ let popupContent = [ "<form id='form-signIn'><legend>sign in</legend><fieldset><
 let username = "";
 
 $(document).ready(function() {
-    $.ajax("/api/player").done((data) => addTemplates(data));
+    $.ajax("/api/user").done((data) => addTemplates(data));
 });
 
 function setUsername() {
-    $.ajax("/api/player").done((data) => { username = data.name; updateNav(1, username); });
+    $.ajax("/api/user").done((data) => { username = data.name; updateNav(1, username); });
 }
 
 function addTemplates(data) {

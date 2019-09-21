@@ -1,11 +1,7 @@
 package com.codeoftheweb.salvo;
 
-import com.codeoftheweb.salvo.entities.Game;
-import com.codeoftheweb.salvo.entities.GamePlayer;
-import com.codeoftheweb.salvo.entities.Player;
-import com.codeoftheweb.salvo.entities.Ship;
+import com.codeoftheweb.salvo.entities.*;
 import com.codeoftheweb.salvo.repositories.*;
-import com.codeoftheweb.salvo.utils.States;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,104 +36,11 @@ public class SalvoController {
         return (authentication == null) ? null : playerRepository.findByEmail(authentication.getName());
     }
 
-    @RequestMapping("/ships")
-    private Set<Map<String, Object>> getShips() {
-        return Consts.SHIPS;
-    }
-
-    @RequestMapping("/player")
+    @RequestMapping("/user")
     private Map<String, Object> getPlayer(Authentication authentication) {
         Player user = getUser(authentication);
 
         return (user == null) ? null : user.getMappedData();
-    }
-
-    @RequestMapping("/players")
-    private List<Map<String, Object>> getPlayers() {
-        return playerRepository.findAll()
-                .stream()
-                .map(x -> x.getMappedData())
-                .collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "/game/{nn}/players", method = RequestMethod.POST)
-    private ResponseEntity<Long> addPlayer(@PathVariable Long nn, Authentication authentication) {
-        Game game = gameRepository.findById(nn).get();
-        Player user = getUser(authentication);
-
-        if (!isGuest(authentication) && !game.containsPlayer(user)) {
-            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), user, game));
-
-            if (game.getGamePlayers() == 2) {
-                game.setState(States.STARTED);
-            }
-
-            return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
-    }
-
-    @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.GET)
-    private ResponseEntity<List<Map<String, Object>>> getShips(@PathVariable Long gp, Authentication authentication) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
-        Player user = getUser(authentication);
-
-        if(!isGuest(authentication) && gamePlayer.getPlayerId() == user.getId()) {
-            return new ResponseEntity<>(gamePlayer.getShipsData(), HttpStatus.ACCEPTED);
-        }
-
-        return new ResponseEntity<List<Map<String, Object>>>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
-    }
-
-    @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.POST)
-    private void addShip(@PathVariable Long gp, @RequestParam String type, @RequestParam Set<String> positions, Authentication authentication) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
-        Player user = getUser(authentication);
-
-        if(!isGuest(authentication) && gamePlayer.getPlayerId() == user.getId()) {
-            gamePlayer.addShip(new Ship(type, positions, gamePlayer));
-        }
-    }
-
-    @RequestMapping(value = "/games", method = RequestMethod.POST)
-    private ResponseEntity<Long> createGame(Authentication authentication) {
-        if (!isGuest(authentication)) {
-            Game game = gameRepository.save(new Game(new Date()));
-            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), getUser(authentication), game));
-
-            return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
-        }
-
-        return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
-    }
-
-    @RequestMapping(value = "/games", method = RequestMethod.GET)
-    private Map<String, Object> getPlayerAndGames(Authentication authentication) {
-        Map<String, Object> data = new HashMap<>();
-
-        data.put("player", isGuest(authentication) ? null : getUser(authentication).getMappedData());
-        data.put("games", this.getGames());
-
-        return data;
-    }
-
-    private List<Map<String, Object>> getGames() {
-        return gameRepository.findAll()
-                .stream()
-                .map(x -> x.getMappedData())
-                .collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "/game_view/{nn}", method = RequestMethod.GET)
-    private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long nn, Authentication authentication) {
-        GamePlayer gp = gamePlayerRepository.findById(nn).get();
-
-        if (isGuest(authentication) || gp.getPlayerId() != getUser(authentication).getId()) {
-            return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
-        }
-
-        return new ResponseEntity<Map<String, Object>> (gp.getMappedData(), HttpStatus.ACCEPTED);
     }
 
     @RequestMapping(path = "/register", method = RequestMethod.POST)
@@ -159,5 +62,102 @@ public class SalvoController {
 
         playerRepository.save(new Player(name, email, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    @RequestMapping("/players")
+    private List<Map<String, Object>> getPlayers() {
+        return playerRepository.findAll()
+                .stream()
+                .map(x -> x.getMappedData())
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/games", method = RequestMethod.GET)
+    private Map<String, Object> getPlayerAndGames(Authentication authentication) {
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("player", isGuest(authentication) ? null : getUser(authentication).getMappedData());
+        data.put("games", this.getGames());
+
+        return data;
+    }
+
+    private List<Map<String, Object>> getGames() {
+        return gameRepository.findAll()
+                .stream()
+                .map(x -> x.getMappedData())
+                .collect(Collectors.toList());
+    }
+
+    @RequestMapping(value = "/games", method = RequestMethod.POST)
+    private ResponseEntity<Long> createGame(Authentication authentication) {
+        if (!isGuest(authentication)) {
+            Game game = gameRepository.save(new Game(new Date()));
+
+            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), getUser(authentication), game));
+
+            return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
+    }
+
+    @RequestMapping(value = "/game/{nn}/players", method = RequestMethod.POST)
+    private ResponseEntity<Long> addPlayer(@PathVariable Long nn, Authentication authentication) {
+        Game game = gameRepository.findById(nn).get();
+        Player user = getUser(authentication);
+
+        if (!isGuest(authentication) && !game.containsPlayer(user)) {
+            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), user, game));
+
+            if (game.getGamePlayers() == 2) {
+
+            }
+
+            return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
+    }
+
+    @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.GET)
+    private ResponseEntity<List<Map<String, Object>>> getShips(@PathVariable Long gp, Authentication authentication) {
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
+        Player user = getUser(authentication);
+
+        if(user != null && gamePlayer.getPlayerId() == user.getId()) {
+            return new ResponseEntity<>(gamePlayer.getShipsData(), HttpStatus.ACCEPTED);
+        }
+
+        return new ResponseEntity<List<Map<String, Object>>>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
+    }
+
+    @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.POST)
+    private void addShip(@PathVariable Long gp, @RequestParam String type, @RequestParam Set<String> positions, Authentication authentication) {
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
+        Player user = getUser(authentication);
+
+        if(user != null && gamePlayer.getPlayerId() == user.getId()) {
+            gamePlayer.addShip(new Ship(type, positions, gamePlayer));
+        }
+
+
+    }
+
+    @RequestMapping("/templates/ships")
+    private Set<Map<String, Object>> getShips() {
+        return Consts.SHIPS;
+    }
+
+    @RequestMapping(value = "/game_view/{nn}", method = RequestMethod.GET)
+    private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long nn, Authentication authentication) {
+        GamePlayer gp = gamePlayerRepository.findById(nn).get();
+        Player user = getUser(authentication);
+
+        if (user != null || gp.getPlayerId() != user.getId()) {
+            return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<Map<String, Object>> (gp.getMappedData(), HttpStatus.ACCEPTED);
     }
 }
