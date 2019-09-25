@@ -1,8 +1,6 @@
 package com.codeoftheweb.salvo.entities;
 
-import com.codeoftheweb.salvo.Consts;
 import com.codeoftheweb.salvo.utils.GameStates;
-import com.codeoftheweb.salvo.utils.StateMachine;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -19,6 +17,7 @@ public class Game {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private Date creationDate;
+    private GameStates state;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<GamePlayer> gamePlayers;
@@ -26,17 +25,12 @@ public class Game {
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<Score> scores;
 
-    private StateMachine<GameStates, Game> state;
-
-    private GamePlayer turn;
-
     public Game() { }
 
     public Game(Date creationDate) {
         this.creationDate = creationDate;
         this.gamePlayers = new HashSet<>();
         this.scores = new HashSet<>();
-        this.state = new StateMachine<GameStates, Game>(this, Consts.GAME_STATES, GameStates.WAITING);
     }
 
     public Long getId() { return this.id; }

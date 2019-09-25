@@ -13,6 +13,11 @@ public class Ship {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private String type;
+    private boolean isDown;
+
+    @ElementCollection
+    @Column(name = "hits")
+    private Set<String> hits = new HashSet<>();
 
     @ElementCollection
     @Column(name = "location")
@@ -28,24 +33,28 @@ public class Ship {
         this.type = type;
         this.locations = locations;
         this.gamePlayer = gamePlayer;
+        this.isDown = false;
     }
 
     public Long getId() { return this.id; }
 
-    public String getType() { return this.type; }
+    public boolean isDown() { return this.isDown; }
 
-    public void setType(String type) { this.type = type; }
+    public void checkHits(Set<String> hits) {
+        for (String hit:hits){
+            if (this.locations.contains(hit) && !this.hits.contains(hit)) {
+                this.hits.add(hit);
+            }
+        }
 
-    public Set<String> getLocations() { return this.locations; }
-
-    public void setLocations(Set<String> locations) { this.locations = locations; }
-
-    public GamePlayer getGamePlayer() { return this.gamePlayer; }
+        this.isDown = (this.hits.size() == this.locations.size());
+    }
 
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("type", this.type);
         data.put("locations", this.locations);
+        data.put("isDown", this.isDown);
 
         return data;
     }
