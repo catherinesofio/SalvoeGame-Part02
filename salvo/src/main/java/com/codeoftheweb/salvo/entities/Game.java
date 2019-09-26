@@ -31,13 +31,20 @@ public class Game {
         this.creationDate = creationDate;
         this.gamePlayers = new HashSet<>();
         this.scores = new HashSet<>();
+        this.state = GameStates.WAITING;
     }
 
     public Long getId() { return this.id; }
 
     public Date getCreationDate() { return this.creationDate; }
 
+    public void setState(GameStates state) { this.state = state; }
+
     public int getGamePlayers() { return this.gamePlayers.size(); }
+
+    public void checkState() {
+
+    }
 
     public void addScore(Score score) {
         this.scores.add(score);

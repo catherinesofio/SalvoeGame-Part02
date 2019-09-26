@@ -2,6 +2,7 @@ package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.entities.*;
 import com.codeoftheweb.salvo.repositories.*;
+import com.codeoftheweb.salvo.utils.PlayerStates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,6 +25,9 @@ public class SalvoController {
 
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
+
+    @Autowired
+    private ShipRepository shipRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -102,17 +106,13 @@ public class SalvoController {
         return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/game/{nn}/players", method = RequestMethod.POST)
-    private ResponseEntity<Long> addPlayer(@PathVariable Long nn, Authentication authentication) {
-        Game game = gameRepository.findById(nn).get();
+    @RequestMapping(value = "/game/{gm}/players", method = RequestMethod.POST)
+    private ResponseEntity<Long> addPlayer(@PathVariable Long gm, Authentication authentication) {
+        Game game = gameRepository.findById(gm).get();
         Player user = getUser(authentication);
 
         if (!isGuest(authentication) && !game.containsPlayer(user)) {
             GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), user, game));
-
-            if (game.getGamePlayers() == 2) {
-
-            }
 
             return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
         }
@@ -133,15 +133,17 @@ public class SalvoController {
     }
 
     @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.POST)
-    private void addShip(@PathVariable Long gp, @RequestParam String type, @RequestParam Set<String> positions, Authentication authentication) {
+    private void addShips(@PathVariable Long gp, @RequestParam List<String> types, @RequestParam List<Set<String>> positions, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
 
         if(user != null && gamePlayer.getPlayerId() == user.getId()) {
-            gamePlayer.addShip(new Ship(type, positions, gamePlayer));
+            for (int i = types.size() - 1; i >= 0; i--) {
+                gamePlayer.addShip(shipRepository.save(new Ship(types.get(i), positions.get(i), gamePlayer)));
+            }
+
+            gamePlayer.setState(PlayerStates.WAITING_PLAYER);
         }
-
-
     }
 
     @RequestMapping("/templates/ships")
@@ -149,9 +151,9 @@ public class SalvoController {
         return Consts.SHIPS;
     }
 
-    @RequestMapping(value = "/game_view/{nn}", method = RequestMethod.GET)
-    private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long nn, Authentication authentication) {
-        GamePlayer gp = gamePlayerRepository.findById(nn).get();
+    @RequestMapping(value = "/game_view/{gp}", method = RequestMethod.GET)
+    private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long gp, Authentication authentication) {
+        GamePlayer gp = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
 
         if (user != null || gp.getPlayerId() != user.getId()) {

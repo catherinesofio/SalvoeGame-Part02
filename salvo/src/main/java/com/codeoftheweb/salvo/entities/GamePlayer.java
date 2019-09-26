@@ -38,6 +38,7 @@ public class GamePlayer {
         this.player = player;
         this.game = game;
         this.salvoes = new HashSet<>();
+        this.state = PlayerStates.WAITING_PREPARING;
     }
 
     public boolean hasLost() {
@@ -52,7 +53,13 @@ public class GamePlayer {
 
     public Object getPlayerData() { return this.player.getMappedData(); }
 
-    public boolean hasPlacedShips() { return ships.isEmpty(); }
+    public void setState(PlayerStates state) {
+        this.state = state;
+
+        if (state == PlayerStates.WAITING_PLAYER) {
+            Game.checkState();
+        }
+    }
 
     public void addShip(Ship ship) { this.ships.add(ship); }
 
