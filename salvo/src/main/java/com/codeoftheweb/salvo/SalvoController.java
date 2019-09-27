@@ -153,13 +153,13 @@ public class SalvoController {
 
     @RequestMapping(value = "/game_view/{gp}", method = RequestMethod.GET)
     private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long gp, Authentication authentication) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
+        GamePlayer gp = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
 
-        if (user == null || gamePlayer.getPlayerId() != user.getId()) {
+        if (user != null || gp.getPlayerId() != user.getId()) {
             return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<Map<String, Object>> (gamePlayer.getMappedData(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<Map<String, Object>> (gp.getMappedData(), HttpStatus.ACCEPTED);
     }
 }
