@@ -53,19 +53,16 @@ public class GamePlayer {
 
     public Object getPlayerData() { return this.player.getMappedData(); }
 
+    public PlayerStates getState() { return this.state; }
+
     public void setState(PlayerStates state) {
         this.state = state;
-
-        if (state == PlayerStates.WAITING_PLAYER) {
-            Game.checkState();
-        }
+        this.game.refreshState();
     }
 
     public void addShip(Ship ship) { this.ships.add(ship); }
 
-    public void addSalvo(Salvo salvo) {
-        this.salvoes.add(salvo);
-    }
+    public void addSalvo(Salvo salvo) { this.salvoes.add(salvo); }
 
     @JsonIgnore
     public List<Map<String, Object>> getSalvoesData() {
@@ -96,9 +93,6 @@ public class GamePlayer {
 
     @JsonIgnore
     public Map<String, Object> getMappedData() {
-        Map<String, Object> data = this.game.getMappedData();
-        data.put("state", this.state.toString());
-
-        return data;
+        return this.game.getMappedData(this.id);
     }
 }
