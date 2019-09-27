@@ -1,21 +1,22 @@
 $(document).ready(function() {
     let param = getParamObj(window.location.search);
     $.ajax("/api/game_view/"+param.gp).done(function (data) {
+        let gp = data.gamePlayers.filter(x => x.id == param.gp)[0];
         switch (data.state) {
             case "WAITING":
-                loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+                loadWaitingTable(data, gp.id, gp.state == "WAITING_PLAYER");
             break;
 
-            case "STARTED":
-                loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+            case "PLAYING":
+                loadTables(data, gp.id);
             break;
 
             case "FINISHED":
-                loadTables(data, param.gp)).fail(() => window.location = "/web/games.html" );
+                loadResults(data, gp.id);
             break;
         };
-    }
-});
+    }).fail(() => window.location = "/web/games.html" );
+})
 
 function getParamObj(search) {
   var obj = {};
@@ -28,14 +29,58 @@ function getParamObj(search) {
   return obj;
 }
 
+function loadWaitingTable(data, id, hasPlacedShips) {
+    if (hasPlacedShips) {
+        loadTables(data, id)
+    } else {
+        $.ajax("/api/templates/ships").done(data => loadShips(data));
+    }
+}
+
+function loadShips(data) {
+    let container = document.createElement("ul");
+    container.setAttribute("id", "ships");
+
+    console.log(data);
+}
+
+function loadResults(data, id) {
+    let container = document.createElement("div");
+    container.setAttribute("id", "results");
+    $(document.body)[0].appendChild(container);
+
+    let title = document.createElement("h1");
+    title.innerText = "GAME " + data.id;
+    container.appendChild(title);
+
+    createPlayerResults(data.gamePlayers.filter(x => x.id == id)[0], "player");
+    createPlayerResults(data.gamePlayers.filter(x => x.id != id)[0], "enemy");
+}
+
+function createPlayerResults(player, id) {
+    let container = document.getElementById("results");
+
+    let gp = document.createElement("div");
+    gp.setAttribute("id", id);
+    container.appendChild(gp);
+
+    let title = document.createElement("h2");
+    title.innerHTML = player.name;
+    container.appendChild(title);
+
+    let log = document.createElement("p");
+    log.innerHTML = player.status;
+    container.appendChild(log);
+}
+
 function loadTables(data, id) {
     createPlayerTable(data.gamePlayers.filter(x => x.id == id)[0]);
 
-    if (data.gamePlayers.length > 1) {
+    /*if (data.gamePlayers.length > 1) {
         createEnemyTable(data.gamePlayers.filter(x => x.id != id)[0]);
     } else {
         createEnemyTable({ "player": { "id": -1, "email": "Waiting for player...@" } , "ships": [], "salvoes": [] });
-    }
+    }*/
 }
 
 function createPlayerTable(data) {

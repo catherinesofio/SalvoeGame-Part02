@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo.entities;
 
 import com.codeoftheweb.salvo.utils.GameStates;
+import com.codeoftheweb.salvo.utils.PlayerStates;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -42,8 +43,12 @@ public class Game {
 
     public int getGamePlayers() { return this.gamePlayers.size(); }
 
-    public void checkState() {
+    public void refreshState() {
+        if (this.state == GameStates.WAITING && gamePlayers.stream().filter(x -> x.getState() == PlayerStates.WAITING_PLAYER).count() == 2) {
+            this.state = GameStates.PLAYING;
+        } else if (this.state == GameStates.PLAYING) {
 
+        }
     }
 
     public void addScore(Score score) {
@@ -78,10 +83,38 @@ public class Game {
             player = new HashMap<String, Object>();
             player.put("id", gp.getId());
             player.put("player", gp.getPlayerData());
-            player.put("ships", gp.getShipsData());
+            player.put("score", getPlayerScore(gp.getPlayerId()));
+            player.put("state", gp.getState().toString());
+
+            players.add(player);
+        }
+
+        data.put("gamePlayers", players);
+        data.put("state", this.state.toString());
+
+        return data;
+    }
+
+    @JsonIgnore
+    public Map<String, Object> getMappedData(Long id) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("id", this.id);
+        data.put("created", new Timestamp(this.creationDate.getTime()));
+
+        List<Map<String, Object>> players = new ArrayList<Map<String, Object>>();
+
+        Map<String, Object> player;
+
+        for (GamePlayer gp : this.gamePlayers) {
+            player = new HashMap<String, Object>();
+            player.put("id", gp.getId());
+            player.put("player", gp.getPlayerData());
+            if (gp.getId() == id) {
+                player.put("ships", gp.getShipsData());
+            }
             player.put("salvoes", gp.getSalvoesData());
             player.put("score", getPlayerScore(gp.getPlayerId()));
-            player.put("hasPlacedShips", gp.hasPlacedShips());
+            player.put("state", gp.getState().toString());
 
             players.add(player);
         }
