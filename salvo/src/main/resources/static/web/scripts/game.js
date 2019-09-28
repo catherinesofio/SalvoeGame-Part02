@@ -1,50 +1,51 @@
+let container;
+
 $(document).ready(function() {
+    container = document.getElementById("container");
+
     let param = getParamObj(window.location.search);
     $.ajax("/api/game_view/"+param.gp).done(function (data) {
         let gp = data.gamePlayers.filter(x => x.id == param.gp)[0];
         switch (data.state) {
             case "WAITING":
-                loadWaitingTable(data, gp.id, gp.state == "WAITING_PLAYER");
+                loadWaitingTable(data, gp, gp.state == "WAITING_PLAYER");
             break;
 
             case "PLAYING":
-                loadTables(data, gp.id);
+                loadPlayerTables(data, gp.id);
             break;
 
             case "FINISHED":
-                loadResults(data, gp.id);
+                loadPlayerResults(data, gp.id);
             break;
         };
-    }).fail(() => window.location = "/web/games.html" );
+    }).fai l(() => window.location = "/web/games.html" );
 })
 
-function getParamObj(search) {
-  var obj = {};
-  var reg = /(?:[?&]([^?&#=]+)(?:=([^&#]*))?)(?:#.*)?/g;
-
-  search.replace(reg, function(match, param, val) {
-    obj[decodeURIComponent(param)] = val === undefined ? "" : decodeURIComponent(val);
-  });
-
-  return obj;
-}
-
-function loadWaitingTable(data, id, hasPlacedShips) {
+function loadWaitingTable(data, gp, hasPlacedShips) {
     if (hasPlacedShips) {
-        loadTables(data, id)
+        loadTables(data, gp.id)
     } else {
+        let table = createTable("player", gp.player.name, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"], [{ name: "empty", value: true }]);
+        container.appendChild(table);
+
         $.ajax("/api/templates/ships").done(data => loadShips(data));
     }
 }
 
 function loadShips(data) {
-    let container = document.createElement("ul");
-    container.setAttribute("id", "ships");
+    let ships = document.createElement("div");
+    ships.setAttribute("id", "ships");
+    container.appendChild(ships);
 
-    console.log(data);
+    data.forEach(ship => ships.appendChild(createElement("div", "ship", [ { name: "type", value: ship.type }, { name: "size", value: ship.size } ])));
 }
 
-function loadResults(data, id) {
+function loadPlayerTables(data, id) {
+
+} _
+
+function loadPlayerResults(data, id) {
     let container = document.createElement("div");
     container.setAttribute("id", "results");
     $(document.body)[0].appendChild(container);
@@ -72,17 +73,7 @@ function createPlayerResults(player, id) {
     log.innerHTML = player.status;
     container.appendChild(log);
 }
-
-function loadTables(data, id) {
-    createPlayerTable(data.gamePlayers.filter(x => x.id == id)[0]);
-
-    /*if (data.gamePlayers.length > 1) {
-        createEnemyTable(data.gamePlayers.filter(x => x.id != id)[0]);
-    } else {
-        createEnemyTable({ "player": { "id": -1, "email": "Waiting for player...@" } , "ships": [], "salvoes": [] });
-    }*/
-}
-
+/*
 function createPlayerTable(data) {
     let table = createTable("player", data, true);
 }
@@ -162,4 +153,4 @@ function createTable(id, data, showShips) {
             tr.appendChild(td);
         }
     }
-}
+}*/

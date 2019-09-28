@@ -109,3 +109,7 @@ td[success=true] {
 
      transform: translate(-25%, -50%);
  }
+
+.ships {
+    background-color: yellow;
+}

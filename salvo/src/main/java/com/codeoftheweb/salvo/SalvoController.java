@@ -80,7 +80,7 @@ public class SalvoController {
     private Map<String, Object> getPlayerAndGames(Authentication authentication) {
         Map<String, Object> data = new HashMap<>();
 
-        data.put("player", isGuest(authentication) ? null : getUser(authentication).getMappedData());
+        data.put("user", isGuest(authentication) ? null : getUser(authentication).getMappedData());
         data.put("games", this.getGames());
 
         return data;

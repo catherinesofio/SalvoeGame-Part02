@@ -1,7 +1,7 @@
 $(document).ready(function () {
     $.ajax("/api/players").done((data) => fillLeaderboardTable(data));
     $.ajax("/api/games").done((data) => {
-        if (data.player != null) {
+        if (data.user != null) {
             let matches = document.createElement("table");
             matches.innerHTML = "<thead><tr><th>game</th><th>player 1</th><th>player 2</th></tr></thead><tbody id='matches-content'></tbody>";
             document.body.appendChild(matches);
@@ -11,7 +11,7 @@ $(document).ready(function () {
             newMatch.innerHTML = "create match";
             document.body.appendChild(newMatch);
 
-            fillMatchesTable(data.games, data.player);
+            fillMatchesTable(data.games, data.user);
         }
     });
 });
@@ -117,5 +117,6 @@ function loadGame(e) {
 }
 
 function createGame() {
+
     $.post("/api/games").done(gp => { window.location = "/web/game.html?gp=" + gp; }).fail(() => alert("my bad dude"));
 }
