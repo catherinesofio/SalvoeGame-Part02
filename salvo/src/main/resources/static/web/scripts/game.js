@@ -19,7 +19,7 @@ $(document).ready(function() {
                 loadPlayerResults(data, gp.id);
             break;
         };
-    }).fai l(() => window.location = "/web/games.html" );
+    }).fail(() => window.location = "/web/games.html" );
 })
 
 function loadWaitingTable(data, gp, hasPlacedShips) {
@@ -34,16 +34,22 @@ function loadWaitingTable(data, gp, hasPlacedShips) {
 }
 
 function loadShips(data) {
-    let ships = document.createElement("div");
+    let ships = document.createElement("ul");
     ships.setAttribute("id", "ships");
     container.appendChild(ships);
 
-    data.forEach(ship => ships.appendChild(createElement("div", "ship", [ { name: "type", value: ship.type }, { name: "size", value: ship.size } ])));
+    data.forEach(function (ship) {
+        let s = createElement("div", "ship", [ { name: "type", value: ship.type }, { name: "size", value: ship.size }, { name: "orientation", value: "horizontal" }, { name: "onclick", value: "triggerSelect(event)" } ]);
+        let li = document.createElement("li");
+        li.appendChild(s);
+
+        ships.appendChild(li);
+    });
 }
 
 function loadPlayerTables(data, id) {
 
-} _
+}
 
 function loadPlayerResults(data, id) {
     let container = document.createElement("div");
