@@ -6,6 +6,9 @@
     --color-fail: linear-gradient(to bottom right, rgb(50, 205, 50), rgb(0, 100, 0));
     --gizmo-color: white;
     --gizmo-size: 0.5em;
+    --gizmo-index: 5;
+    --gizmo-width: 1;
+    --gizmo-height: 2;
 }
 
 html {
@@ -72,8 +75,11 @@ thead th:first-of-type {
 }
 
 td {
-    width: var(--cell-size);
-    height: var(--cell-size);
+    position: relative;;
+    min-width: var(--cell-size);
+    max-width: var(--cell-size);
+    min-height: var(--cell-size);
+    max-height: var(--cell-size);
 
     font-size: 1em;
     text-shadow: 0em 0em 0.15em rgba(171, 117, 36, 1);
@@ -113,14 +119,15 @@ td[success=true] {
 }
 
 #enemy {
-     position: absolute;
-     top: 50vh;
-     right: 0vw;
+    position: absolute;
+    top: 50vh;
+    right: 0vw;
 
-     transform: translate(-25%, -50%);
- }
+    transform: translate(-25%, -50%);
+}
 
 .ship {
+    position: relative;
     background-color: var(--ships-color);
     padding: 0.25em;
 }
@@ -166,30 +173,34 @@ td[success=true] {
 }
 
 .gizmo-obj {
-    position: relative;
-    width: calc(5 * var(--cell-size));
-    height: calc(5 * var(--cell-size));
-    padding: var(--cell-size);
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: calc((var(--gizmo-width)) * var(--cell-size));
+    height: calc((var(--gizmo-height)) * var(--cell-size));
+    padding: 0.25em;
+    z-index: var(--gizmo-index);
 }
 
 .gizmo-obj .ship {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0 !important;
+    left: 0;
 }
 
 .gizmo-position, .gizmo-rotation {
+    position: absolute;
     width: var(--gizmo-size);
     height: var(--gizmo-size);
     background-color: var(--gizmo-color);
+    z-index: var(--gizmo-index);
 }
 
 .gizmo-rotation {
     display: block;
     position: absolute;
-    top: 0;
-    right: 0;
+    top: calc(-1 * var(--cell-size));;
+    right: calc(-1 * var(--cell-size));;
 }
 
 .gizmo-position[isBlocked=false] {
@@ -202,14 +213,14 @@ td[success=true] {
 }
 
 .gizmo-position[direction="north"] {
-    top: 0;
+    top: calc(-1 * var(--cell-size));
     left: 50%;
 
     transform: translateX(-50%);
 }
 
 .gizmo-position[direction="south"] {
-    bottom: 0;
+    bottom: calc(-1 * var(--cell-size));
     left: 50%;
 
     transform: translateX(-50%);
@@ -217,14 +228,14 @@ td[success=true] {
 
 .gizmo-position[direction="west"] {
     top: 50%;
-    left: 0;
+    left: calc(-1 * var(--cell-size));
 
     transform: translateY(-50%);
 }
 
 .gizmo-position[direction="east"] {
     top: 50%;
-    right: 0;
+    right: calc(-1 * var(--cell-size));
 
     transform: translateY(-50%);
 }
