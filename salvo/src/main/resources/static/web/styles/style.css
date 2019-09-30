@@ -53,8 +53,6 @@ th {
     width: var(--cell-size);
     height: var(--cell-size);
 
-    padding: 0.25em;
-
     font-size: 1em;
     text-shadow: 0em 0em 0.15em rgba(171, 117, 36, 1);
 
@@ -76,10 +74,8 @@ thead th:first-of-type {
 
 td {
     position: relative;;
-    min-width: var(--cell-size);
-    max-width: var(--cell-size);
-    min-height: var(--cell-size);
-    max-height: var(--cell-size);
+    width: var(--cell-size);
+    height: var(--cell-size);
 
     font-size: 1em;
     text-shadow: 0em 0em 0.15em rgba(171, 117, 36, 1);
@@ -129,47 +125,70 @@ td[success=true] {
 .ship {
     position: relative;
     background-color: var(--ships-color);
-    padding: 0.25em;
 }
 
 .ship[size="2"][orientation="horizontal"] {
     width: calc(2 * var(--cell-size));
     height: var(--cell-size);
+    padding: 0.25em;
+    padding-right: 0.3em;
+    padding-left: 0.3em;
 }
 
 .ship[size="2"][orientation="vertical"] {
     width: var(--cell-size);
     height: calc(2 * var(--cell-size));
+    padding: 0.25em;
+    padding-bottom: 0.3em;
+    padding-top: 0.3em;
 }
 
 .ship[size="3"][orientation="horizontal"] {
     width: calc(3 * var(--cell-size));
     height: var(--cell-size);
+    padding: 0.25em;
+    padding-right: 0.45em;
+    padding-left: 0.45em;
 }
 
 .ship[size="3"][orientation="vertical"] {
     width: var(--cell-size);
     height: calc(3 * var(--cell-size));
+    padding: 0.25em;
+    padding-bottom: 0.45em;
+    padding-top: 0.45em;
 }
 
 .ship[size="4"][orientation="horizontal"] {
     width: calc(4 * var(--cell-size));
+    padding: 0.25em;
+    padding-right: 0.65em;
+    padding-left: 0.65em;
     height: var(--cell-size);
 }
 
 .ship[size="4"][orientation="vertical"] {
     width: var(--cell-size);
     height: calc(4 * var(--cell-size));
+    padding: 0.25em;
+    padding-bottom: 0.65em;
+    padding-top: 0.65em;
 }
 
 .ship[size="5"][orientation="horizontal"] {
     width: calc(5 * var(--cell-size));
     height: var(--cell-size);
+    padding: 0.25em;
+    padding-right: 0.85em;
+    padding-left: 0.85em;
 }
 
 .ship[size="5"][orientation="vertical"] {
     width: var(--cell-size);
     height: calc(5 * var(--cell-size));
+    padding: 0.25em;
+    padding-bottom: 0.85em;
+    padding-top: 0.85em;
 }
 
 .gizmo-obj {
@@ -215,6 +234,7 @@ td[success=true] {
 .gizmo-position[direction="north"] {
     top: calc(-1 * var(--cell-size));
     left: 50%;
+    background-color:red;
 
     transform: translateX(-50%);
 }
@@ -222,6 +242,7 @@ td[success=true] {
 .gizmo-position[direction="south"] {
     bottom: calc(-1 * var(--cell-size));
     left: 50%;
+    background-color: green;
 
     transform: translateX(-50%);
 }
@@ -229,6 +250,7 @@ td[success=true] {
 .gizmo-position[direction="west"] {
     top: 50%;
     left: calc(-1 * var(--cell-size));
+    background-color: blue;
 
     transform: translateY(-50%);
 }
@@ -236,6 +258,7 @@ td[success=true] {
 .gizmo-position[direction="east"] {
     top: 50%;
     right: calc(-1 * var(--cell-size));
+    background-color: yellow;
 
     transform: translateY(-50%);
 }
