@@ -207,7 +207,7 @@ td[success=true] {
     left: 0;
 }
 
-.gizmo-position, .gizmo-rotation {
+.gizmo-position, .gizmo-rotation, .gizmo-button {
     position: absolute;
     width: var(--gizmo-size);
     height: var(--gizmo-size);
@@ -261,4 +261,18 @@ td[success=true] {
     background-color: yellow;
 
     transform: translateY(-50%);
+}
+
+#gizmo-accept {
+    bottom: -50%;
+    right: 100%;
+
+    background-color: greenyellow;
+}
+
+#gizmo-cancel {
+    bottom: -50%;
+    left: 100%;
+
+    background-color: lightgrey;
 }

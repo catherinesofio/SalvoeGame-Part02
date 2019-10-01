@@ -1,12 +1,9 @@
-let root;
-
 let id = "player-";
-let cellsY = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"];
-let cells = cellsY.length;
 
 let obj;
 let gizmoObj;
 let handlers = [];
+let buttons = [];
 
 let prevParent;
 let initPos;
@@ -17,7 +14,19 @@ let cellY = parseInt(cells / 4);
 let isSelected = false;
 let directions = ["north", "south", "west", "east"];
 
-$(document).ready(x => root = document.documentElement);
+let occupiedCells = [];
+
+function createDummyShips(data) {
+    let ships = document.createElement("div");
+    ships.setAttribute("id", "ship-container");
+    container.appendChild(ships);
+
+    data.forEach(function (x) {
+        let ship = createElement("div", "ship", [ { name: "type", value: x.type }, { name: "size", value: x.size }, { name: "orientation", value: "horizontal" }, { name: "positions", value: "" }, { name: "onclick", value: "triggerSelect(event)" } ]);
+
+        ships.appendChild(ship);
+    });
+}
 
 function createGizmoObj() {
     gizmoObj = createElement("div", "gizmo-obj", []);
@@ -34,21 +43,45 @@ function createGizmoObj() {
     }
 
     gizmoObj.appendChild(createElement("div", "gizmo-rotation", [{ name: "onclick", value: "triggerRotate(event)" }]));
+
+    let btn = createElement("div", "gizmo-button", [{ name: "id", value: "gizmo-accept" }, { name: "isEnabled", value: true }, { name: "onclick", value: "triggerPlace(event)" }]);
+    gizmoObj.appendChild(btn);
+    buttons.push(btn);
+
+    btn = createElement("div", "gizmo-button", [{ name: "id", value: "gizmo-cancel" }, { name: "isEnabled", value: true }, { name: "onclick", value: "triggerUnselect(event)" }]);
+    gizmoObj.appendChild(btn);
+    buttons.push(btn);
 }
 
 function resetGizmoObj() {
+    let orientation = obj.getAttribute("orientation");
+    let size = parseInt(obj.getAttribute("size"));
+
     obj.setAttribute("onclick", "");
 
     prevParent = obj.parentNode;
     gizmoObj.appendChild(obj);
-    initPos.appendChild(gizmoObj);
-    cellX = cells / 2;
-    cellY = parseInt(cells / 4);
+
+    if (obj.getAttribute("positions") != "") {
+        prevParent.appendChild(gizmoObj);
+
+        let parentId = prevParent.getAttribute("id");
+        cellX = parseInt(parentId.substring(id.length + 1));
+        cellY = cellsY.indexOf(parentId.charAt(id.length));
+
+        checkGizmoHandlers(orientation, size);
+    } else {
+        initPos.appendChild(gizmoObj);
+        cellX = cells / 2;
+        cellY = parseInt(cells / 4);
+
+        resetGizmoHandlers();
+    }
 
     isSelected = true;
+    gizmoObj.style.display = "block";
 
-    resetGizmoHandlers();
-    resizeGizmoObj(obj.getAttribute("orientation"), obj.getAttribute("size"));
+    resizeGizmoObj(orientation, size);
 }
 
 function resetGizmoHandlers() {
@@ -71,6 +104,20 @@ function repositionGizmoObj(offsetX, offsetY, orientation, size) {
 
     let parent = document.getElementById(id + cellsY[cellY] + "" + cellX);
     parent.appendChild(gizmoObj);
+}
+
+function unselectGizmoObj(isPlaced) {
+    if (!isPlaced) {
+        prevParent.appendChild(obj);
+    } else {
+        gizmoObj.parentNode.appendChild(obj);
+        obj.style.position = "absolute";
+    }
+
+    obj.setAttribute("onclick", "triggerSelect(event)");
+
+    isSelected = false;
+    gizmoObj.style.display = "none";
 }
 
 function checkGizmoHandlers(orientation, size) {
@@ -131,16 +178,44 @@ function checkGizmoHandlers(orientation, size) {
     }
 }
 
+function checkObjPosition(orientation, size) {
+    //let positions = obj.getAttribute("positions").split("-");
+    let offsetX = 0;
+    let offsetY = 0;
+    if (orientation == "horizontal") {
+        offsetX = 1;
+    } else {
+        offsetY = 1;
+    }
+
+    let positions = [];
+    for (let i = 0; i < size; i++) {
+        positions.push(cellsY[(cellY + (offsetY * i))] + "" + (cellX + (offsetX * i)));
+    }
+
+    for (let i = 0; i < size; i++) {
+        if (occupiedCells.indexOf(positions[i]) > -1) {
+            buttons[0].style.display = "none";
+            return false;
+        } else {
+            buttons[0].style.display = "block";
+        }
+    }
+}
+
 function triggerSelect(e) {
     if (gizmoObj == null) {
         createGizmoObj();
     } else if (isSelected) {
-        obj.setAttribute("onclick", "triggerSelect(event)");
-        prevParent.appendChild(obj);
+        unselectGizmoObj(false);
     }
 
     obj = e.target;
     resetGizmoObj();
+}
+
+function triggerUnselect(e) {
+    unselectGizmoObj(false);
 }
 
 function triggerMove(e) {
@@ -174,6 +249,7 @@ function triggerMove(e) {
 
     checkGizmoHandlers(orientation, size);
     resizeGizmoObj(orientation, size);
+    checkObjPosition(orientation, size);
 }
 
 function triggerRotate(e) {
@@ -184,5 +260,35 @@ function triggerRotate(e) {
 
     checkGizmoHandlers(orientation, size);
     resizeGizmoObj(orientation, size);
+    checkObjPosition(orientation, size);
 }
-//j.bauer@ctu.gov
+
+function triggerPlace(e) {
+    let positions = obj.getAttribute("positions").split("-");
+    let size = parseInt(obj.getAttribute("size"));
+    let orientation = obj.getAttribute("orientation");
+    let offsetX = 0;
+    let offsetY = 0;
+
+    if (orientation == "horizontal") {
+        offsetX = 1;
+    } else {
+        offsetY = 1;
+    }
+
+    for (var i = positions.length - 1; i >= 0; i--) {
+        occupiedCells.splice(occupiedCells.indexOf(positions[i]), 1);
+        console.log(occupiedCells);
+    }
+
+    positions = "";
+    for (let i = 0; i < size; i++) {
+        let pos = cellsY[(cellY + (offsetY * i))] + "" + (cellX + (offsetX * i));
+        positions = positions + pos + "-";
+        occupiedCells.push(pos);
+    }
+    positions = positions.substring(0, positions.length - 1);
+    obj.setAttribute("positions", positions);
+
+    unselectGizmoObj(true);
+}
