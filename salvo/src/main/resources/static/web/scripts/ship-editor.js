@@ -1,6 +1,11 @@
 let id = "player-";
 
 let obj;
+let size;
+let orientation;
+let prevOrientation;
+let positions;
+
 let gizmoObj;
 let handlers = [];
 let buttons = [];
@@ -26,13 +31,16 @@ function createDummyShips(data) {
 
         ships.appendChild(ship);
     });
+
+    let btn = createElement("button", "", [{ name: "id", value: "submit-ships" }, { name: "disabled", value: true }, { name: "onclick", value: "submitShips()" }]);
+    btn.innerText = "SUBMIT SHIPS";
+    ships.appendChild(btn);
 }
 
 function createGizmoObj() {
     gizmoObj = createElement("div", "gizmo-obj", []);
     initPos = document.getElementById(id + cellsY[cellY] + cellX);
 
-    let container = document.getElementById("container");
     container.appendChild(gizmoObj);
 
     for(let i = 0; i < 4; i++) {
@@ -42,27 +50,28 @@ function createGizmoObj() {
         gizmoObj.appendChild(handler);
     }
 
-    gizmoObj.appendChild(createElement("div", "gizmo-rotation", [{ name: "onclick", value: "triggerRotate(event)" }]));
+    gizmoObj.appendChild(createElement("div", "gizmo-rotation", [{ name: "onclick", value: "triggerRotate()" }]));
 
-    let btn = createElement("div", "gizmo-button", [{ name: "id", value: "gizmo-accept" }, { name: "isEnabled", value: true }, { name: "onclick", value: "triggerPlace(event)" }]);
+    let btn = createElement("div", "gizmo-button", [{ name: "id", value: "gizmo-accept" }, { name: "isEnabled", value: true }, { name: "onclick", value: "triggerPlace()" }]);
     gizmoObj.appendChild(btn);
     buttons.push(btn);
 
-    btn = createElement("div", "gizmo-button", [{ name: "id", value: "gizmo-cancel" }, { name: "isEnabled", value: true }, { name: "onclick", value: "triggerUnselect(event)" }]);
+    btn = createElement("div", "gizmo-button", [{ name: "id", value: "gizmo-cancel" }, { name: "isEnabled", value: true }, { name: "onclick", value: "triggerUnselect()" }]);
     gizmoObj.appendChild(btn);
     buttons.push(btn);
 }
 
 function resetGizmoObj() {
-    let orientation = obj.getAttribute("orientation");
-    let size = parseInt(obj.getAttribute("size"));
+    size = parseInt(obj.getAttribute("size"));
+    prevOrientation = orientation = obj.getAttribute("orientation");
+    positions = obj.getAttribute("positions").split("-");
 
     obj.setAttribute("onclick", "");
 
     prevParent = obj.parentNode;
     gizmoObj.appendChild(obj);
 
-    if (obj.getAttribute("positions") != "") {
+    if (positions != "") {
         prevParent.appendChild(gizmoObj);
 
         let parentId = prevParent.getAttribute("id");
@@ -81,14 +90,14 @@ function resetGizmoObj() {
     isSelected = true;
     gizmoObj.style.display = "block";
 
-    resizeGizmoObj(orientation, size);
+    resizeGizmoObj();
 }
 
 function resetGizmoHandlers() {
     handlers.forEach(x => x.setAttribute("isBlocked", false));
 }
 
-function resizeGizmoObj(orientation, size) {
+function resizeGizmoObj() {
     if (orientation == "horizontal") {
         root.style.setProperty("--gizmo-width", size);
         root.style.setProperty("--gizmo-height", 1);
@@ -98,7 +107,7 @@ function resizeGizmoObj(orientation, size) {
     }
 }
 
-function repositionGizmoObj(offsetX, offsetY, orientation, size) {
+function repositionGizmoObj(offsetX, offsetY) {
     cellX += offsetX;
     cellY += offsetY;
 
@@ -108,6 +117,7 @@ function repositionGizmoObj(offsetX, offsetY, orientation, size) {
 
 function unselectGizmoObj(isPlaced) {
     if (!isPlaced) {
+        obj.setAttribute("orientation", prevOrientation);
         prevParent.appendChild(obj);
     } else {
         gizmoObj.parentNode.appendChild(obj);
@@ -120,7 +130,7 @@ function unselectGizmoObj(isPlaced) {
     gizmoObj.style.display = "none";
 }
 
-function checkGizmoHandlers(orientation, size) {
+function checkGizmoHandlers() {
     let offsetX = 0;
     let offsetY = 0;
 
@@ -131,7 +141,7 @@ function checkGizmoHandlers(orientation, size) {
             offsetY -= 1;
 
             if (cells < dx) {
-                repositionGizmoObj((dx - cells) * - 1, 0, orientation, size);
+                repositionGizmoObj((dx - cells) * - 1, 0);
                 handlers[3].setAttribute("isBlocked", true);
             }
             break;
@@ -141,7 +151,7 @@ function checkGizmoHandlers(orientation, size) {
             offsetY -= size;
 
             if (cells < dy) {
-                repositionGizmoObj(0, (dy - cells) * - 1, orientation, size);
+                repositionGizmoObj(0, (dy - cells) * - 1);
                 handlers[1].setAttribute("isBlocked", true);
             }
             break;
@@ -178,8 +188,7 @@ function checkGizmoHandlers(orientation, size) {
     }
 }
 
-function checkObjPosition(orientation, size) {
-    //let positions = obj.getAttribute("positions").split("-");
+function checkObjPosition() {
     let offsetX = 0;
     let offsetY = 0;
     if (orientation == "horizontal") {
@@ -188,13 +197,13 @@ function checkObjPosition(orientation, size) {
         offsetY = 1;
     }
 
-    let positions = [];
+    let newPositions = [];
     for (let i = 0; i < size; i++) {
-        positions.push(cellsY[(cellY + (offsetY * i))] + "" + (cellX + (offsetX * i)));
+        newPositions.push(cellsY[(cellY + (offsetY * i))] + "" + (cellX + (offsetX * i)));
     }
 
     for (let i = 0; i < size; i++) {
-        if (occupiedCells.indexOf(positions[i]) > -1) {
+        if (occupiedCells.indexOf(newPositions[i]) > -1 && !positions.includes(newPositions[i])) {
             buttons[0].style.display = "none";
             return false;
         } else {
@@ -212,16 +221,15 @@ function triggerSelect(e) {
 
     obj = e.target;
     resetGizmoObj();
+    checkObjPosition();
 }
 
-function triggerUnselect(e) {
+function triggerUnselect() {
     unselectGizmoObj(false);
 }
 
 function triggerMove(e) {
     let parent = gizmoObj.parentNode;
-    let orientation = obj.getAttribute("orientation");
-    let size = parseInt(obj.getAttribute("size"));
 
     switch (e.target.getAttribute("direction")) {
         case "north":
@@ -247,26 +255,21 @@ function triggerMove(e) {
             break;
     }
 
-    checkGizmoHandlers(orientation, size);
-    resizeGizmoObj(orientation, size);
-    checkObjPosition(orientation, size);
+    checkGizmoHandlers();
+    resizeGizmoObj();
+    checkObjPosition();
 }
 
-function triggerRotate(e) {
-    let orientation = (obj.getAttribute("orientation") == "horizontal") ? "vertical" : "horizontal";
+function triggerRotate() {
+    orientation = (orientation == "horizontal") ? "vertical" : "horizontal";
     obj.setAttribute("orientation", orientation);
 
-    let size = parseInt(obj.getAttribute("size"));
-
-    checkGizmoHandlers(orientation, size);
-    resizeGizmoObj(orientation, size);
-    checkObjPosition(orientation, size);
+    checkGizmoHandlers();
+    resizeGizmoObj();
+    checkObjPosition();
 }
 
-function triggerPlace(e) {
-    let positions = obj.getAttribute("positions").split("-");
-    let size = parseInt(obj.getAttribute("size"));
-    let orientation = obj.getAttribute("orientation");
+function triggerPlace() {
     let offsetX = 0;
     let offsetY = 0;
 
@@ -278,7 +281,6 @@ function triggerPlace(e) {
 
     for (var i = positions.length - 1; i >= 0; i--) {
         occupiedCells.splice(occupiedCells.indexOf(positions[i]), 1);
-        console.log(occupiedCells);
     }
 
     positions = "";
@@ -291,4 +293,19 @@ function triggerPlace(e) {
     obj.setAttribute("positions", positions);
 
     unselectGizmoObj(true);
+
+    if (document.getElementById("ship-container").childElementCount == 1) {
+        document.getElementById("submit-ships").disabled = false;
+    }
+}
+
+function submitShips() {
+    let data = document.getElementsByClassName("ship");
+
+    let ships = [];
+    for (let i = data.length - 1; i >= 0; i--){
+        ships.push({ type: data[i].getAttribute("type"), locations: data[i].getAttribute("positions").split("-") });
+    }
+
+    $.post({ url: "/api/games/players/" + gamePlayerId + "/ships", data: JSON.stringify(ships), dataType: "text", contentType: "application/json" }).done(x => checkState());
 }

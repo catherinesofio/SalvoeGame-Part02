@@ -36,6 +36,8 @@ public class Ship {
         this.isDown = false;
     }
 
+    public void setGamePlayer(GamePlayer gamePlayer) { this.gamePlayer = gamePlayer; }
+
     public Long getId() { return this.id; }
 
     public boolean isDown() { return this.isDown; }

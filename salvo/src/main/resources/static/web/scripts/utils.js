@@ -11,7 +11,9 @@ function getParamObj(search) {
 
 function createElement(element, objClass, attributes) {
     let e = document.createElement(element);
-    e.classList.add(objClass);
+    if (objClass != "") {
+        e.classList.add(objClass);
+    }
     attributes.forEach(x => e.setAttribute(x.name, x.value));
 
     return e;

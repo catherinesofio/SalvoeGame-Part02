@@ -1,28 +1,32 @@
 $(document).ready(function() {
-    let param = getParamObj(window.location.search);
+    gamePlayerId = getParamObj(window.location.search);
+    checkState();
+})
+
+function checkState() {
     $.ajax("/api/game_view/"+param.gp).done(function (data) {
         let gp = data.gamePlayers.filter(x => x.id == param.gp)[0];
         switch (data.state) {
             case "WAITING":
                 loadWaitingTable(data, gp, gp.state == "WAITING_PLAYER");
-            break;
+                break;
 
             case "PLAYING":
                 loadPlayerTables(data, gp.id);
-            break;
+                break;
 
             case "FINISHED":
                 loadPlayerResults(data, gp.id);
-            break;
+                break;
         };
     }).fail(() => window.location = "/web/games.html" );
-})
+}
 
 function loadWaitingTable(data, gp, hasPlacedShips) {
     if (hasPlacedShips) {
         loadTables(data, gp.id)
     } else {
-        let table = createTable("player", gp.player.name, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"], [{ name: "empty", value: true }]);
+        let table = createTable("player", gp.player.name, cellsX, cellsY, [{ name: "empty", value: true }]);
         container.appendChild(table);
 
         $.ajax("/api/templates/ships").done(data => createDummyShips(data));

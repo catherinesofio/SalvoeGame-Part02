@@ -133,17 +133,30 @@ public class SalvoController {
     }
 
     @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.POST)
-    private void addShips(@PathVariable Long gp, @RequestParam List<String> types, @RequestParam List<Set<String>> positions, Authentication authentication) {
+    private ResponseEntity<String> addShips(@PathVariable Long gp, @RequestBody List<Ship> ships, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
 
-        if(user != null && gamePlayer.getPlayerId() == user.getId()) {
-            for (int i = types.size() - 1; i >= 0; i--) {
-                gamePlayer.addShip(shipRepository.save(new Ship(types.get(i), positions.get(i), gamePlayer)));
+        if (gamePlayer == null) {
+            return new ResponseEntity<String>("Gameplayer does not exist.", HttpStatus.UNAUTHORIZED);
+        }
+        else if (user != null && gamePlayer.getPlayerId() == user.getId()) {
+            if (gamePlayer.getState() == PlayerStates.WAITING_PLAYER) {
+                return new ResponseEntity<String>("Ships have already been placed.", HttpStatus.FORBIDDEN);
+            }
+
+            for (Ship ship:ships) {
+                gamePlayer.addShip(ship);
+                ship.setGamePlayer(gamePlayer);
+                shipRepository.save(ship);
             }
 
             gamePlayer.setState(PlayerStates.WAITING_PLAYER);
+
+            return new ResponseEntity<String>("Ships successfully placed.", HttpStatus.CREATED);
         }
+
+        return new ResponseEntity<String>("No user found", HttpStatus.UNAUTHORIZED);
     }
 
     @RequestMapping("/templates/ships")
