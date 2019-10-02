@@ -120,18 +120,6 @@ public class SalvoController {
         return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.GET)
-    private ResponseEntity<List<Map<String, Object>>> getShips(@PathVariable Long gp, Authentication authentication) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
-        Player user = getUser(authentication);
-
-        if(user != null && gamePlayer.getPlayerId() == user.getId()) {
-            return new ResponseEntity<>(gamePlayer.getShipsData(), HttpStatus.ACCEPTED);
-        }
-
-        return new ResponseEntity<List<Map<String, Object>>>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
-    }
-
     @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.POST)
     private ResponseEntity<String> addShips(@PathVariable Long gp, @RequestBody List<Ship> ships, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
@@ -139,8 +127,7 @@ public class SalvoController {
 
         if (gamePlayer == null) {
             return new ResponseEntity<String>("Gameplayer does not exist.", HttpStatus.UNAUTHORIZED);
-        }
-        else if (user != null && gamePlayer.getPlayerId() == user.getId()) {
+        } else if (user != null && gamePlayer.getPlayerId() == user.getId()) {
             if (gamePlayer.getState() == PlayerStates.WAITING_PLAYER) {
                 return new ResponseEntity<String>("Ships have already been placed.", HttpStatus.FORBIDDEN);
             }
@@ -152,6 +139,8 @@ public class SalvoController {
             }
 
             gamePlayer.setState(PlayerStates.WAITING_PLAYER);
+            gamePlayerRepository.save(gamePlayer);
+            gameRepository.save(gamePlayer.getGame());
 
             return new ResponseEntity<String>("Ships successfully placed.", HttpStatus.CREATED);
         }

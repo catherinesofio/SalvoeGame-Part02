@@ -1,6 +1,6 @@
 package com.codeoftheweb.salvo;
 
-public enum Ships {
+public enum ShipTypes {
     AIRCRAFT_CARRIER,
     BATTLESHIP,
     SUBMARINE,

@@ -307,5 +307,5 @@ function submitShips() {
         ships.push({ type: data[i].getAttribute("type"), locations: data[i].getAttribute("positions").split("-") });
     }
 
-    $.post({ url: "/api/games/players/" + gamePlayerId + "/ships", data: JSON.stringify(ships), dataType: "text", contentType: "application/json" }).done(x => checkState());
+    $.post({ url: "/api/games/players/" + gamePlayerId + "/ships", data: JSON.stringify(ships), dataType: "text", contentType: "application/json" }).done(x => window.location.reload());
 }

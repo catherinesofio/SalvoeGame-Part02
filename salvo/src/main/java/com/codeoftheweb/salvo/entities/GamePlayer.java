@@ -51,6 +51,8 @@ public class GamePlayer {
 
     public Long getPlayerId() { return this.player.getId(); }
 
+    public Game getGame() { return this.game; }
+
     public Object getPlayerData() { return this.player.getMappedData(); }
 
     public PlayerStates getState() { return this.state; }
@@ -66,15 +68,10 @@ public class GamePlayer {
 
     @JsonIgnore
     public List<Map<String, Object>> getSalvoesData() {
-        List<Map<String, Object>> salvoes = new ArrayList<>();
+        List<Map<String, Object>> salvoes = new ArrayList<Map<String, Object>>();
 
-        Map<String, Object> salvo;
-        for (Salvo s : this.salvoes) {
-            salvo = new HashMap<>();
-            salvo.put("turn", s.getTurn());
-            salvo.put("locations", s.getCells());
-
-            salvoes.add(salvo);
+        for (Salvo salvo : this.salvoes) {
+            salvoes.add(salvo.getMappedData());
         }
 
         return salvoes;

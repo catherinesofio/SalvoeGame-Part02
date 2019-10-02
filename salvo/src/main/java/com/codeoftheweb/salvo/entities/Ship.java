@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo.entities;
 
+import com.codeoftheweb.salvo.ShipTypes;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ public class Ship {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private String type;
+    private ShipTypes type;
     private boolean isDown;
 
     @ElementCollection
@@ -29,12 +30,16 @@ public class Ship {
 
     public Ship() { }
 
-    public Ship(String type, Set<String> locations, GamePlayer gamePlayer) {
+    public Ship(ShipTypes type, Set<String> locations, GamePlayer gamePlayer) {
         this.type = type;
         this.locations = locations;
         this.gamePlayer = gamePlayer;
         this.isDown = false;
     }
+
+    public void setType(ShipTypes type) { this.type = type; }
+
+    public void setLocations(Set<String> locations) { this.locations = locations; }
 
     public void setGamePlayer(GamePlayer gamePlayer) { this.gamePlayer = gamePlayer; }
 
@@ -54,7 +59,7 @@ public class Ship {
 
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("type", this.type);
+        data.put("type", this.type.toString());
         data.put("locations", this.locations);
         data.put("isDown", this.isDown);
 
