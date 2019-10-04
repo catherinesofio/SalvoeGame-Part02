@@ -6,6 +6,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class GamePlayer {
@@ -53,6 +54,10 @@ public class GamePlayer {
 
     public Game getGame() { return this.game; }
 
+    public List<Ship> getDownedShips() {
+        return ships.stream().filter(x -> x.isDown()).collect(Collectors.toList());
+    }
+
     public Object getPlayerData() { return this.player.getMappedData(); }
 
     public PlayerStates getState() { return this.state; }
@@ -65,6 +70,16 @@ public class GamePlayer {
     public void addShip(Ship ship) { this.ships.add(ship); }
 
     public void addSalvo(Salvo salvo) { this.salvoes.add(salvo); }
+
+    public void checkSalvoes(List<Salvo> salvoes) {
+        Set<Ship> activeShips = this.ships.stream().filter(x -> !x.isDown()).collect(Collectors.toSet());
+
+        for (Salvo salvo: salvoes) {
+            for (Ship ship: activeShips) {
+                salvo.setSuccessful(ship.checkHit(salvo.getCell()));
+            }
+        }
+    }
 
     @JsonIgnore
     public List<Map<String, Object>> getSalvoesData() {

@@ -30,6 +30,9 @@ public class SalvoController {
     private ShipRepository shipRepository;
 
     @Autowired
+    private SalvoRepository salvoRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private boolean isGuest(Authentication authentication) {
@@ -143,6 +146,41 @@ public class SalvoController {
             gameRepository.save(gamePlayer.getGame());
 
             return new ResponseEntity<String>("Ships successfully placed.", HttpStatus.CREATED);
+        }
+
+        return new ResponseEntity<String>("No user found", HttpStatus.UNAUTHORIZED);
+    }
+
+    @RequestMapping(value = "/games/players/{gp}/salvoes", method = RequestMethod.POST)
+    private ResponseEntity<String> addSalvoes(@PathVariable Long gp, @RequestBody List<Salvo> salvoes, Authentication authentication) {
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
+        Player user = getUser(authentication);
+
+        if (gamePlayer == null) {
+            return new ResponseEntity<String>("Gameplayer does not exist.", HttpStatus.UNAUTHORIZED);
+        } else if (user != null && gamePlayer.getPlayerId() == user.getId()) {
+            if (gamePlayer.getState() == PlayerStates.PLAYING_WAITING) {
+                return new ResponseEntity<String>("Cannot place salvoes on the other player's turn.", HttpStatus.FORBIDDEN);
+            }
+
+            Salvo salvo;
+            Game game = gamePlayer.getGame();
+            Long turn = game.refreshTurn(gamePlayer);
+            salvoes = salvoes.subList(0, Consts.SALVOES);
+            for (int i = Consts.SALVOES - 1; i >= 0; i--) {
+                salvo = salvoes.get(i);
+
+                if (salvo != null) {
+                    salvo.setTurn(turn);
+                    gamePlayer.addSalvo(salvo);
+                    salvoRepository.save(salvo);
+                }
+            }
+
+            game.checkSalvoes(gamePlayer, salvoes);
+            gamePlayerRepository.save(game.getOponent(gamePlayer));
+            gamePlayerRepository.save(gamePlayer);
+            gameRepository.save(game);
         }
 
         return new ResponseEntity<String>("No user found", HttpStatus.UNAUTHORIZED);

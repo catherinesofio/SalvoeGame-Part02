@@ -4,6 +4,7 @@
     --color-empty: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(25, 25, 25));
     --color-success: linear-gradient(to bottom right, rgb(178, 34, 34), rgb(128, 0, 0));
     --color-fail: linear-gradient(to bottom right, rgb(50, 205, 50), rgb(0, 100, 0));
+    --color-test: linear-gradient(to bottom right, blue, greenyellow);
     --gizmo-color: white;
     --gizmo-size: 0.5em;
     --gizmo-index: 5;
@@ -104,6 +105,10 @@ td[success=false] {
 
 td[success=true] {
     background-image: var(--color-success);
+}
+
+td[hasSalvo] {
+    background-image: var(--color-test);
 }
 
 #player {

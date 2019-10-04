@@ -4,7 +4,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,10 +15,10 @@ public class Salvo {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private Long turn;
+    private Boolean successful;
 
-    @ElementCollection
     @Column(name = "cells")
-    private Set<String> cells = new HashSet<>();
+    String cell;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "gamePlayer_id")
@@ -27,21 +26,29 @@ public class Salvo {
 
     public Salvo() { }
 
-    public Salvo(Long turn, Set<String> cells, GamePlayer gamePlayer) {
+    public Salvo(Long turn, String cell, GamePlayer gamePlayer) {
         this.turn = turn;
-        this.cells = cells;
+        this.cell = cell;
         this.gamePlayer = gamePlayer;
+        this.successful = false;
     }
 
     public Long getId() { return this.id; }
 
-    public void setCells(Set<String> cells) { this.cells = cells; }
+    public void setTurn(Long turn) { this.turn = turn; }
+
+    public String getCell() { return this.cell; }
+
+    public void setCell(String cell) { this.cell = cell.toUpperCase(); }
+
+    public void setSuccessful(Boolean successful) { this.successful = successful; }
 
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<>();
 
         data.put("turn", this.turn);
-        data.put("locations", this.cells);
+        data.put("locations", this.cell);
+        data.put("success", this.successful);
 
         return data;
     }

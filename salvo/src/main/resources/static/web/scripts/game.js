@@ -43,17 +43,19 @@ function loadPlayerTables(data, hasStarted) {
     gp.ships.forEach(function (ship) {
         setElementsAttributes("player-", ship.locations, [{ name: "empty", value: false }, { name: "type", value: ship.type }, { name: "hasSalvo", value: false }]);
     });
-    gp.salvoes.forEach(function (salvo) {
-        setElementsAttributes("player-", salvo.locations, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn}]);
-    });
+    if (gp2 != null) {
+        gp2.salvoes.forEach(function (salvo) {
+            setElementsAttributes("player-", salvo.locations, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }]);
+        });
+    }
 
     let tableGP2 = createTable("enemy", (gp2 != null) ? gp2.player.name : "Waiting for player...", cellsX, cellsY, [{ name: "hasSalvo", value: false }]);
     container.appendChild(tableGP2);
-    if (gp2 != null) {
-        gp2.salvoes.forEach(function (salvo) {
-            setElementsAttributes("enemy-", salvo.locations, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }]);
-        });
-    }
+    gp.salvoes.forEach(function (salvo) {
+        setElementsAttributes("enemy-", salvo.locations, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn}]);
+    });
+
+    createSalvoNav(gp.state);
 }
 
 function loadPlayerResults(data) {

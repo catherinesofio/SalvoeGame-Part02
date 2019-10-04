@@ -5,6 +5,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Ship {
@@ -39,7 +40,7 @@ public class Ship {
 
     public void setType(ShipTypes type) { this.type = type; }
 
-    public void setLocations(Set<String> locations) { this.locations = locations; }
+    public void setLocations(Set<String> locations) { this.locations = locations.stream().map(x -> x.toUpperCase()).collect(Collectors.toSet()); }
 
     public void setGamePlayer(GamePlayer gamePlayer) { this.gamePlayer = gamePlayer; }
 
@@ -47,14 +48,17 @@ public class Ship {
 
     public boolean isDown() { return this.isDown; }
 
-    public void checkHits(Set<String> hits) {
-        for (String hit:hits){
-            if (this.locations.contains(hit) && !this.hits.contains(hit)) {
-                this.hits.add(hit);
-            }
+    public boolean checkHit(String hit) {
+        Boolean hasHitted = locations.contains(hit);
+
+        if (hasHitted) {
+            hits.add(hit);
+            this.isDown = (this.hits.size() == this.locations.size());
+
+            return true;
         }
 
-        this.isDown = (this.hits.size() == this.locations.size());
+        return false;
     }
 
     public Map<String, Object> getMappedData() {

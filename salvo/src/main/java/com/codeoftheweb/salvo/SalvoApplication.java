@@ -86,59 +86,145 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			gamePlayer81.setState(PlayerStates.WAITING_PREPARING);
 			gamePlayer82.setState(PlayerStates.WAITING_PREPARING);
 
-			Salvo salvo11 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("B4", "C5", "F1")), gamePlayer11));
-			Salvo salvo12 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("F2", "D5")), gamePlayer11));
-			gamePlayer11.addSalvo(salvo11);
-			gamePlayer12.addSalvo(salvo12);
+			Salvo salvo = salvoRepository.save(new Salvo(1L, "B4", gamePlayer11));
+			gamePlayer11.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "C5", gamePlayer11));
+			gamePlayer11.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "F1", gamePlayer11));
+			gamePlayer11.addSalvo(salvo);
 
-			Salvo salvo21 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("B4", "B5", "B6")), gamePlayer12));
-			Salvo salvo22 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("E1", "H3", "A2")), gamePlayer12));
-			gamePlayer12.addSalvo(salvo21);
-			gamePlayer12.addSalvo(salvo22);
+			salvo = salvoRepository.save(new Salvo(2L, "F2", gamePlayer11));
+			gamePlayer12.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "D5", gamePlayer11));
+			gamePlayer12.addSalvo(salvo);
 
-			Salvo salvo31 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("A2", "A4", "G6")), gamePlayer21));
-			Salvo salvo32 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("A3", "H6")), gamePlayer21));
-			gamePlayer21.addSalvo(salvo31);
-			gamePlayer21.addSalvo(salvo32);
+			salvo = salvoRepository.save(new Salvo(1L, "B4", gamePlayer12));
+			gamePlayer12.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "B5", gamePlayer12));
+			gamePlayer12.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "B6", gamePlayer12));
+			gamePlayer12.addSalvo(salvo);
 
-			Salvo salvo41 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("B5", "D5", "C7")), gamePlayer22));
-			Salvo salvo42 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("C5", "C6")), gamePlayer22));
-			gamePlayer21.addSalvo(salvo41);
-			gamePlayer21.addSalvo(salvo42);
+			salvo = salvoRepository.save(new Salvo(2L, "E1", gamePlayer12));
+			gamePlayer12.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "H3", gamePlayer12));
+			gamePlayer12.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "A2", gamePlayer12));
+			gamePlayer12.addSalvo(salvo);
 
-			Salvo salvo51 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("G6", "H6", "A4")), gamePlayer31));
-			Salvo salvo52 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("A2", "A3", "D8")), gamePlayer31));
-			gamePlayer31.addSalvo(salvo51);
-			gamePlayer31.addSalvo(salvo52);
+			salvo = salvoRepository.save(new Salvo(1L, "A2", gamePlayer21));
+			gamePlayer21.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "A4", gamePlayer21));
+			gamePlayer21.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "G6", gamePlayer21));
+			gamePlayer21.addSalvo(salvo);
 
-			Salvo salvo61 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("H1", "H2", "H3")), gamePlayer32));
-			Salvo salvo62 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("E1", "F2", "G3")), gamePlayer32));
-			gamePlayer32.addSalvo(salvo61);
-			gamePlayer32.addSalvo(salvo62);
+			salvo = salvoRepository.save(new Salvo(2L, "A3", gamePlayer21));
+			gamePlayer21.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "H6", gamePlayer21));
+			gamePlayer21.addSalvo(salvo);
 
-			Salvo salvo71 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("A3", "A4", "F7")), gamePlayer41));
-			Salvo salvo72 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("A2", "G6", "H6")), gamePlayer41));
-			gamePlayer41.addSalvo(salvo71);
-			gamePlayer41.addSalvo(salvo72);
+			salvo = salvoRepository.save(new Salvo(1L, "B5", gamePlayer22));
+			gamePlayer21.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "D5", gamePlayer22));
+			gamePlayer21.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "C7", gamePlayer22));
+			gamePlayer21.addSalvo(salvo);
 
-			Salvo salvo81 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("B5", "C6", "H1")), gamePlayer42));
-			Salvo salvo82 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("C5", "C7", "D5")), gamePlayer42));
-			gamePlayer42.addSalvo(salvo81);
-			gamePlayer42.addSalvo(salvo82);
+			salvo = salvoRepository.save(new Salvo(2L, "C5", gamePlayer22));
+			gamePlayer21.addSalvo(salvo);
 
-			Salvo salvo91 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("A1", "A2", "A3")), gamePlayer51));
-			Salvo salvo92 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("G6", "G7", "G8")), gamePlayer51));
-			Salvo salvo93 = salvoRepository.save(new Salvo(3L, new HashSet<>(), gamePlayer51));
-			gamePlayer51.addSalvo(salvo91);
-			gamePlayer51.addSalvo(salvo92);
-			gamePlayer51.addSalvo(salvo93);
+			salvo = salvoRepository.save(new Salvo(2L, "C6", gamePlayer22));
+			gamePlayer21.addSalvo(salvo);
 
-			Salvo salvo101 = salvoRepository.save(new Salvo(1L, new HashSet<>(Arrays.asList("B5", "B6", "C7")), gamePlayer52));
-			Salvo salvo102 = salvoRepository.save(new Salvo(2L, new HashSet<>(Arrays.asList("C6", "D6", "E6")), gamePlayer52));
-			Salvo salvo103 = salvoRepository.save(new Salvo(3L, new HashSet<>(Arrays.asList("H1", "H8")), gamePlayer52));
-			gamePlayer52.addSalvo(salvo101);
-			gamePlayer52.addSalvo(salvo102);
-			gamePlayer52.addSalvo(salvo103);
+			salvo = salvoRepository.save(new Salvo(1L, "G6", gamePlayer31));
+			gamePlayer31.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "H6", gamePlayer31));
+			gamePlayer31.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "A4", gamePlayer31));
+			gamePlayer31.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(2L, "A2", gamePlayer31));
+			gamePlayer31.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "A3", gamePlayer31));
+			gamePlayer31.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "D8", gamePlayer31));
+			gamePlayer31.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(1L, "H1", gamePlayer32));
+			gamePlayer32.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "H2", gamePlayer32));
+			gamePlayer32.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "H3", gamePlayer32));
+			gamePlayer32.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(2L, "E1", gamePlayer32));
+			gamePlayer32.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "F2", gamePlayer32));
+			gamePlayer32.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "G3", gamePlayer32));
+			gamePlayer32.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(1L, "A3", gamePlayer41));
+			gamePlayer41.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "A4", gamePlayer41));
+			gamePlayer41.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "F7", gamePlayer41));
+			gamePlayer41.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(2L, "A2", gamePlayer41));
+			gamePlayer41.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "G6", gamePlayer41));
+			gamePlayer41.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "H6", gamePlayer41));
+			gamePlayer41.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(1L, "B5", gamePlayer42));
+			gamePlayer42.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "C6", gamePlayer42));
+			gamePlayer42.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "H1", gamePlayer42));
+			gamePlayer42.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(2L, "C5", gamePlayer42));
+			gamePlayer42.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "C7", gamePlayer42));
+			gamePlayer42.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "D5", gamePlayer42));
+			gamePlayer42.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(1L, "A1", gamePlayer51));
+			gamePlayer51.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "A2", gamePlayer51));
+			gamePlayer51.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "A3", gamePlayer51));
+			gamePlayer51.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(2L, "G6", gamePlayer51));
+			gamePlayer51.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "G7", gamePlayer51));
+			gamePlayer51.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "G8", gamePlayer51));
+			gamePlayer51.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(1L, "B5", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "B6", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(1L, "C7", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(2L, "C6", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "D6", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(2L, "E6", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+
+			salvo = salvoRepository.save(new Salvo(3L, "H1", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
+			salvo = salvoRepository.save(new Salvo(3L, "H8", gamePlayer52));
+			gamePlayer52.addSalvo(salvo);
 
 			gamePlayer51.setState(PlayerStates.PLAYING_TURN);
 			gamePlayer52.setState(PlayerStates.PLAYING_WAITING);
