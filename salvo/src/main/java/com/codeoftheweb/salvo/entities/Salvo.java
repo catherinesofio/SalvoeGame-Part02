@@ -1,6 +1,5 @@
 package com.codeoftheweb.salvo.entities;
 
-import com.codeoftheweb.salvo.entities.GamePlayer;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -28,23 +27,15 @@ public class Salvo {
 
     public Salvo() { }
 
-    public Salvo(Long turn, Set<String> locations, GamePlayer gamePlayer) {
+    public Salvo(Long turn, Set<String> cells, GamePlayer gamePlayer) {
         this.turn = turn;
-        this.cells = locations;
+        this.cells = cells;
         this.gamePlayer = gamePlayer;
     }
 
     public Long getId() { return this.id; }
 
-    public void setTurn(Long turn) { this.turn = turn; }
-
-    public Long getTurn() { return this.turn; }
-
     public void setCells(Set<String> cells) { this.cells = cells; }
-
-    public Set<String> getCells() { return this.cells; }
-
-    public GamePlayer getGamePlayer() { return this.gamePlayer; }
 
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<>();

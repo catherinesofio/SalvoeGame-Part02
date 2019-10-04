@@ -153,6 +153,9 @@ public class SalvoController {
         return Consts.SHIPS;
     }
 
+    @RequestMapping("/templates/salvoes")
+    private int getSalvoes() { return Consts.SALVOES; }
+
     @RequestMapping(value = "/game_view/{gp}", method = RequestMethod.GET)
     private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long gp, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();

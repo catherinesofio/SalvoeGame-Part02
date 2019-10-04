@@ -41,17 +41,17 @@ function loadPlayerTables(data, hasStarted) {
     let tableGP = createTable("player", username, cellsX, cellsY, [{ name: "empty", value: true }]);
     container.appendChild(tableGP);
     gp.ships.forEach(function (ship) {
-        setElementsAttributes("player-", ship.locations, [{ name: "empty", value: false }, { name: "type", value: ship.type }]);
+        setElementsAttributes("player-", ship.locations, [{ name: "empty", value: false }, { name: "type", value: ship.type }, { name: "hasSalvo", value: false }]);
     });
     gp.salvoes.forEach(function (salvo) {
-        setElementsAttributes("player-", salvo.locations, [{name: "turn", value: salvo.turn}]);
+        setElementsAttributes("player-", salvo.locations, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn}]);
     });
 
-    let tableGP2 = createTable("enemy", (gp2 != null) ? gp2.player.name : "Waiting for player...", cellsX, cellsY, [{ name: "empty", value: true }]);
+    let tableGP2 = createTable("enemy", (gp2 != null) ? gp2.player.name : "Waiting for player...", cellsX, cellsY, [{ name: "hasSalvo", value: false }]);
     container.appendChild(tableGP2);
     if (gp2 != null) {
         gp2.salvoes.forEach(function (salvo) {
-            setElementsAttributes("enemy-", salvo.locations, [{ name: "turn", value: salvo.turn }]);
+            setElementsAttributes("enemy-", salvo.locations, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }]);
         });
     }
 }

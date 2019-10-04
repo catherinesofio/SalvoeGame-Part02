@@ -11,4 +11,6 @@ public final class Consts {
         add(new HashMap<String, Object>() {{ put("type", ShipTypes.SUBMARINE.toString()); put("size", 3); }});
         add(new HashMap<String, Object>() {{ put("type", ShipTypes.PATROL_BOAT.toString()); put("size", 2); }});
     }};
+
+    public static int SALVOES = 6;
 }

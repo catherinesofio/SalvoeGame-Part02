@@ -44,8 +44,16 @@ public class Game {
     public int getGamePlayers() { return this.gamePlayers.size(); }
 
     public void refreshState() {
+        List<GamePlayer> gps = gamePlayers.stream().collect(Collectors.toList());
+
         if (this.state == GameStates.WAITING && gamePlayers.stream().filter(x -> x.getState() == PlayerStates.WAITING_PLAYER).count() == 2) {
             this.state = GameStates.PLAYING;
+
+            GamePlayer gp1 = gps.get(0).getId() < gps.get(1).getId() ? gps.get(0) : gps.get(1);
+            gp1.setState(PlayerStates.PLAYING_TURN);
+
+            GamePlayer gp2 = gps.get(0).getId() > gps.get(1).getId() ? gps.get(0) : gps.get(1);
+            gp2.setState(PlayerStates.PLAYING_WAITING);
         } else if (this.state == GameStates.PLAYING) {
 
         }
