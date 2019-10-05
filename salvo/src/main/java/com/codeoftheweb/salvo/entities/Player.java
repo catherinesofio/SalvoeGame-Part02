@@ -26,7 +26,7 @@ public class Player {
     @OneToMany(mappedBy = "player", fetch = FetchType.EAGER)
     private Set<Score> scores;
 
-    public Player() { }
+    public Player() {}
 
     public Player(String name, String email, String password) {
         this.name = name;

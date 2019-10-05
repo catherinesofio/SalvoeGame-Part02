@@ -1,0 +1,13 @@
+package com.codeoftheweb.salvo.utils;
+
+public enum GameLogs {
+    PLAYER_CREATED_GAME,
+    PLAYER_FIRED_SALVOES,
+    PLAYER_JOINED_GAME,
+    PLAYER_LOST_MATCH,
+    PLAYER_PLACED_SHIPS,
+    PLAYER_WON_MATCH,
+    SALVO_FAILED,
+    SALVO_SUCCEDED,
+    SHIP_SANK
+}

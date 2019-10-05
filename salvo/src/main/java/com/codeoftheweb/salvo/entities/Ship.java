@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo.entities;
 
-import com.codeoftheweb.salvo.ShipTypes;
+import com.codeoftheweb.salvo.utils.Ships;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,7 +15,7 @@ public class Ship {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private ShipTypes type;
+    private Ships type;
     private boolean isDown;
 
     @ElementCollection
@@ -29,22 +30,24 @@ public class Ship {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    public Ship() { }
+    public Ship() {}
 
-    public Ship(ShipTypes type, Set<String> locations, GamePlayer gamePlayer) {
+    public Ship(Ships type, Set<String> locations, GamePlayer gamePlayer) {
         this.type = type;
         this.locations = locations;
         this.gamePlayer = gamePlayer;
         this.isDown = false;
     }
 
-    public void setType(ShipTypes type) { this.type = type; }
-
-    public void setLocations(Set<String> locations) { this.locations = locations.stream().map(x -> x.toUpperCase()).collect(Collectors.toSet()); }
+    public Long getId() { return this.id; }
 
     public void setGamePlayer(GamePlayer gamePlayer) { this.gamePlayer = gamePlayer; }
 
-    public Long getId() { return this.id; }
+    public void setType(Ships type) { this.type = type; }
+
+    public Ships getType() { return this.type; }
+
+    public void setLocations(Set<String> locations) { this.locations = locations.stream().map(x -> x.toUpperCase()).collect(Collectors.toSet()); }
 
     public boolean isDown() { return this.isDown; }
 
@@ -61,6 +64,7 @@ public class Ship {
         return false;
     }
 
+    @JsonIgnore
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("type", this.type.toString());

@@ -203,7 +203,7 @@ function checkObjPosition() {
     }
 
     for (let i = 0; i < size; i++) {
-        if (occupiedCells.indexOf(newPositions[i]) > -1 && !positions.includes(newPositions[i])) {
+        if (occupiedCells.indexOf(newPositions[i]) > - 1 && !positions.includes(newPositions[i])) {
             buttons[0].style.display = "none";
             return false;
         } else {

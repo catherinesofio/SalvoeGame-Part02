@@ -20,6 +20,8 @@ function checkGameState() {
                 loadPlayerResults(data);
                 break;
         };
+
+        createGameLog(data.log);
     }).fail(() => window.location = "/web/games.html" );
 }
 
@@ -86,4 +88,8 @@ function createPlayerResults(player, id) {
     gp.appendChild(log);
 
     return gp;
+}
+
+function createGameLog(data) {
+
 }

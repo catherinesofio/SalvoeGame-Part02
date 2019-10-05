@@ -24,7 +24,7 @@ public class Salvo {
     @JoinColumn(name = "gamePlayer_id")
     private GamePlayer gamePlayer;
 
-    public Salvo() { }
+    public Salvo() {}
 
     public Salvo(Long turn, String cell, GamePlayer gamePlayer) {
         this.turn = turn;
@@ -35,11 +35,15 @@ public class Salvo {
 
     public Long getId() { return this.id; }
 
+    public void setGamePlayer(GamePlayer gamePlayer) { this.gamePlayer = gamePlayer; }
+
     public void setTurn(Long turn) { this.turn = turn; }
 
     public String getCell() { return this.cell; }
 
     public void setCell(String cell) { this.cell = cell.toUpperCase(); }
+
+    public boolean succeded() { return this.successful; }
 
     public void setSuccessful(Boolean successful) { this.successful = successful; }
 

@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo.entities;
 
+import com.codeoftheweb.salvo.Consts;
+import com.codeoftheweb.salvo.utils.GameLogs;
 import com.codeoftheweb.salvo.utils.GameStates;
 import com.codeoftheweb.salvo.utils.PlayerStates;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -25,38 +27,33 @@ public class Game {
     private Set<GamePlayer> gamePlayers;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private List<GameLog> gameLogs;
+
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<Score> scores;
 
-    public Game() { }
+    public Game() {}
 
     public Game(Date creationDate) {
         this.creationDate = creationDate;
-        this.gamePlayers = new HashSet<>();
-        this.scores = new HashSet<>();
         this.turn = 0L;
         this.state = GameStates.WAITING;
+        this.gamePlayers = new HashSet<>();
+        this.gameLogs = new ArrayList<>();
+        this.scores = new HashSet<>();
     }
 
     public Long getId() { return this.id; }
 
-    public Date getCreationDate() { return this.creationDate; }
-
-    public GamePlayer getOponent(GamePlayer gamePlayer) {
+    public GamePlayer getOpponent(GamePlayer gamePlayer) {
         return this.gamePlayers.stream().filter(x -> x != gamePlayer).findFirst().orElse(null);
     }
 
     public boolean containsPlayer(Player player) {
-        return gamePlayers.stream()
-                .map(x -> x.getPlayerId())
-                .collect(Collectors.toSet())
-                .contains(player.getId());
+        return gamePlayers.stream().map(x -> x.getPlayerId()).collect(Collectors.toSet()).contains(player.getId());
     }
 
-    public void addScore(Score score) {
-        this.scores.add(score);
-    }
-
-    public void setState(GameStates state) { this.state = state; }
+    public GameStates getState() { return this.state; }
 
     public void refreshState() {
         if (this.state == GameStates.WAITING && gamePlayers.stream().filter(x -> x.getState() == PlayerStates.WAITING_PLAYER).count() == 2) {
@@ -73,29 +70,35 @@ public class Game {
     }
 
     public Long refreshTurn(GamePlayer gamePlayer) {
-        GamePlayer oponent = getOponent(gamePlayer);
+        GamePlayer opponent = getOpponent(gamePlayer);
 
-        if (gamePlayer.getId() < oponent.getId()) {
+        if (gamePlayer.getId() < opponent.getId()) {
             this.turn += 1;
         }
 
         return this.turn;
     }
 
-    public void checkSalvoes(GamePlayer gamePlayer, List<Salvo> salvoes) {
-        GamePlayer oponent = getOponent(gamePlayer);
-        oponent.checkSalvoes(salvoes);
+    public Set<Ship> checkHits(GamePlayer gamePlayer, List<Salvo> salvoes) {
+        GamePlayer opponent = getOpponent(gamePlayer);
+        Set<Ship> newDowns = opponent.checkHits(salvoes);
 
-        if (oponent.hasLost()) {
+        if (opponent.hasLost()) {
             this.state = GameStates.FINISHED;
 
             gamePlayer.setState(PlayerStates.FINISHED_WON);
-            oponent.setState(PlayerStates.FINISHED_LOST);
+            opponent.setState(PlayerStates.FINISHED_LOST);
         } else {
             gamePlayer.setState(PlayerStates.PLAYING_WAITING);
-            oponent.setState(PlayerStates.PLAYING_TURN);
+            opponent.setState(PlayerStates.PLAYING_TURN);
         }
+
+        return newDowns;
     }
+
+    public void addGameLog(GameLog gameLog) { this.gameLogs.add(gameLog); }
+
+    public void addScore(Score score) { this.scores.add(score); }
 
     @JsonIgnore
     public float getPlayerScore(Long id) {
@@ -125,7 +128,9 @@ public class Game {
         }
 
         data.put("gamePlayers", players);
+        data.put("turn", this.turn);
         data.put("state", this.state.toString());
+        data.put("log", this.gameLogs.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
 
         return data;
     }
@@ -157,7 +162,9 @@ public class Game {
         }
 
         data.put("gamePlayers", players);
+        data.put("turn", this.turn);
         data.put("state", this.state.toString());
+        data.put("log", this.gameLogs.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
 
         return data;
     }

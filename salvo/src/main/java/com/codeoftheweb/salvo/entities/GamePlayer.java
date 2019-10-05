@@ -32,7 +32,7 @@ public class GamePlayer {
     @OneToMany(mappedBy = "gamePlayer", fetch = FetchType.EAGER)
     private Set<Salvo> salvoes;
 
-    public GamePlayer() { }
+    public GamePlayer() {}
 
     public GamePlayer(Date createdDate, Player player, Game game) {
         this.createdDate = createdDate;
@@ -42,23 +42,15 @@ public class GamePlayer {
         this.state = PlayerStates.WAITING_PREPARING;
     }
 
-    public boolean hasLost() {
-        return ships.stream()
-                .filter(x -> x.isDown() == true)
-                .count() < ships.size();
-    }
+    public boolean hasLost() { return ships.stream() .filter(x -> x.isDown() == true).count() == ships.size(); }
 
     public Long getId() { return this.id; }
 
     public Long getPlayerId() { return this.player.getId(); }
 
+    public Player getPlayer() { return this.player; }
+
     public Game getGame() { return this.game; }
-
-    public List<Ship> getDownedShips() {
-        return ships.stream().filter(x -> x.isDown()).collect(Collectors.toList());
-    }
-
-    public Object getPlayerData() { return this.player.getMappedData(); }
 
     public PlayerStates getState() { return this.state; }
 
@@ -71,30 +63,43 @@ public class GamePlayer {
 
     public void addSalvo(Salvo salvo) { this.salvoes.add(salvo); }
 
-    public void checkSalvoes(List<Salvo> salvoes) {
+    public Set<Ship> checkHits(List<Salvo> salvoes) {
         Set<Ship> activeShips = this.ships.stream().filter(x -> !x.isDown()).collect(Collectors.toSet());
+        Set<Ship> newDowns = new HashSet<>();
 
         for (Salvo salvo: salvoes) {
             for (Ship ship: activeShips) {
                 salvo.setSuccessful(ship.checkHit(salvo.getCell()));
+
+                if (ship.isDown()) {
+                    newDowns.add(ship);
+                }
             }
         }
+
+        return newDowns;
     }
 
     @JsonIgnore
-    public List<Map<String, Object>> getSalvoesData() {
-        List<Map<String, Object>> salvoes = new ArrayList<Map<String, Object>>();
+    public Set<Ship> getDownedShips() { return ships.stream().filter(x -> x.isDown()).collect(Collectors.toSet()); }
+
+    @JsonIgnore
+    public Object getPlayerData() { return this.player.getMappedData(); }
+
+    @JsonIgnore
+    public Set<Map<String, Object>> getSalvoesData() {
+        Set<Map<String, Object>> data = new HashSet<>();
 
         for (Salvo salvo : this.salvoes) {
-            salvoes.add(salvo.getMappedData());
+            data.add(salvo.getMappedData());
         }
 
-        return salvoes;
+        return data;
     }
 
     @JsonIgnore
-    public List<Map<String, Object>> getShipsData() {
-        List<Map<String, Object>> data = new ArrayList<Map<String, Object>>();
+    public Set<Map<String, Object>> getShipsData() {
+        Set<Map<String, Object>> data = new HashSet<>();
 
         for (Ship ship : this.ships) {
             data.add(ship.getMappedData());
@@ -104,7 +109,5 @@ public class GamePlayer {
     }
 
     @JsonIgnore
-    public Map<String, Object> getMappedData() {
-        return this.game.getMappedData(this.id);
-    }
+    public Map<String, Object> getMappedData() { return this.game.getMappedData(this.id); }
 }

@@ -2,6 +2,8 @@ package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.entities.*;
 import com.codeoftheweb.salvo.repositories.*;
+import com.codeoftheweb.salvo.utils.GameLogs;
+import com.codeoftheweb.salvo.utils.GameStates;
 import com.codeoftheweb.salvo.utils.PlayerStates;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,15 +35,17 @@ public class SalvoController {
     private SalvoRepository salvoRepository;
 
     @Autowired
+    private GameLogRepository gameLogRepository;
+
+    @Autowired
+    private ScoreRepository scoreRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
-    private boolean isGuest(Authentication authentication) {
-        return (authentication == null) ? true : false;
-    }
+    private boolean isGuest(Authentication authentication) { return (authentication == null) ? true : false; }
 
-    private Player getUser(Authentication authentication) {
-        return (authentication == null) ? null : playerRepository.findByEmail(authentication.getName());
-    }
+    private Player getUser(Authentication authentication) { return (authentication == null) ? null : playerRepository.findByEmail(authentication.getName()); }
 
     @RequestMapping("/user")
     private Map<String, Object> getPlayer(Authentication authentication) {
@@ -99,9 +103,15 @@ public class SalvoController {
     @RequestMapping(value = "/games", method = RequestMethod.POST)
     private ResponseEntity<Long> createGame(Authentication authentication) {
         if (!isGuest(authentication)) {
-            Game game = gameRepository.save(new Game(new Date()));
+            Date date = new Date();
 
-            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), getUser(authentication), game));
+            Game game = gameRepository.save(new Game(date));
+
+            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(date, getUser(authentication), game));
+
+            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_CREATED_GAME), gp.getId(), game);
+            game.addGameLog(log);
+            gameLogRepository.save(log);
 
             return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
         }
@@ -115,7 +125,13 @@ public class SalvoController {
         Player user = getUser(authentication);
 
         if (!isGuest(authentication) && !game.containsPlayer(user)) {
-            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(new Date(), user, game));
+            Date date = new Date();
+
+            GamePlayer gp = gamePlayerRepository.save(new GamePlayer(date, user, game));
+
+            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_JOINED_GAME), gp.getId(), game);
+            game.addGameLog(log);
+            gameLogRepository.save(log);
 
             return new ResponseEntity<Long>(gp.getId(), HttpStatus.CREATED);
         }
@@ -141,9 +157,15 @@ public class SalvoController {
                 shipRepository.save(ship);
             }
 
+            Game game = gamePlayer.getGame();
+
+            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_PLACED_SHIPS), gamePlayer.getId(), game);
+            game.addGameLog(log);
+            gameLogRepository.save(log);
+
             gamePlayer.setState(PlayerStates.WAITING_PLAYER);
             gamePlayerRepository.save(gamePlayer);
-            gameRepository.save(gamePlayer.getGame());
+            gameRepository.save(game);
 
             return new ResponseEntity<String>("Ships successfully placed.", HttpStatus.CREATED);
         }
@@ -171,14 +193,68 @@ public class SalvoController {
                 salvo = salvoes.get(i);
 
                 if (salvo != null) {
+                    salvo.setGamePlayer(gamePlayer);
                     salvo.setTurn(turn);
                     gamePlayer.addSalvo(salvo);
                     salvoRepository.save(salvo);
                 }
             }
 
-            game.checkSalvoes(gamePlayer, salvoes);
-            gamePlayerRepository.save(game.getOponent(gamePlayer));
+            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), game, salvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
+            game.addGameLog(log);
+            gameLogRepository.save(log);
+
+            Set<Ship> newDowns = game.checkHits(gamePlayer, salvoes);
+
+            Set<String> fails = salvoes.stream().filter(x -> !x.succeded()).map(x -> x.getCell()).collect(Collectors.toSet());
+            Set<String> successes = salvoes.stream().filter(x -> x.succeded()).map(x -> x.getCell()).collect(Collectors.toSet());
+            GamePlayer opponent = game.getOpponent(gamePlayer);
+            Date date = new Date();
+
+            if (fails.size() > 0) {
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_FAILED), gamePlayer.getId(), game, fails);
+                game.addGameLog(log);
+                gameLogRepository.save(log);
+            }
+
+            if (successes.size() > 0) {
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_SUCCEDED), gamePlayer.getId(), game, successes);
+                game.addGameLog(log);
+                gameLogRepository.save(log);
+            }
+
+            newDowns.forEach((ship) -> {
+                GameLog gameLog = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SHIP_SANK), opponent.getId(), game, new HashSet<String>() {{ add(ship.getType().toString()); }});
+                game.addGameLog(gameLog);
+                gameLogRepository.save(gameLog);
+            });
+
+            Player player01 = gamePlayer.getPlayer();
+            Player player02 = opponent.getPlayer();
+
+            if (game.getState() == GameStates.FINISHED) {
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_WON_MATCH), gamePlayer.getId(), game);
+                game.addGameLog(log);
+                gameLogRepository.save(log);
+
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_LOST_MATCH), opponent.getId(), game);
+                game.addGameLog(log);
+                gameLogRepository.save(log);
+
+                Score score = new Score(1f, date, game, player01);
+                player01.addScore(score);
+                game.addScore(score);
+                scoreRepository.save(score);
+
+                score = new Score(0f, date, game, player02);
+                player02.addScore(score);
+                game.addScore(score);
+                scoreRepository.save(score);
+            }
+
+            playerRepository.save(player01);
+            playerRepository.save(player02);
+            gamePlayerRepository.save(opponent);
             gamePlayerRepository.save(gamePlayer);
             gameRepository.save(game);
 

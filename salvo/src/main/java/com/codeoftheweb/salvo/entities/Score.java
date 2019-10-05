@@ -23,7 +23,7 @@ public class Score {
     @JoinColumn(name = "game_id")
     private Game game;
 
-    public Score() { }
+    public Score() {}
 
     public Score(float score, Date finishDate, Game game, Player player) {
         this.score = score;
@@ -34,13 +34,7 @@ public class Score {
 
     public Long getId() { return this.id; }
 
-    public void setScore(float score) { this.score = score; }
-
     public float getScore() { return this.score; }
-
-    public void setFinishDate(Date finishDate) { this.finishDate = finishDate; }
-
-    public Date getFinishDate() { return this.finishDate; }
 
     public Long getPlayerId() { return this.player.getId(); }
 }

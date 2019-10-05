@@ -52,7 +52,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			Player player3 = playerRepository.save(new Player("Kim Bauer", "kim_bauer@gmail.com", passwordEncoder.encode("kb")));
 			Player player4 = playerRepository.save(new Player("Tony Almeida", "t.almeida@ctu.gov", passwordEncoder.encode("mole")));
 
-			Date date = new Date();
+			/*Date date = new Date();
 			int offset = 3600;
 
 			Game game1 = gameRepository.save(new Game(date));
@@ -318,7 +318,7 @@ public class SalvoApplication extends SpringBootServletInitializer {
 			gameRepository.save(game5);
 			gameRepository.save(game6);
 			gameRepository.save(game7);
-			gameRepository.save(game8);
+			gameRepository.save(game8);*/
 		};
 	}
 
