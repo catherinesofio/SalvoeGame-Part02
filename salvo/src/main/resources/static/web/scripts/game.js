@@ -27,10 +27,10 @@ function loadWaitingTable(data, hasPlacedShips) {
     if (hasPlacedShips) {
         loadPlayerTables(data, false);
     } else {
-        let table = createTable("player", username, cellsX, cellsY, []);
+        let table = createTable(playerId, username, cellsX, cellsY, []);
         container.appendChild(table);
 
-        $.ajax("/api/templates/ships").done(data => createDummyShips(data));
+        createDummyShips();
     }
 }
 
@@ -38,21 +38,23 @@ function loadPlayerTables(data, hasStarted) {
     let gp = data.gamePlayers.filter(x => x.id == gamePlayerId)[0];
     let gp2 = (data.gamePlayers.length > 1) ? data.gamePlayers.filter(x => x.id != gamePlayerId)[0] : null;
 
-    let tableGP = createTable("player", username, cellsX, cellsY, [{ name: "empty", value: true }]);
+    let tableGP = createTable(playerId, username, cellsX, cellsY, [{ name: "empty", value: true }]);
     container.appendChild(tableGP);
     gp.ships.forEach(function (ship) {
-        setElementsAttributes("player-", ship.locations, [{ name: "empty", value: false }, { name: "type", value: ship.type }, { name: "hasSalvo", value: false }]);
+        setElementsAttributes(playerId + "-", ship.locations, [{ name: "empty", value: false }, { name: "type", value: ship.type }, { name: "hasSalvo", value: false }]);
     });
     if (gp2 != null) {
         gp2.salvoes.forEach(function (salvo) {
-            setElementsAttributes("player-", salvo.locations, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }]);
+            element = setElementAttributes(playerId + "-" + salvo.cell, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }]);
+            element.innerText = salvo.turn;
         });
     }
 
-    let tableGP2 = createTable("enemy", (gp2 != null) ? gp2.player.name : "Waiting for player...", cellsX, cellsY, [{ name: "hasSalvo", value: false }]);
+    let tableGP2 = createTable(oponentId, (gp2 != null) ? gp2.player.name : "Waiting for player...", cellsX, cellsY, [{ name: "hasSalvo", value: false }]);
     container.appendChild(tableGP2);
     gp.salvoes.forEach(function (salvo) {
-        setElementsAttributes("enemy-", salvo.locations, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn}]);
+        element = setElementAttributes(oponentId + "-" + salvo.cell, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn}]);
+        element.innerText = salvo.turn;
     });
 
     createSalvoNav(gp.state);
@@ -67,8 +69,8 @@ function loadPlayerResults(data) {
     title.innerText = "GAME " + data.id;
     resultsContainer.appendChild(title);
 
-    resultsContainer.appendChild(createPlayerResults(data.gamePlayers.filter(x => x.id == gamePlayerId)[0], "player"));
-    resultsContainer.appendChild(createPlayerResults(data.gamePlayers.filter(x => x.id != gamePlayerId)[0], "enemy"));
+    resultsContainer.appendChild(createPlayerResults(data.gamePlayers.filter(x => x.id == gamePlayerId)[0], playerId));
+    resultsContainer.appendChild(createPlayerResults(data.gamePlayers.filter(x => x.id != gamePlayerId)[0], oponentId));
 }
 
 function createPlayerResults(player, id) {

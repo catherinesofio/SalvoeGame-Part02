@@ -181,6 +181,8 @@ public class SalvoController {
             gamePlayerRepository.save(game.getOponent(gamePlayer));
             gamePlayerRepository.save(gamePlayer);
             gameRepository.save(game);
+
+            return new ResponseEntity<String>("Salvoes successfully fired.", HttpStatus.CREATED);
         }
 
         return new ResponseEntity<String>("No user found", HttpStatus.UNAUTHORIZED);

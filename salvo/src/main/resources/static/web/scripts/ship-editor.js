@@ -1,5 +1,3 @@
-let id = "player-";
-
 let obj;
 let size;
 let orientation;
@@ -21,25 +19,27 @@ let directions = ["north", "south", "west", "east"];
 
 let occupiedCells = [];
 
-function createDummyShips(data) {
-    let ships = document.createElement("div");
-    ships.setAttribute("id", "ship-container");
-    container.appendChild(ships);
+function createDummyShips() {
+    $.ajax("/api/templates/ships").done(function(data) {
+        let ships = document.createElement("div");
+        ships.setAttribute("id", "ship-container");
+        container.appendChild(ships);
 
-    data.forEach(function (x) {
-        let ship = createElement("div", "ship", [ { name: "type", value: x.type }, { name: "size", value: x.size }, { name: "orientation", value: "horizontal" }, { name: "positions", value: "" }, { name: "onclick", value: "triggerSelect(event)" } ]);
+        data.forEach(function (x) {
+            let ship = createElement("div", "ship", [ { name: "type", value: x.type }, { name: "size", value: x.size }, { name: "orientation", value: "horizontal" }, { name: "positions", value: "" }, { name: "onclick", value: "triggerSelect(event)" } ]);
 
-        ships.appendChild(ship);
+            ships.appendChild(ship);
+        });
+
+        let btn = createElement("button", "", [{ name: "id", value: "submit-ships" }, { name: "disabled", value: true }, { name: "onclick", value: "submitShips()" }]);
+        btn.innerText = "SUBMIT SHIPS";
+        ships.appendChild(btn);
     });
-
-    let btn = createElement("button", "", [{ name: "id", value: "submit-ships" }, { name: "disabled", value: true }, { name: "onclick", value: "submitShips()" }]);
-    btn.innerText = "SUBMIT SHIPS";
-    ships.appendChild(btn);
 }
 
 function createGizmoObj() {
     gizmoObj = createElement("div", "gizmo-obj", []);
-    initPos = document.getElementById(id + cellsY[cellY] + cellX);
+    initPos = document.getElementById(playerId + "-" + cellsY[cellY] + cellX);
 
     container.appendChild(gizmoObj);
 
@@ -75,8 +75,8 @@ function resetGizmoObj() {
         prevParent.appendChild(gizmoObj);
 
         let parentId = prevParent.getAttribute("id");
-        cellX = parseInt(parentId.substring(id.length + 1));
-        cellY = cellsY.indexOf(parentId.charAt(id.length));
+        cellX = parseInt(parentId.substring(playerId.length + 2));
+        cellY = cellsY.indexOf(parentId.charAt(playerId.length + 1));
 
         checkGizmoHandlers(orientation, size);
     } else {
@@ -111,7 +111,7 @@ function repositionGizmoObj(offsetX, offsetY) {
     cellX += offsetX;
     cellY += offsetY;
 
-    let parent = document.getElementById(id + cellsY[cellY] + "" + cellX);
+    let parent = document.getElementById(playerId + "-" + cellsY[cellY] + "" + cellX);
     parent.appendChild(gizmoObj);
 }
 
@@ -234,13 +234,13 @@ function triggerMove(e) {
     switch (e.target.getAttribute("direction")) {
         case "north":
             cellY -= 1;
-            parent = parent.parentNode.previousSibling.querySelector("#" + id + cellsY[cellY] + cellX);
+            parent = parent.parentNode.previousSibling.querySelector("#" + playerId + "-" + cellsY[cellY] + cellX);
             parent.appendChild(gizmoObj);
             break;
 
         case "south":
             cellY += 1;
-            parent = parent.parentNode.nextSibling.querySelector("#" + id + cellsY[cellY] + cellX);
+            parent = parent.parentNode.nextSibling.querySelector("#" + playerId + "-" + cellsY[cellY] + cellX);
             parent.appendChild(gizmoObj);
             break;
 

@@ -47,7 +47,7 @@ public class Salvo {
         Map<String, Object> data = new HashMap<>();
 
         data.put("turn", this.turn);
-        data.put("locations", this.cell);
+        data.put("cell", this.cell);
         data.put("success", this.successful);
 
         return data;

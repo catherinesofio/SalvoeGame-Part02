@@ -3,23 +3,26 @@ let maxSalvoes;
 let status;
 let salvoesDisplay;
 
-let id = "enemy";
+let salvoesCount = 0;
 let locations = [];
 
 function createSalvoNav(data) {
-    $.get("/templates/salvoes").done(function(data) {
+    $.ajax("/api/templates/salvoes").done(function(data) {
         maxSalvoes = data;
 
         let salvoContainer = createElement("div", "", []);
-        container.appendChild(salvoContainer);
+        salvoContainer.setAttribute("id", "salvo-container");
+        container.insertBefore(salvoContainer, container.firstChild);
 
         status = createElement("h2", "", [{ name: "id", value: "status" }]);
         salvoContainer.appendChild(status);
 
-        salvoesDisplay = createElement("0", "", [{ name: "id", value: "salvoes" }]);
-        salvoContainer.appendChild(salvoesCount);
+        salvoesDisplay = createElement("p", "", [{ name: "id", value: "salvoes" }]);
+        salvoContainer.appendChild(salvoesDisplay);
 
-        salvoesButton = createElement("button", "", [{ name: "id", value: "button-salvoes" }, { name: "disabled", value: true }, { name: "onclick", value: "submitSalvoes()" }]);
+        salvoesButton = createElement("button", "", [{ name: "id", value: "submit-salvoes" }, { name: "disabled", value: true }, { name: "onclick", value: "submitSalvoes()" }]);
+        salvoesButton.innerText = "SUBMIT SALVOES";
+        salvoContainer.appendChild(salvoesButton);
     }).done(x => updateSalvoNav(data));
 }
 
@@ -30,6 +33,9 @@ function updateSalvoNav(state) {
     enableEvents(isTurn);
 
     if (isTurn) {
+        salvoesCount = maxSalvoes;
+        salvoesDisplay.innerText = salvoesCount;
+
         salvoesDisplay.style.display = "block";
     } else {
         salvoesDisplay.style.display = "none";
@@ -37,7 +43,7 @@ function updateSalvoNav(state) {
 }
 
 function enableEvents(enable) {
-    let cells = document.getElementById(id).querySelectorAll("td[hasSalvo=false]");
+    let cells = document.getElementById(oponentId).querySelectorAll("td[hasSalvo=false]");
 
     if (enable) {
         cells.forEach(x => x.setAttribute("onclick", "placeSalvo(event)"));
@@ -47,38 +53,46 @@ function enableEvents(enable) {
 }
 
 function placeSalvo(e) {
-    let cellId = e.target.getAttribute(id).substring(id.length);
+    if (salvoesCount > 0) {
+        let cellId = e.target.getAttribute("id").substring(oponentId.length + 1);
 
-    locations.push(cellId);
-    e.target.setAttribute("hasSalvo", true);
-    e.target.setAttribute("onclick", "removeSalvo(event)");
+        locations.push(cellId);
+        e.target.setAttribute("hasSalvo", true);
+        e.target.setAttribute("onclick", "removeSalvo(event)");
 
-    if (cells.length == maxSalvoes) {
-        document.getElementById("button-salvoes").setAttribute("disabled", false);
+        salvoesCount -= 1;
+        salvoesDisplay.innerText = salvoesCount;
+
+        if (salvoesCount == 0) {
+            document.getElementById("submit-salvoes").removeAttribute("disabled");
+        }
     }
 }
 
 function removeSalvo(e) {
-    let cellId = e.target.getAttribute(id).substring(id.length);
+    let cellId = e.target.getAttribute("id").substring(oponentId.length + 1);
 
-    locations.remove(locations.indexOf(cellId));
+    locations.splice(locations.indexOf(cellId), 1);
     e.target.setAttribute("hasSalvo", false);
     e.target.setAttribute("onclick", "placeSalvo(event)");
 
-    if (locations.length == maxSalvoes - 1) {
-        document.getElementById("button-salvoes").setAttribute("disabled", true);
+    salvoesCount += 1;
+    salvoesDisplay.innerText = salvoesCount;
+
+    if (salvoesCount > 0) {
+        document.getElementById("submit-salvoes").setAttribute("disabled", true);
     }
 }
 
 function submitSalvoes() {
-    document.getElementById("button-salvoes").setAttribute("disabled", true);
+    document.getElementById("submit-salvoes").setAttribute("disabled", true);
 
     let salvoes = [];
     for (let i = locations.length - 1; i >= 0; i--) {
-        document.getElementById(id + "-" + locations[i]).setAttribute("onclick", "");
+        document.getElementById(oponentId + "-" + locations[i]).setAttribute("onclick", "");
         salvoes.push({ cell: locations[i] });
     }
     locations = [];
 
-    $.post({ url: "/api/games/players/" + gamePlayerId + "/salvoes", data: JSON.stringify(salvoes), dataType: "text", contentType: "application/json" }).done(x => console.log("enviados perro"));
+    $.post({ url: "/api/games/players/" + gamePlayerId + "/salvoes", data: JSON.stringify(salvoes), dataType: "text", contentType: "application/json" }).done(x => window.location.reload());
 }

@@ -107,7 +107,7 @@ td[success=true] {
     background-image: var(--color-success);
 }
 
-td[hasSalvo] {
+td[hasSalvo=true] {
     background-image: var(--color-test);
 }
 

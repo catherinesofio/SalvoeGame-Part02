@@ -68,6 +68,16 @@ function createTable(id, caption, headersX, headersY, attributes) {
     return table;
 }
 
+function setElementAttributes(id, attributes) {
+    let element = document.getElementById(id);
+
+    attributes.forEach(function (attr) {
+        element.setAttribute(attr.name, attr.value);
+    });
+
+    return element;
+}
+
 function setElementsAttributes(idsPrefix, ids, attributes) {
     for (let i = ids.length - 1; i >= 0; i--) {
         let element = document.getElementById(idsPrefix + ids[i]);
