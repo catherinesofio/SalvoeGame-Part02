@@ -24,25 +24,19 @@ public class GameLog {
     @Column(name = "params")
     private Set<String> params;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "game_id")
-    private Game game;
-
     public GameLog() {}
 
-    public GameLog(Date date, String message, Long gamePlayerId, Game game) {
+    public GameLog(Date date, String message, Long gamePlayerId) {
         this.date = date;
         this.message = message;
         this.gamePlayerId = gamePlayerId;
-        this.game = game;
         this.params = null;
     }
 
-    public GameLog(Date date, String message, Long gamePlayerId, Game game, Set<String> params) {
+    public GameLog(Date date, String message, Long gamePlayerId, Set<String> params) {
         this.date = date;
         this.message = message;
         this.gamePlayerId = gamePlayerId;
-        this.game = game;
         this.params = params;
     }
 

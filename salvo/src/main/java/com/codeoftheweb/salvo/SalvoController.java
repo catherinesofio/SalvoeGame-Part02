@@ -109,7 +109,7 @@ public class SalvoController {
 
             GamePlayer gp = gamePlayerRepository.save(new GamePlayer(date, getUser(authentication), game));
 
-            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_CREATED_GAME), gp.getId(), game);
+            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_CREATED_GAME), gp.getId());
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -129,7 +129,7 @@ public class SalvoController {
 
             GamePlayer gp = gamePlayerRepository.save(new GamePlayer(date, user, game));
 
-            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_JOINED_GAME), gp.getId(), game);
+            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_JOINED_GAME), gp.getId());
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -159,7 +159,7 @@ public class SalvoController {
 
             Game game = gamePlayer.getGame();
 
-            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_PLACED_SHIPS), gamePlayer.getId(), game);
+            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_PLACED_SHIPS), gamePlayer.getId());
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -200,7 +200,7 @@ public class SalvoController {
                 }
             }
 
-            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), game, salvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
+            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), salvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -212,19 +212,19 @@ public class SalvoController {
             Date date = new Date();
 
             if (fails.size() > 0) {
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_FAILED), gamePlayer.getId(), game, fails);
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_FAILED), gamePlayer.getId(), fails);
                 game.addGameLog(log);
                 gameLogRepository.save(log);
             }
 
             if (successes.size() > 0) {
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_SUCCEDED), gamePlayer.getId(), game, successes);
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_SUCCEDED), gamePlayer.getId(), successes);
                 game.addGameLog(log);
                 gameLogRepository.save(log);
             }
 
             newDowns.forEach((ship) -> {
-                GameLog gameLog = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SHIP_SANK), opponent.getId(), game, new HashSet<String>() {{ add(ship.getType().toString()); }});
+                GameLog gameLog = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SHIP_SANK), opponent.getId(), new HashSet<String>() {{ add(ship.getType().toString()); }});
                 game.addGameLog(gameLog);
                 gameLogRepository.save(gameLog);
             });
@@ -233,23 +233,16 @@ public class SalvoController {
             Player player02 = opponent.getPlayer();
 
             if (game.getState() == GameStates.FINISHED) {
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_WON_MATCH), gamePlayer.getId(), game);
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_WON_MATCH), gamePlayer.getId());
                 game.addGameLog(log);
                 gameLogRepository.save(log);
 
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_LOST_MATCH), opponent.getId(), game);
+                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_LOST_MATCH), opponent.getId());
                 game.addGameLog(log);
                 gameLogRepository.save(log);
 
-                Score score = new Score(1f, date, game, player01);
-                player01.addScore(score);
-                game.addScore(score);
-                scoreRepository.save(score);
-
-                score = new Score(0f, date, game, player02);
-                player02.addScore(score);
-                game.addScore(score);
-                scoreRepository.save(score);
+                scoreRepository.save(new Score(1f, date, game, player01));
+                scoreRepository.save(new Score(0f, date, game, player02));
             }
 
             playerRepository.save(player01);
