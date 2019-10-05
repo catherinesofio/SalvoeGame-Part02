@@ -12,5 +12,3 @@ $(document).ready(function() {
     root = document.documentElement;
     container = document.getElementById("container");
 });
-//j.bauer@ctu.gov
-//c.obrian@ctu.gov

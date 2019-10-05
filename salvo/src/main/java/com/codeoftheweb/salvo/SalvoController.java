@@ -195,8 +195,6 @@ public class SalvoController {
                 if (salvo != null) {
                     salvo.setGamePlayer(gamePlayer);
                     salvo.setTurn(turn);
-                    gamePlayer.addSalvo(salvo);
-                    salvoRepository.save(salvo);
                 }
             }
 
@@ -204,10 +202,17 @@ public class SalvoController {
             game.addGameLog(log);
             gameLogRepository.save(log);
 
-            Set<Ship> newDowns = game.checkHits(gamePlayer, salvoes);
+            Map<String, Object> hitsData = game.checkHits(gamePlayer, salvoes);
 
-            Set<String> fails = salvoes.stream().filter(x -> !x.succeded()).map(x -> x.getCell()).collect(Collectors.toSet());
-            Set<String> successes = salvoes.stream().filter(x -> x.succeded()).map(x -> x.getCell()).collect(Collectors.toSet());
+            Set<Salvo> updatedSalvoes = (Set<Salvo>)hitsData.get("salvoes");
+            updatedSalvoes.stream().forEach(x -> {
+                gamePlayer.addSalvo(x);
+                salvoRepository.save(x);
+            });
+
+            Set<String> fails = updatedSalvoes.stream().filter(x -> x.succeded() == false).map(x -> x.getCell()).collect(Collectors.toSet());
+            Set<String> successes = updatedSalvoes.stream().filter(x -> x.succeded() == true).map(x -> x.getCell()).collect(Collectors.toSet());
+
             GamePlayer opponent = game.getOpponent(gamePlayer);
             Date date = new Date();
 
@@ -223,7 +228,8 @@ public class SalvoController {
                 gameLogRepository.save(log);
             }
 
-            newDowns.forEach((ship) -> {
+            Set<Ship> sunkShips = (Set<Ship>) hitsData.get("ships");
+            sunkShips.forEach((ship) -> {
                 GameLog gameLog = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SHIP_SANK), opponent.getId(), new HashSet<String>() {{ add(ship.getType().toString()); }});
                 game.addGameLog(gameLog);
                 gameLogRepository.save(gameLog);

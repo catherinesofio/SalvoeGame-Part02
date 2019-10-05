@@ -21,7 +21,7 @@ function checkGameState() {
                 break;
         };
 
-        createGameLog(data.log);
+        createGameLog({ players: data.gamePlayers.map(function(player) { return { id: player.id, player: player.player}; }), log: data.log });
     }).fail(() => window.location = "/web/games.html" );
 }
 
@@ -47,7 +47,7 @@ function loadPlayerTables(data, hasStarted) {
     });
     if (gp2 != null) {
         gp2.salvoes.forEach(function (salvo) {
-            element = setElementAttributes(playerId + "-" + salvo.cell, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }]);
+            element = setElementAttributes(playerId + "-" + salvo.cell, [{ name: "hasSalvo", value: true }, { name: "turn", value: salvo.turn }, { name: "success", value: salvo.success }]);
             element.innerText = salvo.turn;
         });
     }
@@ -55,7 +55,7 @@ function loadPlayerTables(data, hasStarted) {
     let tableGP2 = createTable(oponentId, (gp2 != null) ? gp2.player.name : "Waiting for player...", cellsX, cellsY, [{ name: "hasSalvo", value: false }]);
     container.appendChild(tableGP2);
     gp.salvoes.forEach(function (salvo) {
-        element = setElementAttributes(oponentId + "-" + salvo.cell, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn}]);
+        element = setElementAttributes(oponentId + "-" + salvo.cell, [{ name: "hasSalvo", value: true }, {name: "turn", value: salvo.turn }, { name: "success", value: salvo.success }]);
         element.innerText = salvo.turn;
     });
 
@@ -88,8 +88,4 @@ function createPlayerResults(player, id) {
     gp.appendChild(log);
 
     return gp;
-}
-
-function createGameLog(data) {
-
 }

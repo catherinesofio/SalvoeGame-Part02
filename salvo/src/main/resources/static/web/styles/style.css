@@ -2,8 +2,8 @@
     --cell-size: 1em;
     --ships-color: grey;
     --color-empty: linear-gradient(to bottom right, rgb(50, 50, 50), rgb(25, 25, 25));
-    --color-success: linear-gradient(to bottom right, rgb(178, 34, 34), rgb(128, 0, 0));
-    --color-fail: linear-gradient(to bottom right, rgb(50, 205, 50), rgb(0, 100, 0));
+    --color-fail: linear-gradient(to bottom right, rgb(178, 34, 34), rgb(128, 0, 0));
+    --color-success: linear-gradient(to bottom right, rgb(50, 205, 50), rgb(0, 100, 0));
     --color-test: linear-gradient(to bottom right, blue, greenyellow);
     --gizmo-color: white;
     --gizmo-size: 0.5em;
@@ -99,16 +99,16 @@ td[empty=false] {
     background-image: var(--color-empty);
 }
 
+td[hasSalvo=true] {
+    background-image: var(--color-test);
+}
+
 td[success=false] {
     background-image: var(--color-fail);
 }
 
 td[success=true] {
     background-image: var(--color-success);
-}
-
-td[hasSalvo=true] {
-    background-image: var(--color-test);
 }
 
 #player {

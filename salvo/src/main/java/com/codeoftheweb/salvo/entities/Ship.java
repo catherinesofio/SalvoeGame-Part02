@@ -52,9 +52,7 @@ public class Ship {
     public boolean isDown() { return this.isDown; }
 
     public boolean checkHit(String hit) {
-        Boolean hasHitted = locations.contains(hit);
-
-        if (hasHitted) {
+        if (locations.contains(hit)) {
             hits.add(hit);
             this.isDown = (this.hits.size() == this.locations.size());
 

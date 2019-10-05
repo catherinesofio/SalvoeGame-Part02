@@ -5,7 +5,6 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 @Entity
 public class Salvo {

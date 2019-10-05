@@ -79,9 +79,9 @@ public class Game {
         return this.turn;
     }
 
-    public Set<Ship> checkHits(GamePlayer gamePlayer, List<Salvo> salvoes) {
+    public Map<String, Object> checkHits(GamePlayer gamePlayer, List<Salvo> salvoes) {
         GamePlayer opponent = getOpponent(gamePlayer);
-        Set<Ship> newDowns = opponent.checkHits(salvoes);
+        Map<String, Object> data = opponent.checkHits(salvoes);
 
         if (opponent.hasLost()) {
             this.state = GameStates.FINISHED;
@@ -93,7 +93,7 @@ public class Game {
             opponent.setState(PlayerStates.PLAYING_TURN);
         }
 
-        return newDowns;
+        return data;
     }
 
     public void addGameLog(GameLog gameLog) { this.gameLogs.add(gameLog); }
