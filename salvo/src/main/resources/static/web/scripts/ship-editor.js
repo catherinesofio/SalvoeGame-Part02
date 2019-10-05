@@ -280,7 +280,10 @@ function triggerPlace() {
     }
 
     for (var i = positions.length - 1; i >= 0; i--) {
-        occupiedCells.splice(occupiedCells.indexOf(positions[i]), 1);
+        if (occupiedCells.includes(positions[i]))
+        {
+            occupiedCells.splice(occupiedCells.indexOf(positions[i]), 1);
+        }
     }
 
     positions = "";
