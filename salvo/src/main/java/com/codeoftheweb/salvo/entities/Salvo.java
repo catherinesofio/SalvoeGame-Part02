@@ -14,7 +14,7 @@ public class Salvo {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private Long turn;
-    private Boolean successful;
+    private Boolean success = false;
 
     @Column(name = "cells")
     String cell;
@@ -29,7 +29,7 @@ public class Salvo {
         this.turn = turn;
         this.cell = cell;
         this.gamePlayer = gamePlayer;
-        this.successful = false;
+        this.success = false;
     }
 
     public Long getId() { return this.id; }
@@ -42,16 +42,16 @@ public class Salvo {
 
     public void setCell(String cell) { this.cell = cell.toUpperCase(); }
 
-    public boolean succeded() { return this.successful; }
+    public boolean getSuccess() { return this.success; }
 
-    public void setSuccessful(Boolean successful) { this.successful = successful; }
+    public void setSuccess(Boolean success) { this.success = success; }
 
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<>();
 
         data.put("turn", this.turn);
         data.put("cell", this.cell);
-        data.put("success", this.successful);
+        data.put("success", this.success);
 
         return data;
     }

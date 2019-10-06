@@ -185,36 +185,27 @@ public class SalvoController {
                 return new ResponseEntity<String>("Cannot place salvoes on the other player's turn.", HttpStatus.FORBIDDEN);
             }
 
-            Salvo salvo;
             Game game = gamePlayer.getGame();
+            GamePlayer opponent = game.getOpponent(gamePlayer);
             Long turn = game.refreshTurn(gamePlayer);
-            salvoes = salvoes.subList(0, Consts.SALVOES);
-            for (int i = Consts.SALVOES - 1; i >= 0; i--) {
-                salvo = salvoes.get(i);
+            Date date = new Date();
 
-                if (salvo != null) {
-                    salvo.setGamePlayer(gamePlayer);
-                    salvo.setTurn(turn);
-                }
-            }
+            Map<String, Object> hitsData = game.checkHits(gamePlayer, salvoes.subList(0, Consts.SALVOES));
 
-            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), salvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
+            Set<Salvo> updatedSalvoes = (Set<Salvo>) hitsData.get("salvoes");
+            updatedSalvoes.stream().forEach(salvo -> {
+                salvo.setTurn(turn);
+                salvo.setGamePlayer(gamePlayer);
+                gamePlayer.addSalvo(salvo);
+                salvoRepository.save(salvo);
+            });
+
+            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), updatedSalvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
             game.addGameLog(log);
             gameLogRepository.save(log);
 
-            Map<String, Object> hitsData = game.checkHits(gamePlayer, salvoes);
-
-            Set<Salvo> updatedSalvoes = (Set<Salvo>)hitsData.get("salvoes");
-            updatedSalvoes.stream().forEach(x -> {
-                gamePlayer.addSalvo(x);
-                salvoRepository.save(x);
-            });
-
-            Set<String> fails = updatedSalvoes.stream().filter(x -> x.succeded() == false).map(x -> x.getCell()).collect(Collectors.toSet());
-            Set<String> successes = updatedSalvoes.stream().filter(x -> x.succeded() == true).map(x -> x.getCell()).collect(Collectors.toSet());
-
-            GamePlayer opponent = game.getOpponent(gamePlayer);
-            Date date = new Date();
+            Set<String> fails = updatedSalvoes.stream().filter(x -> !x.getSuccess()).map(x -> x.getCell()).collect(Collectors.toSet());
+            Set<String> successes = updatedSalvoes.stream().filter(x -> x.getSuccess()).map(x -> x.getCell()).collect(Collectors.toSet());
 
             if (fails.size() > 0) {
                 log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_FAILED), gamePlayer.getId(), fails);

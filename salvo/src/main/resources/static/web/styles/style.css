@@ -111,7 +111,7 @@ td[success=true] {
     background-image: var(--color-success);
 }
 
-#player {
+/*#player {
     position: absolute;
     top: 50vh;
     left: 0vw;
@@ -125,7 +125,7 @@ td[success=true] {
     right: 0vw;
 
     transform: translate(-25%, -50%);
-}
+}*/
 
 .ship {
     position: relative;

@@ -63,27 +63,30 @@ public class GamePlayer {
 
     public void addSalvo(Salvo salvo) { this.salvoes.add(salvo); }
 
-    public Map<String, Object> checkHits(List<Salvo> salvoes) {
-        Set<Ship> activeShips = this.ships.stream().filter(x -> x.isDown() == false).collect(Collectors.toSet());
+    public Map<String, Object> checkHits(List<Salvo> opponentSalvoes) {
+        Set<Ship> activeShips = this.ships.stream().filter(x -> !x.isDown()).collect(Collectors.toSet());
 
         Map<String, Object> data = new HashMap<>();
         Set<Ship> sunkShips = new HashSet<>();
-        Set<Salvo> updatedSalvoes = new HashSet<>();
 
-        for (Salvo salvo: salvoes) {
+        for (Salvo salvo: opponentSalvoes) {
             for (Ship ship: activeShips) {
-                salvo.setSuccessful(ship.checkHit(salvo.getCell()));
+                Boolean hit = ship.checkHit(salvo.getCell());
 
-                if (ship.isDown()) {
-                    sunkShips.add(ship);
+                if (hit) {
+                    salvo.setSuccess(true);
+
+                    if (ship.isDown()) {
+                        sunkShips.add(ship);
+                    }
+
+                    break;
                 }
             }
-
-            updatedSalvoes.add(salvo);
         }
 
         data.put("ships", sunkShips);
-        data.put("salvoes", updatedSalvoes);
+        data.put("salvoes", opponentSalvoes.stream().collect(Collectors.toSet()));
 
         return data;
     }
