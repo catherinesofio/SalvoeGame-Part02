@@ -109,28 +109,24 @@ public class Game {
 
     @JsonIgnore
     public Map<String, Object> getMappedData() {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
+
         data.put("id", this.id);
-        data.put("created", new Timestamp(this.creationDate.getTime()));
+        data.put("date", this.creationDate);
+        data.put("state", this.state.toString());
 
-        List<Map<String, Object>> players = new ArrayList<Map<String, Object>>();
-
+        List<Map<String, Object>> players = new ArrayList<>();
         Map<String, Object> player;
-
         for (GamePlayer gp : this.gamePlayers) {
             player = new HashMap<String, Object>();
+
             player.put("id", gp.getId());
-            player.put("player", gp.getPlayerData());
-            player.put("score", getPlayerScore(gp.getPlayerId()));
-            player.put("state", gp.getState().toString());
+            player.put("state", gp.getState());
+            player.put("player", gp.getMappedData());
 
             players.add(player);
         }
-
         data.put("gamePlayers", players);
-        data.put("turn", this.turn);
-        data.put("state", this.state.toString());
-        data.put("log", this.gameLogs.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
 
         return data;
     }
@@ -142,17 +138,13 @@ public class Game {
         data.put("created", new Timestamp(this.creationDate.getTime()));
 
         List<Map<String, Object>> players = new ArrayList<Map<String, Object>>();
-
         Map<String, Object> player;
-
         for (GamePlayer gp : this.gamePlayers) {
             player = new HashMap<String, Object>();
             player.put("id", gp.getId());
             player.put("player", gp.getPlayerData());
             if (gp.getId() == id) {
                 player.put("ships", gp.getShipsData());
-            } else {
-                player.put("ships", gp.getDownedShips());
             }
             player.put("salvoes", gp.getSalvoesData());
             player.put("score", getPlayerScore(gp.getPlayerId()));
@@ -160,11 +152,34 @@ public class Game {
 
             players.add(player);
         }
-
         data.put("gamePlayers", players);
-        data.put("turn", this.turn);
+
         data.put("state", this.state.toString());
         data.put("log", this.gameLogs.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
+
+        return data;
+    }
+
+    @JsonIgnore
+    public Map<String, Object> getUpdatedData(Long id) {
+        Map<String, Object> data =  new HashMap<>();
+
+        data.put("id", this.id);
+        data.put("state", this.state);
+
+        List<Map<String, Object>> players = new ArrayList<>();
+        Map<String, Object> player;
+        for (GamePlayer gp : this.gamePlayers) {
+            player = new HashMap<>();
+
+            player.put("id", gp.getId());
+            player.put("state", gp.getState());
+            player.put("ships", gp.getActiveShips());
+            player.put("player", gp.getPlayerData());
+
+            players.add(player);
+        }
+        data.put("gamePlayers", players);
 
         return data;
     }

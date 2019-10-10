@@ -63,7 +63,7 @@ public class Player {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("id", this.id);
         data.put("name", this.name);
-        data.put("email", this.email);
+        //data.put("email", this.email);
         data.put("scores", this.scores.stream().map(x -> x.getScore()));
 
         return data;

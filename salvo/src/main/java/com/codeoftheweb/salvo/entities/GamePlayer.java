@@ -91,6 +91,8 @@ public class GamePlayer {
         return data;
     }
 
+    public Long getActiveShips() { return ships.stream().filter(x -> !x.isDown()).count(); }
+
     @JsonIgnore
     public Set<Ship> getDownedShips() { return ships.stream().filter(x -> x.isDown()).collect(Collectors.toSet()); }
 
@@ -121,4 +123,7 @@ public class GamePlayer {
 
     @JsonIgnore
     public Map<String, Object> getMappedData() { return this.game.getMappedData(this.id); }
+
+    @JsonIgnore
+    public Map<String, Object> getUpdatedData() { return this.game.getUpdatedData(this.id); }
 }

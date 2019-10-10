@@ -7,7 +7,7 @@ import java.util.*;
 
 public final class Consts {
 
-    public static int SALVOES = 6;
+    public static int SALVOES = 5;
 
     public static Set<Map<String, Object>> SHIPS = new HashSet<Map<String, Object>>() {{
         add(new HashMap<String, Object>() {{ put("type", Ships.AIRCRAFT_CARRIER.toString()); put("size", 5); }});
