@@ -17,6 +17,7 @@ public class GamePlayer {
     private Long id;
     private Date createdDate;
     private PlayerStates state;
+    private Map<String, Object> update;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "player_id")
@@ -40,6 +41,7 @@ public class GamePlayer {
         this.game = game;
         this.salvoes = new HashSet<>();
         this.state = PlayerStates.WAITING_PREPARING;
+        this.update = new HashMap<>();
     }
 
     public boolean hasLost() { return ships.stream() .filter(x -> x.isDown() == true).count() == ships.size(); }
@@ -54,10 +56,9 @@ public class GamePlayer {
 
     public PlayerStates getState() { return this.state; }
 
-    public void setState(PlayerStates state) {
-        this.state = state;
-        this.game.refreshState();
-    }
+    public void setState(PlayerStates state) { this.state = state; }
+
+    public void addUpdate(Map<String, Object> newUdate) { update.put(); }
 
     public void addShip(Ship ship) { this.ships.add(ship); }
 

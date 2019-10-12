@@ -19,8 +19,9 @@ public class Game {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
-    private Date creationDate;
     private Long turn;
+    private boolean tied;
+    private Date creationDate;
     private GameStates state;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
@@ -35,8 +36,9 @@ public class Game {
     public Game() {}
 
     public Game(Date creationDate) {
+        this.turn = 1L;
+        this.tied = false;
         this.creationDate = creationDate;
-        this.turn = 0L;
         this.state = GameStates.WAITING;
         this.gamePlayers = new HashSet<>();
         this.gameLogs = new ArrayList<>();
@@ -45,39 +47,47 @@ public class Game {
 
     public Long getId() { return this.id; }
 
-    public GamePlayer getOpponent(GamePlayer gamePlayer) {
-        return this.gamePlayers.stream().filter(x -> x != gamePlayer).findFirst().orElse(null);
-    }
+    public GamePlayer getOpponent(GamePlayer gamePlayer) { return this.gamePlayers.stream().filter(x -> x != gamePlayer).findFirst().orElse(null); }
 
-    public boolean containsPlayer(Player player) {
-        return gamePlayers.stream().map(x -> x.getPlayerId()).collect(Collectors.toSet()).contains(player.getId());
-    }
+    public Set<GamePlayer> getGamePlayers() { return this.gamePlayers; }
+
+    public boolean containsPlayer(Player player) { return gamePlayers.stream().map(x -> x.getPlayerId()).collect(Collectors.toSet()).contains(player.getId()); }
 
     public GameStates getState() { return this.state; }
 
-    public void refreshState() {
+    public GameStates getAndRefreshState() {
         if (this.state == GameStates.WAITING && gamePlayers.stream().filter(x -> x.getState() == PlayerStates.WAITING_PLAYER).count() == 2) {
             this.state = GameStates.PLAYING;
 
-            List<GamePlayer> gps = gamePlayers.stream().collect(Collectors.toList());
+            for (GamePlayer gp : this.gamePlayers) {
+                gp.setState(PlayerStates.PLAYING_TURN);
+            }
+        } else if (this.gamePlayers.stream().filter(x -> x.getState() == PlayerStates.PLAYING_WAITING).count() == 2) {
+            if (this.tied) {
+                this.state = GameStates.FINISHED;
 
-            GamePlayer gp1 = gps.get(0).getId() < gps.get(1).getId() ? gps.get(0) : gps.get(1);
-            gp1.setState(PlayerStates.PLAYING_TURN);
+                for (GamePlayer gp : this.gamePlayers) {
+                    gp.setState(PlayerStates.FINISHED_TIED);
+                }
+            } else if (this.gamePlayers.stream().filter(x -> x.hasLost()).count() == 1) {
+                this.state = GameStates.FINISHED;
 
-            GamePlayer gp2 = gps.get(0).getId() > gps.get(1).getId() ? gps.get(0) : gps.get(1);
-            gp2.setState(PlayerStates.PLAYING_WAITING);
+                for (GamePlayer gp : this.gamePlayers) {
+                    gp.setState(gp.hasLost() ? PlayerStates.FINISHED_LOST : PlayerStates.FINISHED_WON);
+                }
+            } else {
+                for (GamePlayer gp : this.gamePlayers) {
+                    gp.setState(PlayerStates.PLAYING_TURN);
+                }
+
+                this.turn += 1;
+            }
         }
+
+        return this.state;
     }
 
-    public Long refreshTurn(GamePlayer gamePlayer) {
-        GamePlayer opponent = getOpponent(gamePlayer);
-
-        if (gamePlayer.getId() < opponent.getId()) {
-            this.turn += 1;
-        }
-
-        return this.turn;
-    }
+    public Long getTurn() { return this.turn; }
 
     public Map<String, Object> checkHits(GamePlayer gamePlayer, List<Salvo> salvoes) {
         GamePlayer opponent = getOpponent(gamePlayer);

@@ -1,6 +1,7 @@
 package com.codeoftheweb.salvo;
 
 import com.codeoftheweb.salvo.utils.GameLogs;
+import com.codeoftheweb.salvo.utils.PlayerStates;
 import com.codeoftheweb.salvo.utils.Ships;
 
 import java.util.*;
@@ -15,6 +16,12 @@ public final class Consts {
         add(new HashMap<String, Object>() {{ put("type", Ships.DESTROYER.toString()); put("size", 3); }});
         add(new HashMap<String, Object>() {{ put("type", Ships.SUBMARINE.toString()); put("size", 3); }});
         add(new HashMap<String, Object>() {{ put("type", Ships.PATROL_BOAT.toString()); put("size", 2); }});
+    }};
+
+    public static Map<PlayerStates, Float> SCORES = new HashMap<PlayerStates, Float>() {{
+        put(PlayerStates.FINISHED_LOST, 0f);
+        put(PlayerStates.FINISHED_WON, 1f);
+        put(PlayerStates.FINISHED_TIED, 0.5f);
     }};
 
     public static Map<GameLogs, String> LOG_TEMPLATES = new HashMap<GameLogs, String>() {{

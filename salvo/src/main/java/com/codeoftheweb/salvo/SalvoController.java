@@ -164,8 +164,10 @@ public class SalvoController {
             gameLogRepository.save(log);
 
             gamePlayer.setState(PlayerStates.WAITING_PLAYER);
-            gamePlayerRepository.save(gamePlayer);
+            game.getAndRefreshState();
+
             gameRepository.save(game);
+            gamePlayerRepository.saveAll(game.getGamePlayers());
 
             return new ResponseEntity<String>("Ships successfully placed.", HttpStatus.CREATED);
         }
@@ -186,6 +188,29 @@ public class SalvoController {
             }
 
             Game game = gamePlayer.getGame();
+
+
+            gamePlayer.setState(PlayerStates.PLAYING_WAITING);
+
+            Set<GamePlayer> gamePlayers = game.getGamePlayers();
+            if (game.getAndRefreshState() == GameStates.FINISHED) {
+                Date date = new Date();
+                Score score;
+
+                for (GamePlayer player : gamePlayers) {
+                    score = new Score(Consts.SCORES.get(player.getState()), date, game, player.getPlayer());
+                    player.getPlayer().addScore(score);
+                    game.addScore(score);
+
+                    scoreRepository.save(score);
+                }
+
+                playerRepository.saveAll(gamePlayers.stream().map(x -> x.getPlayer()).collect(Collectors.toSet()));
+            }
+
+            gamePlayerRepository.saveAll(gamePlayers);
+            gameRepository.save(game);
+            /*Game game = gamePlayer.getGame();
             GamePlayer opponent = game.getOpponent(gamePlayer);
             Long turn = game.refreshTurn(gamePlayer);
             Date date = new Date();
@@ -246,7 +271,7 @@ public class SalvoController {
             playerRepository.save(player02);
             gamePlayerRepository.save(opponent);
             gamePlayerRepository.save(gamePlayer);
-            gameRepository.save(game);
+            gameRepository.save(game);*/
 
             return new ResponseEntity<String>("Salvoes successfully fired.", HttpStatus.CREATED);
         }
