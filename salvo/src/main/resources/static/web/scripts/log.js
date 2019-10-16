@@ -1,7 +1,17 @@
-function createGameLog(data) {
-    let logContainer = createElement("ul", "", [{ name: "id", value: "log-container" }]);
+let logContainer;
+
+function createGameLog(data, hideUpdates) {
+    logContainer = createElement("ul", "", [{ name: "id", value: "log-container" }]);
     container.appendChild(logContainer);
 
+    if (hideUpdates) {
+        data.log = data.log.filter(x => x.turn != turn);
+    }
+
+    addLogs(data);
+}
+
+function addLogs(data) {
     let log;
     let date;
     let message;

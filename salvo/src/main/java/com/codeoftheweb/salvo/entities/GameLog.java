@@ -16,6 +16,7 @@ public class GameLog {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
+    private Long turn;
     private Date date;
     private String message;
     private Long gamePlayerId;
@@ -26,28 +27,33 @@ public class GameLog {
 
     public GameLog() {}
 
-    public GameLog(Date date, String message, Long gamePlayerId) {
+    public GameLog(Long turn, Date date, String message, Long gamePlayerId) {
+        this.turn = turn;
         this.date = date;
         this.message = message;
         this.gamePlayerId = gamePlayerId;
         this.params = null;
     }
 
-    public GameLog(Date date, String message, Long gamePlayerId, Set<String> params) {
+    public GameLog(Long turn, Date date, String message, Long gamePlayerId, Set<String> params) {
+        this.turn = turn;
         this.date = date;
         this.message = message;
         this.gamePlayerId = gamePlayerId;
         this.params = params;
     }
 
+    public Long getTurn() { return this.turn; }
+
     @JsonIgnore
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<>();
 
-        data.put("gamePlayerId", gamePlayerId);
-        data.put("date", date.toInstant());
-        data.put("message", message);
-        data.put("params", params);
+        data.put("gamePlayerId", this.gamePlayerId);
+        data.put("turn", this.turn);
+        data.put("date", this.date.toInstant());
+        data.put("message", this.message);
+        data.put("params", this.params);
 
         return data;
     }

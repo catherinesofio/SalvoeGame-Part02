@@ -109,7 +109,7 @@ public class SalvoController {
 
             GamePlayer gp = gamePlayerRepository.save(new GamePlayer(date, getUser(authentication), game));
 
-            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_CREATED_GAME), gp.getId());
+            GameLog log = new GameLog(0L, date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_CREATED_GAME), gp.getId());
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -129,7 +129,7 @@ public class SalvoController {
 
             GamePlayer gp = gamePlayerRepository.save(new GamePlayer(date, user, game));
 
-            GameLog log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_JOINED_GAME), gp.getId());
+            GameLog log = new GameLog(0L, date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_JOINED_GAME), gp.getId());
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -159,7 +159,7 @@ public class SalvoController {
 
             Game game = gamePlayer.getGame();
 
-            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_PLACED_SHIPS), gamePlayer.getId());
+            GameLog log = new GameLog(0L, new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_PLACED_SHIPS), gamePlayer.getId());
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -185,34 +185,12 @@ public class SalvoController {
         } else if (user != null && gamePlayer.getPlayerId() == user.getId()) {
             if (gamePlayer.getState() != PlayerStates.PLAYING_TURN) {
                 return new ResponseEntity<String>("Cannot place salvoes on the other player's turn.", HttpStatus.FORBIDDEN);
+            } else if (gamePlayer.getGame().getState() == GameStates.FINISHED) {
+                return new ResponseEntity<String>("Cannot place salvoes on a finished game!", HttpStatus.FORBIDDEN);
             }
 
             Game game = gamePlayer.getGame();
-
-
-            gamePlayer.setState(PlayerStates.PLAYING_WAITING);
-
-            Set<GamePlayer> gamePlayers = game.getGamePlayers();
-            if (game.getAndRefreshState() == GameStates.FINISHED) {
-                Date date = new Date();
-                Score score;
-
-                for (GamePlayer player : gamePlayers) {
-                    score = new Score(Consts.SCORES.get(player.getState()), date, game, player.getPlayer());
-                    player.getPlayer().addScore(score);
-                    game.addScore(score);
-
-                    scoreRepository.save(score);
-                }
-
-                playerRepository.saveAll(gamePlayers.stream().map(x -> x.getPlayer()).collect(Collectors.toSet()));
-            }
-
-            gamePlayerRepository.saveAll(gamePlayers);
-            gameRepository.save(game);
-            /*Game game = gamePlayer.getGame();
-            GamePlayer opponent = game.getOpponent(gamePlayer);
-            Long turn = game.refreshTurn(gamePlayer);
+            Long turn = game.getTurn();
             Date date = new Date();
 
             Map<String, Object> hitsData = game.checkHits(gamePlayer, salvoes.subList(0, Consts.SALVOES));
@@ -225,7 +203,7 @@ public class SalvoController {
                 salvoRepository.save(salvo);
             });
 
-            GameLog log = new GameLog(new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), updatedSalvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
+            GameLog log = new GameLog(turn, new Date(), Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_FIRED_SALVOES), gamePlayer.getId(), updatedSalvoes.stream().map(x -> x.getCell()).collect(Collectors.toSet()));
             game.addGameLog(log);
             gameLogRepository.save(log);
 
@@ -233,45 +211,46 @@ public class SalvoController {
             Set<String> successes = updatedSalvoes.stream().filter(x -> x.getSuccess()).map(x -> x.getCell()).collect(Collectors.toSet());
 
             if (fails.size() > 0) {
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_FAILED), gamePlayer.getId(), fails);
+                log = new GameLog(turn, date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_FAILED), gamePlayer.getId(), fails);
                 game.addGameLog(log);
                 gameLogRepository.save(log);
             }
 
             if (successes.size() > 0) {
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_SUCCEDED), gamePlayer.getId(), successes);
+                log = new GameLog(turn, date, Consts.LOG_TEMPLATES.get(GameLogs.SALVO_SUCCEDED), gamePlayer.getId(), successes);
                 game.addGameLog(log);
                 gameLogRepository.save(log);
             }
 
             Set<Ship> sunkShips = (Set<Ship>) hitsData.get("ships");
             sunkShips.forEach((ship) -> {
-                GameLog gameLog = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.SHIP_SANK), opponent.getId(), new HashSet<String>() {{ add(ship.getType().toString()); }});
+                GameLog gameLog = new GameLog(turn, date, Consts.LOG_TEMPLATES.get(GameLogs.SHIP_SANK), game.getOpponent(gamePlayer).getId(), new HashSet<String>() {{ add(ship.getType().toString()); }});
                 game.addGameLog(gameLog);
                 gameLogRepository.save(gameLog);
             });
 
-            Player player01 = gamePlayer.getPlayer();
-            Player player02 = opponent.getPlayer();
+            gamePlayer.setState(PlayerStates.PLAYING_WAITING);
 
-            if (game.getState() == GameStates.FINISHED) {
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_WON_MATCH), gamePlayer.getId());
-                game.addGameLog(log);
-                gameLogRepository.save(log);
+            Set<GamePlayer> gamePlayers = game.getGamePlayers();
+            if (game.getAndRefreshState() == GameStates.FINISHED) {
+                Score score;
 
-                log = new GameLog(date, Consts.LOG_TEMPLATES.get(GameLogs.PLAYER_LOST_MATCH), opponent.getId());
-                game.addGameLog(log);
-                gameLogRepository.save(log);
+                for (GamePlayer player : gamePlayers) {
+                    score = new Score(Consts.SCORES.get(player.getState()), date, game, player.getPlayer());
+                    player.getPlayer().addScore(score);
+                    game.addScore(score);
+                    scoreRepository.save(score);
 
-                scoreRepository.save(new Score(1f, date, game, player01));
-                scoreRepository.save(new Score(0f, date, game, player02));
+                    GameLog gameLog = new GameLog(turn, date, Consts.LOG_TEMPLATES.get(Consts.RESULTS.get(player.getState())), game.getId());
+                    game.addGameLog(gameLog);
+                    gameLogRepository.save(gameLog);
+                }
+
+                playerRepository.saveAll(gamePlayers.stream().map(x -> x.getPlayer()).collect(Collectors.toSet()));
             }
 
-            playerRepository.save(player01);
-            playerRepository.save(player02);
-            gamePlayerRepository.save(opponent);
-            gamePlayerRepository.save(gamePlayer);
-            gameRepository.save(game);*/
+            gamePlayerRepository.saveAll(gamePlayers);
+            gameRepository.save(game);
 
             return new ResponseEntity<String>("Salvoes successfully fired.", HttpStatus.CREATED);
         }
@@ -296,18 +275,18 @@ public class SalvoController {
             return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<Map<String, Object>> (gamePlayer.getMappedData(), HttpStatus.ACCEPTED);
+        return new ResponseEntity<Map<String, Object>> (gamePlayer.getGame().getMappedData(gamePlayer.getId()), HttpStatus.ACCEPTED);
     }
 
-    @RequestMapping(value = "/game_update/{gp}", method = RequestMethod.GET)
-    private ResponseEntity<Map<String, Object>> getGameUpdate(@PathVariable Long gp, Authentication authentication) {
+    @RequestMapping(value = "/game_view/{gp}/turns/{tn}", method = RequestMethod.GET)
+    private ResponseEntity<Map<String, Object>> getGameUpdate(@PathVariable Long gp, @PathVariable Long tn, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
 
-        if (user == null || gamePlayer.getId() != user.getId()) {
+        if (user == null || gamePlayer.getPlayerId() != user.getId()) {
             return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
         }
 
-        return new ResponseEntity<Map<String, Object>>(gamePlayer.getUpdatedData(), HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<Map<String, Object>>(gamePlayer.getGame().getMappedDataByTurn(tn), HttpStatus.ACCEPTED);
     }
 }

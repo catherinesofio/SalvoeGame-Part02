@@ -1,5 +1,6 @@
 package com.codeoftheweb.salvo.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -36,6 +37,8 @@ public class Salvo {
 
     public void setGamePlayer(GamePlayer gamePlayer) { this.gamePlayer = gamePlayer; }
 
+    public Long getTurn() { return this.turn; }
+
     public void setTurn(Long turn) { this.turn = turn; }
 
     public String getCell() { return this.cell; }
@@ -46,6 +49,7 @@ public class Salvo {
 
     public void setSuccess(Boolean success) { this.success = success; }
 
+    @JsonIgnore
     public Map<String, Object> getMappedData() {
         Map<String, Object> data = new HashMap<>();
 

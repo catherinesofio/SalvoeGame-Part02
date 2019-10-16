@@ -1,3 +1,5 @@
+let timeout = 5000;
+
 $(document).ready(function () {
     $.ajax("/api/players").done((data) => fillLeaderboardTable(data));
     $.ajax("/api/games").done((data) => {
@@ -12,6 +14,8 @@ $(document).ready(function () {
             document.body.appendChild(newMatch);
 
             fillMatchesTable(data.games, data.user);
+
+            setTimeout(updateMatchesTable, timeout);
         }
     });
 });
@@ -68,23 +72,16 @@ function fillLeaderboardTable(data) {
 }
 
 function fillMatchesTable(data, player) {
-    let sortedData = data.sort(function(a, b) {
-        let dateA = new Date(a.created);
-        let dateB = new Date(b.created);
-
-        return (dateB < dateA) ? 1 : -1;
-    });
-
-    let games = sortedData.map(x => x.id);
-    let players1 = sortedData.map(x => x.gamePlayers[0].player.name);
-    let players2 = sortedData.map(function(x) {
+    let games = data.map(x => x.id);
+    let players1 = data.map(x => x.gamePlayers[0].player.name);
+    let players2 = data.map(function(x) {
         return (x.gamePlayers.length > 1) ? x.gamePlayers[1].player.name : (x.gamePlayers[0].player.id != player.id) ? "<button id='" + x.id + "' onclick='joinGame(event)'>join</button>" : "N/A";
     });
 
     let rows;
     if (player != null) {
-        let count = sortedData.length;
-        let matches = sortedData.map(x => {
+        let count = data.length;
+        let matches = data.map(x => {
             for(let i = x.gamePlayers.length - 1; i >= 0; i--){
                 if (x.gamePlayers[i].player.id == player.id) {
                     return "<button id='" + x.gamePlayers[i].id + "' onclick='loadGame(event)'>PLAY</button>"
@@ -104,6 +101,21 @@ function fillMatchesTable(data, player) {
     fillTable("matches-content", rows);
 }
 
+function updateMatchesTable() {
+    $.ajax("/api/games").done(function(data) {
+        if (data.user != null) {
+            let games = document.getElementById("matches-content").childElementCount;
+
+            if (games < data.games.length) {
+                data.games.splice(0, games);
+                fillMatchesTable(data.games, data.user);
+            }
+
+            setTimeout(updateMatchesTable, timeout);
+        }
+    });
+}
+
 function joinGame(e) {
     e.preventDefault();
 
@@ -116,7 +128,4 @@ function loadGame(e) {
     window.location = "/web/game.html?gp=" + e.target.getAttribute("id");
 }
 
-function createGame() {
-
-    $.post("/api/games").done(gp => { window.location = "/web/game.html?gp=" + gp; }).fail(() => alert("my bad dude"));
-}
+function createGame() { $.post("/api/games").done(gp => { window.location = "/web/game.html?gp=" + gp; }).fail(() => alert("my bad dude")); }

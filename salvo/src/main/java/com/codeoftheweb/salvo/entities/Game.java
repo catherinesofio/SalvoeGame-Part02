@@ -1,7 +1,6 @@
 package com.codeoftheweb.salvo.entities;
 
 import com.codeoftheweb.salvo.Consts;
-import com.codeoftheweb.salvo.utils.GameLogs;
 import com.codeoftheweb.salvo.utils.GameStates;
 import com.codeoftheweb.salvo.utils.PlayerStates;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -20,15 +19,14 @@ public class Game {
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
     private Long turn;
-    private boolean tied;
     private Date creationDate;
     private GameStates state;
 
-    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
-    private Set<GamePlayer> gamePlayers;
-
     @OneToMany
     private List<GameLog> gameLogs;
+
+    @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
+    private Set<GamePlayer> gamePlayers;
 
     @OneToMany(mappedBy = "game", fetch = FetchType.EAGER)
     private Set<Score> scores;
@@ -37,11 +35,10 @@ public class Game {
 
     public Game(Date creationDate) {
         this.turn = 1L;
-        this.tied = false;
         this.creationDate = creationDate;
         this.state = GameStates.WAITING;
-        this.gamePlayers = new HashSet<>();
         this.gameLogs = new ArrayList<>();
+        this.gamePlayers = new HashSet<>();
         this.scores = new HashSet<>();
     }
 
@@ -63,13 +60,15 @@ public class Game {
                 gp.setState(PlayerStates.PLAYING_TURN);
             }
         } else if (this.gamePlayers.stream().filter(x -> x.getState() == PlayerStates.PLAYING_WAITING).count() == 2) {
-            if (this.tied) {
+            Long totalLosers = this.gamePlayers.stream().filter(x -> x.hasLost()).count();
+
+            if (this.turn + 1 > Consts.MAX_TURNS || totalLosers == 2) {
                 this.state = GameStates.FINISHED;
 
                 for (GamePlayer gp : this.gamePlayers) {
                     gp.setState(PlayerStates.FINISHED_TIED);
                 }
-            } else if (this.gamePlayers.stream().filter(x -> x.hasLost()).count() == 1) {
+            } else if (totalLosers == 1) {
                 this.state = GameStates.FINISHED;
 
                 for (GamePlayer gp : this.gamePlayers) {
@@ -89,22 +88,7 @@ public class Game {
 
     public Long getTurn() { return this.turn; }
 
-    public Map<String, Object> checkHits(GamePlayer gamePlayer, List<Salvo> salvoes) {
-        GamePlayer opponent = getOpponent(gamePlayer);
-        Map<String, Object> data = opponent.checkHits(salvoes);
-
-        if (opponent.hasLost()) {
-            this.state = GameStates.FINISHED;
-
-            gamePlayer.setState(PlayerStates.FINISHED_WON);
-            opponent.setState(PlayerStates.FINISHED_LOST);
-        } else {
-            gamePlayer.setState(PlayerStates.PLAYING_WAITING);
-            opponent.setState(PlayerStates.PLAYING_TURN);
-        }
-
-        return data;
-    }
+    public Map<String, Object> checkHits(GamePlayer gamePlayer, List<Salvo> salvoes) { return getOpponent(gamePlayer).checkHits(salvoes, this.turn); }
 
     public void addGameLog(GameLog gameLog) { this.gameLogs.add(gameLog); }
 
@@ -132,7 +116,7 @@ public class Game {
 
             player.put("id", gp.getId());
             player.put("state", gp.getState());
-            player.put("player", gp.getMappedData());
+            player.put("player", gp.getPlayer().getMappedData());
 
             players.add(player);
         }
@@ -151,11 +135,10 @@ public class Game {
         Map<String, Object> player;
         for (GamePlayer gp : this.gamePlayers) {
             player = new HashMap<String, Object>();
+
             player.put("id", gp.getId());
-            player.put("player", gp.getPlayerData());
-            if (gp.getId() == id) {
-                player.put("ships", gp.getShipsData());
-            }
+            player.put("player", gp.getPlayer().getReducedMappedData());
+            player.put("ships", gp.getShipsData(gp.getId() == id));
             player.put("salvoes", gp.getSalvoesData());
             player.put("score", getPlayerScore(gp.getPlayerId()));
             player.put("state", gp.getState().toString());
@@ -164,18 +147,19 @@ public class Game {
         }
         data.put("gamePlayers", players);
 
+        data.put("turn", this.turn);
         data.put("state", this.state.toString());
-        data.put("log", this.gameLogs.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
+        data.put("logs", this.gameLogs.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
 
         return data;
     }
 
     @JsonIgnore
-    public Map<String, Object> getUpdatedData(Long id) {
+    public Map<String, Object> getMappedDataByTurn(Long turn) {
         Map<String, Object> data =  new HashMap<>();
 
         data.put("id", this.id);
-        data.put("state", this.state);
+        data.put("created", this.creationDate);
 
         List<Map<String, Object>> players = new ArrayList<>();
         Map<String, Object> player;
@@ -183,13 +167,19 @@ public class Game {
             player = new HashMap<>();
 
             player.put("id", gp.getId());
-            player.put("state", gp.getState());
-            player.put("ships", gp.getActiveShips());
-            player.put("player", gp.getPlayerData());
+            player.put("player", gp.getPlayer().getReducedMappedData());
+            player.put("ships", gp.getShipsPerTurn(turn));
+            player.put("salvoes", gp.getSalvoesPerTurn(turn));
+            player.put("score", getPlayerScore(gp.getPlayerId()));
+            player.put("state", gp.getState().toString());
 
             players.add(player);
         }
         data.put("gamePlayers", players);
+
+        data.put("turn", this.turn);
+        data.put("state", this.state);
+        data.put("logs", this.gameLogs.stream().filter(x -> x.getTurn() == turn).map(x -> x.getMappedData()).collect(Collectors.toList()));
 
         return data;
     }

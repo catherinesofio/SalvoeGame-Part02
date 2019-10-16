@@ -15,6 +15,7 @@ public class Ship {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private Long id;
+    private Long sunkInTurn;
     private Ships type;
     private boolean isDown;
 
@@ -49,12 +50,18 @@ public class Ship {
 
     public void setLocations(Set<String> locations) { this.locations = locations.stream().map(x -> x.toUpperCase()).collect(Collectors.toSet()); }
 
+    public Long getSunkInTurn() { return sunkInTurn; }
+
     public boolean isDown() { return this.isDown; }
 
-    public boolean checkHit(String hit) {
+    public boolean checkHit(String hit, Long turn) {
         if (locations.contains(hit)) {
             hits.add(hit);
             this.isDown = (this.hits.size() == this.locations.size());
+
+            if (this.isDown) {
+                this.sunkInTurn = turn;
+            }
 
             return true;
         }
@@ -68,6 +75,7 @@ public class Ship {
         data.put("type", this.type.toString());
         data.put("locations", this.locations);
         data.put("isDown", this.isDown);
+        data.put("sunkInTurn", this.sunkInTurn);
 
         return data;
     }

@@ -43,7 +43,7 @@ function updateSalvoNav(state) {
 }
 
 function enableEvents(enable) {
-    let cells = document.getElementById(oponentId).querySelectorAll("td[hasSalvo=false]");
+    let cells = document.getElementById(opponentId).querySelectorAll("td[hasSalvo=false]");
 
     if (enable) {
         cells.forEach(x => x.setAttribute("onclick", "placeSalvo(event)"));
@@ -54,7 +54,7 @@ function enableEvents(enable) {
 
 function placeSalvo(e) {
     if (salvoesCount > 0) {
-        let cellId = e.target.getAttribute("id").substring(oponentId.length + 1);
+        let cellId = e.target.getAttribute("id").substring(opponentId.length + 1);
 
         locations.push(cellId);
         e.target.setAttribute("hasSalvo", true);
@@ -70,7 +70,7 @@ function placeSalvo(e) {
 }
 
 function removeSalvo(e) {
-    let cellId = e.target.getAttribute("id").substring(oponentId.length + 1);
+    let cellId = e.target.getAttribute("id").substring(opponentId.length + 1);
 
     locations.splice(locations.indexOf(cellId), 1);
     e.target.setAttribute("hasSalvo", false);
@@ -89,10 +89,14 @@ function submitSalvoes() {
 
     let salvoes = [];
     for (let i = locations.length - 1; i >= 0; i--) {
-        document.getElementById(oponentId + "-" + locations[i]).setAttribute("onclick", "");
+        document.getElementById(opponentId + "-" + locations[i]).setAttribute("onclick", "");
+
         salvoes.push({ cell: locations[i] });
     }
     locations = [];
 
-    $.post({ url: "/api/games/players/" + gamePlayerId + "/salvoes", data: JSON.stringify(salvoes), dataType: "text", contentType: "application/json" }).done(x => window.location.reload());
+    $.post({ url: "/api/games/players/" + gamePlayerId + "/salvoes", data: JSON.stringify(salvoes), dataType: "text", contentType: "application/json" }).done(() => {
+        clearInterval(interval);
+        updateGameView();
+    });
 }

@@ -86,3 +86,7 @@ function setElementsAttributes(idsPrefix, ids, attributes) {
         });
     }
 }
+
+function scheduleInterval(func, timeout) {
+    return setTimeout(func, timeout);
+}
