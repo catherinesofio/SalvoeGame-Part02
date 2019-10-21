@@ -1,23 +1,26 @@
 <template>
-  <div id="app">
+  <div id='app'>
     <router-view/>
-    <Nav v-if="userExists" :user="user" />
   </div>
 </template>
 
 <script>
-import Nav from "@/components/Nav.vue";
-import { mapState } from 'vuex';
-
 export default {
-  components: {
-    Nav
-  },
-  computed: {
-    ...mapState(['user']),
-    userExists: function() {
-      return this.user != "";
-    }
-  }
-}
+  name: 'App'
+};
 </script>
+
+<style>
+:root {
+  --layer-background: 0;
+  --layer-middle: 1;
+  --layer-foreground: 2;
+  --layer-ui: 4;
+  --layer-popup: 5;
+  --spacer-height: 10vh;
+}
+
+li {
+  list-style-type: none;
+}
+</style>

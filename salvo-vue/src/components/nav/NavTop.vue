@@ -1,8 +1,6 @@
 <template>
     <div>
-        <h1>{{ getName }}</h1>
-        <p>🏵️ #1</p>
-        <button v-on:click='logout'>🚪</button>
+        <h1>{{ getName }} <button v-on:click='logout'>🚪</button></h1>
     </div>
 </template>
 
@@ -19,5 +17,13 @@ export default {
     methods: {
         ...mapActions(['logout'])
     }
+};
+</script>
+
+<style scoped>
+div {
+    width: 100vw;
+    position: absolute;
+    top: 0;
 }
-</script>>
+</style>
