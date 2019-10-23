@@ -9,6 +9,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.session.SessionInformation;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +21,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api")
 public class SalvoController {
+
+    @Autowired
+    private SessionRegistry sessionRegistry;
 
     @Autowired
     private GameRepository gameRepository;
@@ -46,6 +52,17 @@ public class SalvoController {
     private boolean isGuest(Authentication authentication) { return (authentication == null) ? true : false; }
 
     private Player getUser(Authentication authentication) { return (authentication == null) ? null : playerRepository.findByEmail(authentication.getName()); }
+
+    @RequestMapping("/users")
+    private Set<String> getOnlineUsers() {
+        return sessionRegistry.getAllPrincipals().stream()
+                //.forEach(principal -> sessionRegistry.getAllSessions(principal, false))
+                .filter(principal -> principal instanceof User)
+                .map(User.class::cast)
+                .map(user -> user.getUsername())
+                //.map(player -> player.getMappedData())
+                .collect(Collectors.toSet());
+    }
 
     @RequestMapping("/user")
     private Map<String, Object> getPlayer(Authentication authentication) {

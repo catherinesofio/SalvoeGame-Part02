@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 import router from '@/router/index.js';
 
 Vue.use(Vuex);
@@ -111,37 +112,28 @@ export default new Vuex.Store({
     }]
   },
   mutations: {
-    INIT_USER: state => {
-      state.user = {
-        name: 'JaegerBomb',
-        id: 1
-      }
-      /*$.get("/api/user").then(response => {
-        state.user = (response == "") ? null : response;
+    INIT_USER: async state => {
+      await axios.get('/api/user').then(response => { 
+        let data = JSON.parse(JSON.stringify(response.data));
+        data = (data.name == null) ? null : data;
+
+        state.user = data;
         
-        if (state.user != null) {
-          router.push("/menu").catch(err => {});
-        } else {
-          router.push("/login").catch(err => {});
-        }
-      });*/
+        checkUser(data);
+      });
     },
     SET_USER: state => {
-      state.user = state;
-      
-      if (state.user != null) {
-        router.push('/menu').catch(err => {});
-      } else {
-        router.push('/login').catch(err => {});
-      }
+      state.user = checkUser(state);
     }
   },
   actions: {
-    login: (context, params) => {
-      $.post('/api/login', params).done(response => context.commit('SET_USER', response.data));
+    login: async (context, params) => {
+      let data = await axios.post('/api/login', new URLSearchParams(params)).then(response => JSON.parse(JSON.stringify(response.data)));
+
+      await context.commit('SET_USER', data)
     },
-    logout: (context) => {
-      $.post('/api/logout').done(() => context.commit('SET_USER', null));
+    logout: async (context) => {
+      await axios.post('/api/logout').then(() => context.commit('SET_USER', null));
     },
     joinMatch: (context, params) => {
       //JOIN MATCH
@@ -154,3 +146,11 @@ export default new Vuex.Store({
     }
   }
 });
+
+function checkUser(user) {
+  if (user == null) {
+    router.push('/login');
+  } else {
+    router.push('/menu');
+  }
+}

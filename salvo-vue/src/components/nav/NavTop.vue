@@ -1,6 +1,7 @@
 <template>
     <div>
-        <h1>{{ getName }} <button v-on:click='logout'>🚪</button></h1>
+        <h1>{{ getName }}</h1>
+        <button v-on:click='logout'>🚪</button>
     </div>
 </template>
 

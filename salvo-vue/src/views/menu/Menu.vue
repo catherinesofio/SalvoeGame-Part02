@@ -2,7 +2,7 @@
     <div>
         <Nav :user="user" />
         <Spacer />
-        <router-view/>
+        <router-view />
     </div>
 </template>
 
