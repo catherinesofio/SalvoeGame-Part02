@@ -183,4 +183,31 @@ public class Game {
 
         return data;
     }
+
+    public Map<String, Object> getMenuMappedData(Long userId) {
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("id", this.id);
+        data.put("state", this.state);
+
+        GamePlayer opponent = this.gamePlayers.stream().filter(x -> x.getPlayerId() != userId).findAny().get();
+        data.put("opponent", (opponent != null) ? opponent.getPlayerId() : -1);
+
+        List<Map<String, Object>> gps = new ArrayList<>();
+        Map<String, Object> player;
+        for (GamePlayer gp : this.gamePlayers) {
+            player = new HashMap<String, Object>();
+
+            player.put("id", gp.getId());
+            player.put("state", gp.getState());
+
+            if (gp.getPlayerId() != userId) {
+                data.put("opponent", );
+            } else {
+
+            }
+        }
+
+        return data;
+    }
 }

@@ -53,18 +53,8 @@ public class SalvoController {
 
     private Player getUser(Authentication authentication) { return (authentication == null) ? null : playerRepository.findByEmail(authentication.getName()); }
 
-    @RequestMapping("/users")
-    private Set<String> getOnlineUsers() {
-        return sessionRegistry.getAllPrincipals().stream()
-                //.forEach(principal -> sessionRegistry.getAllSessions(principal, false))
-                .filter(principal -> principal instanceof User)
-                .map(User.class::cast)
-                .map(user -> user.getUsername())
-                //.map(player -> player.getMappedData())
-                .collect(Collectors.toSet());
-    }
-
-    @RequestMapping("/user")
+    //AUTHENTICATION
+    @RequestMapping(path = "/user", method = RequestMethod.GET)
     private Map<String, Object> getPlayer(Authentication authentication) {
         Player user = getUser(authentication);
 
@@ -90,6 +80,47 @@ public class SalvoController {
 
         playerRepository.save(new Player(name, email, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+
+    //MENU
+    //not done!!!!!!!!
+    @RequestMapping(path = "/users", method = RequestMethod.GET)
+    private ResponseEntity<Set<String>> getOnlineUsers(Authentication authentication) {
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(new HashSet<>(), HttpStatus.FORBIDDEN);
+        }
+
+        Set<String> data = sessionRegistry.getAllPrincipals().stream()
+                //.forEach(principal -> sessionRegistry.getAllSessions(principal, false))
+                .filter(principal -> principal instanceof User)
+                .map(User.class::cast)
+                .map(user -> user.getUsername())
+                //.map(player -> player.getMappedData())
+                .collect(Collectors.toSet());
+
+        return new ResponseEntity<>(data, HttpStatus.ACCEPTED);
+    }
+
+    //not done!!!!!!!!
+    @RequestMapping(path = "/matches", method = RequestMethod.GET)
+    private ResponseEntity<List<Map<String, Object>>> getMatches(Authentication authentication) {
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.FORBIDDEN);
+        }
+
+        List<Map<String, Object>> data = gameRepository
+
+        return new ResponseEntity<>(data, HttpStatus.ACCEPTED);
+    }
+
+    //not done!!!!!!!!
+    @RequestMapping(path = "/matches/user", method = RequestMethod.GET)
+    private ResponseEntity<Map<String, Object>> getUserMatches(Authentication authentication) {
+        if (isGuest(authentication)) {
+            return new ResponseEntity<>(new HashMap<>(), HttpStatus.FORBIDDEN);
+        }
+
+        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
     }
 
     @RequestMapping("/players")
