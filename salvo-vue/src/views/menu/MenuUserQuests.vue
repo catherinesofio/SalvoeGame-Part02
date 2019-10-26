@@ -31,7 +31,7 @@ export default {
         UserQuestInfo
     },
     computed: {
-        ...mapState(['userQuests']),
+        ...mapState(['userMatches']),
         getQuests() {
             return (this.showCurrent) ? this.userQuests.current : this.userQuests.history;
         }

@@ -1,5 +1,7 @@
 package com.codeoftheweb.salvo.entities;
 
+import com.codeoftheweb.salvo.Consts;
+import com.codeoftheweb.salvo.utils.PlayerStates;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -50,9 +52,7 @@ public class Player {
         return this.email;
     }
 
-    public String getPassword() {
-        return this.password;
-    }
+    public String getPassword() { return this.password; }
 
     public void addScore(Score score) {
         this.scores.add(score);
@@ -64,7 +64,18 @@ public class Player {
 
         data.put("id", this.id);
         data.put("name", this.name);
-        data.put("scores", this.scores.stream().map(x -> x.getScore()));
+
+        Map<String, Object> scores = new HashMap<>();
+        scores.put("total", (this.scores.size() > 0) ? this.scores.stream().map(score -> score.getScore()).reduce((a,
+                                                                                                                   b) -> a + b) : 0);
+        scores.put("lost",
+                this.scores.stream().filter(score -> score.getScore() == Consts.SCORES.get(PlayerStates.FINISHED_LOST)).count());
+        scores.put("won",
+                this.scores.stream().filter(score -> score.getScore() == Consts.SCORES.get(PlayerStates.FINISHED_WON)).count());
+        scores.put("tied",
+                this.scores.stream().filter(score -> score.getScore() == Consts.SCORES.get(PlayerStates.FINISHED_TIED)).count());
+
+        data.put("scores", scores);
 
         return data;
     }
@@ -75,7 +86,6 @@ public class Player {
 
         data.put("id", this.id);
         data.put("name", this.name);
-        data.put("isOnline", true);
 
         return data;
     }

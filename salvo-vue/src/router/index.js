@@ -69,12 +69,6 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   let userExists = store.state.user != null;
-console.log(from.path);
-console.log(to.path);
-console.log(from.path === '/');
-  if (from.path === '/') {
-    next(false);
-  }
 
   if (to.path.includes('/menu') && !userExists) {
     next({ path: '/login', replace: true });

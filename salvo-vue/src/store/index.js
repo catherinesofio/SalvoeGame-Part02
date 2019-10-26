@@ -5,111 +5,16 @@ import router from '@/router/index.js';
 
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     user: null,
-    quests: [{
-      id: 1,
-      opponent: 'DaKingJJ',
-      isOnline: true
+    users: [],
+    matches: [],
+    userMatches: {
+      current: [],
+      history: []
     },
-    {
-      id: 2,
-      opponent: 'Bertorto',
-      isOnline: false
-    },
-    {
-      id: 3,
-      opponent: 'LordDross',
-      isOnline: false
-    },
-    {
-      id: 4,
-      opponent: 'Allmightho',
-      isOnline: true
-    }],
-    userQuests: {
-      current: [{
-        id: 10,
-        opponent: 'KaBoom',
-        isOnline: false,
-        state: 'PLAYING_TURN'
-      },
-      {
-        id: 11,
-        opponent: 'AnaMov',
-        isOnline: false,
-        state: 'WAITING_SHIPS'
-      },
-      {
-        id: 12,
-        opponent: 'Izukuwu',
-        isOnline: true,
-        state: 'PLAYING_WAITING'
-      }],
-      history: [{
-        id: 6,
-        opponent: 'LordDross',
-        isOnline: false,
-        state: 'PLAYER_LOST'
-      },
-      {
-        id: 7,
-        opponent: 'Izukuwu',
-        isOnline: true,
-        state: 'PLAYER_TIED'
-      }]
-    },
-    leaderboards: [{
-      username: 'Allmightho',
-      points: 3000,
-      position: 1
-    },
-    {
-      username: 'ToddyCaliente',
-      points: 2999,
-      position: 2
-    },
-    {
-      username: 'Bertorto',
-      points: 2000,
-      position: 3
-    },
-    {
-      username: 'DaKingJJ',
-      points: 1000,
-      position: 4
-    },
-    {
-      username: 'AnaMov',
-      points: 700,
-      position: 5
-    },
-    {
-      username: 'LordDross',
-      points: 666,
-      position: 6
-    },
-    {
-      username: 'elDementoide',
-      points: 420,
-      position: 7
-    },
-    {
-      username: 'KaBoom',
-      points: 22,
-      position: 8
-    },
-    {
-      username: 'JaegerBomb',
-      points: 10,
-      position: 9
-    },
-    {
-      username: 'Izukuwu',
-      points: 1,
-      position: 10
-    }]
+    leaderboards: []
   },
   mutations: {
     INIT_USER: async state => {
@@ -123,14 +28,44 @@ export default new Vuex.Store({
       });
     },
     SET_USER: state => {
-      state.user = checkUser(state);
+      state.user = state;
+      
+      checkUser(state);
+    },
+    UPDATE_INFO: async state => {
+      if (state.user == null) {
+        state.users = [];
+        state.matches = [];
+        state.userMatches = { current: [], history: [] };
+        state.leaderboards = [];
+
+        return;
+      }
+
+      await axios.get('/api/matches').then(response => {
+        let data = JSON.parse(JSON.stringify(response.data));
+
+        let users = data.users;
+        state.users = users;
+        state.matches = data.matches;
+        state.userMatches = data.userMatches;
+        state.leaderboards = users.foreach(function(user) {
+          let points = (user.won + (user.lost / 2)) * 100 / (user.won + user.won + user.lost);
+
+          return { id: user.id, points: points };
+        }).sort(function(a, b) {
+          return a.points - b.points;
+        });
+      })
     }
   },
   actions: {
     login: async (context, params) => {
-      let data = await axios.post('/api/login', new URLSearchParams(params)).then(response => JSON.parse(JSON.stringify(response.data)));
+      await axios.post('/api/login', new URLSearchParams(params)).then(response => {
+        let data = JSON.parse(JSON.stringify(response.data));
 
-      await context.commit('SET_USER', data)
+        context.commit('SET_USER', data);
+      });
     },
     logout: async (context) => {
       await axios.post('/api/logout').then(() => context.commit('SET_USER', null));
@@ -147,10 +82,16 @@ export default new Vuex.Store({
   }
 });
 
+export default store;
+
 function checkUser(user) {
   if (user == null) {
-    router.push('/login');
+    store.commit('UPDATE_INFO');
+
+    router.push('/login').catch(err => {});
   } else {
-    router.push('/menu');
+    store.commit('UPDATE_INFO');
+
+    router.push('/menu').catch(err => {});
   }
 }

@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,10 +25,16 @@ public class SalvoController {
     private SessionRegistry sessionRegistry;
 
     @Autowired
-    private GameRepository gameRepository;
+    private PasswordEncoder passwordEncoder;
 
     @Autowired
     private PlayerRepository playerRepository;
+
+    @Autowired
+    private GameRepository gameRepository;
+
+    @Autowired
+    private GameLogRepository gameLogRepository;
 
     @Autowired
     private GamePlayerRepository gamePlayerRepository;
@@ -41,13 +46,7 @@ public class SalvoController {
     private SalvoRepository salvoRepository;
 
     @Autowired
-    private GameLogRepository gameLogRepository;
-
-    @Autowired
     private ScoreRepository scoreRepository;
-
-    @Autowired
-    private PasswordEncoder passwordEncoder;
 
     private boolean isGuest(Authentication authentication) { return (authentication == null) ? true : false; }
 
@@ -83,72 +82,59 @@ public class SalvoController {
     }
 
     //MENU
-    //not done!!!!!!!!
-    @RequestMapping(path = "/users", method = RequestMethod.GET)
-    private ResponseEntity<Set<String>> getOnlineUsers(Authentication authentication) {
-        if (isGuest(authentication)) {
-            return new ResponseEntity<>(new HashSet<>(), HttpStatus.FORBIDDEN);
-        }
-
-        Set<String> data = sessionRegistry.getAllPrincipals().stream()
-                //.forEach(principal -> sessionRegistry.getAllSessions(principal, false))
-                .filter(principal -> principal instanceof User)
-                .map(User.class::cast)
-                .map(user -> user.getUsername())
-                //.map(player -> player.getMappedData())
-                .collect(Collectors.toSet());
-
-        return new ResponseEntity<>(data, HttpStatus.ACCEPTED);
-    }
-
-    //not done!!!!!!!!
     @RequestMapping(path = "/matches", method = RequestMethod.GET)
-    private ResponseEntity<List<Map<String, Object>>> getMatches(Authentication authentication) {
-        if (isGuest(authentication)) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.FORBIDDEN);
-        }
-
-        List<Map<String, Object>> data = gameRepository
-
-        return new ResponseEntity<>(data, HttpStatus.ACCEPTED);
-    }
-
-    //not done!!!!!!!!
-    @RequestMapping(path = "/matches/user", method = RequestMethod.GET)
-    private ResponseEntity<Map<String, Object>> getUserMatches(Authentication authentication) {
+    private ResponseEntity<Map<String, Object>> getMatches(Authentication authentication) {
         if (isGuest(authentication)) {
             return new ResponseEntity<>(new HashMap<>(), HttpStatus.FORBIDDEN);
         }
 
-        return new ResponseEntity<>(null, HttpStatus.ACCEPTED);
-    }
+        Player player = getUser(authentication);
 
-    @RequestMapping("/players")
-    private List<Map<String, Object>> getPlayers() {
-        return playerRepository.findAll()
-                .stream()
-                .map(x -> x.getMappedData())
-                .collect(Collectors.toList());
-    }
+        Set<Map<String, Object>> matches =
+                gameRepository.findAll().stream().filter(game -> !game.containsPlayer(player)).filter(game -> game.getGamePlayers().size() == 1).map(game -> game.getMenuMappedData()).collect(Collectors.toSet());
 
-    @RequestMapping(value = "/games", method = RequestMethod.GET)
-    private Map<String, Object> getPlayerAndGames(Authentication authentication) {
+        Set<Game> playerGames =
+                gameRepository.findAll().stream().filter(game -> game.containsPlayer(player)).collect(Collectors.toSet());
+        Set<Map<String, Object>> current =
+                playerGames.stream().filter(game -> game.getState() != GameStates.FINISHED).map(game -> game.getMenuMappedData(player.getId())).collect(Collectors.toSet());
+        Set<Map<String, Object>> history =
+                playerGames.stream().filter(game -> game.getState() == GameStates.FINISHED).map(game -> game.getMenuMappedData(player.getId())).collect(Collectors.toSet());
+
+        Map<String, Object> userMatches = new HashMap<>();
+        userMatches.put("current", current);
+        userMatches.put("history", history);
+
         Map<String, Object> data = new HashMap<>();
+        data.put("matches", matches);
+        data.put("userMatches", userMatches);
+        data.put("users", getUsers());
 
-        data.put("user", isGuest(authentication) ? null : getUser(authentication).getMappedData());
-        data.put("games", this.getGames());
+        return new ResponseEntity<>(data, HttpStatus.ACCEPTED);
+    }
+
+    private Set<Map<String, Object>> getUsers() {
+        Set<String> principals = sessionRegistry.getAllPrincipals().stream()
+                .filter(principal -> principal instanceof User)
+                .map(User.class::cast)
+                .map(user -> user.getUsername())
+                .collect(Collectors.toSet());
+
+        Set<Map<String, Object>> data = new HashSet<>();
+
+        List<Player> players = playerRepository.findAll();
+        Map<String, Object> playerData;
+        for (Player player: players) {
+            playerData = player.getMappedData();
+            playerData.put("isOnline", principals.contains(player.getEmail()));
+
+            data.add(playerData);
+        }
 
         return data;
     }
 
-    private List<Map<String, Object>> getGames() {
-        return gameRepository.findAll()
-                .stream()
-                .map(x -> x.getMappedData())
-                .collect(Collectors.toList());
-    }
-
-    @RequestMapping(value = "/games", method = RequestMethod.POST)
+    //GAME
+    @RequestMapping(path = "/games", method = RequestMethod.POST)
     private ResponseEntity<Long> createGame(Authentication authentication) {
         if (!isGuest(authentication)) {
             Date date = new Date();
@@ -167,7 +153,33 @@ public class SalvoController {
         return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/game/{gm}/players", method = RequestMethod.POST)
+    //GAME VIEW
+    @RequestMapping(path = "/game_view/{gp}", method = RequestMethod.GET)
+    private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long gp, Authentication authentication) {
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
+        Player user = getUser(authentication);
+
+        if (user == null || gamePlayer.getPlayerId() != user.getId()) {
+            return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<Map<String, Object>> (gamePlayer.getGame().getMappedData(gamePlayer.getId()), HttpStatus.ACCEPTED);
+    }
+
+    @RequestMapping(path = "/game_view/{gp}/turns/{tn}", method = RequestMethod.GET)
+    private ResponseEntity<Map<String, Object>> getGameUpdate(@PathVariable Long gp, @PathVariable Long tn, Authentication authentication) {
+        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
+        Player user = getUser(authentication);
+
+        if (user == null || gamePlayer.getPlayerId() != user.getId()) {
+            return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(gamePlayer.getGame().getMappedDataByTurn(tn), HttpStatus.ACCEPTED);
+    }
+
+    //GAME ACTIONS
+    @RequestMapping(path = "/game/{gm}/players", method = RequestMethod.POST)
     private ResponseEntity<Long> addPlayer(@PathVariable Long gm, Authentication authentication) {
         Game game = gameRepository.findById(gm).get();
         Player user = getUser(authentication);
@@ -187,7 +199,7 @@ public class SalvoController {
         return new ResponseEntity<Long>(0L, HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/games/players/{gp}/ships", method = RequestMethod.POST)
+    @RequestMapping(path = "/games/players/{gp}/ships", method = RequestMethod.POST)
     private ResponseEntity<String> addShips(@PathVariable Long gp, @RequestBody List<Ship> ships, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
@@ -223,7 +235,7 @@ public class SalvoController {
         return new ResponseEntity<String>("No user found", HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping(value = "/games/players/{gp}/salvoes", method = RequestMethod.POST)
+    @RequestMapping(path = "/games/players/{gp}/salvoes", method = RequestMethod.POST)
     private ResponseEntity<String> addSalvoes(@PathVariable Long gp, @RequestBody List<Salvo> salvoes, Authentication authentication) {
         GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
         Player user = getUser(authentication);
@@ -294,7 +306,7 @@ public class SalvoController {
                     gameLogRepository.save(gameLog);
                 }
 
-                playerRepository.saveAll(gamePlayers.stream().map(x -> x.getPlayer()).collect(Collectors.toSet()));
+                playerRepository.saveAll(gamePlayers.stream().map(x -> x.getPlayer()).collect(Collectors.toList()));
             }
 
             gamePlayerRepository.saveAll(gamePlayers);
@@ -306,35 +318,10 @@ public class SalvoController {
         return new ResponseEntity<String>("No user found", HttpStatus.UNAUTHORIZED);
     }
 
-    @RequestMapping("/templates/ships")
-    private Set<Map<String, Object>> getShips() {
-        return Consts.SHIPS;
-    }
+    //TEMPLATES
+    @RequestMapping(path = "/templates/ships")
+    private Set<Map<String, Object>> getShips() { return Consts.SHIPS; }
 
-    @RequestMapping("/templates/salvoes")
+    @RequestMapping(path = "/templates/salvoes")
     private int getSalvoes() { return Consts.SALVOES; }
-
-    @RequestMapping(value = "/game_view/{gp}", method = RequestMethod.GET)
-    private ResponseEntity<Map<String, Object>> getGameView(@PathVariable Long gp, Authentication authentication) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
-        Player user = getUser(authentication);
-
-        if (user == null || gamePlayer.getPlayerId() != user.getId()) {
-            return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
-        }
-
-        return new ResponseEntity<Map<String, Object>> (gamePlayer.getGame().getMappedData(gamePlayer.getId()), HttpStatus.ACCEPTED);
-    }
-
-    @RequestMapping(value = "/game_view/{gp}/turns/{tn}", method = RequestMethod.GET)
-    private ResponseEntity<Map<String, Object>> getGameUpdate(@PathVariable Long gp, @PathVariable Long tn, Authentication authentication) {
-        GamePlayer gamePlayer = gamePlayerRepository.findById(gp).get();
-        Player user = getUser(authentication);
-
-        if (user == null || gamePlayer.getPlayerId() != user.getId()) {
-            return new ResponseEntity<Map<String, Object>>(new HashMap<>(), HttpStatus.UNAUTHORIZED);
-        }
-
-        return new ResponseEntity<Map<String, Object>>(gamePlayer.getGame().getMappedDataByTurn(tn), HttpStatus.ACCEPTED);
-    }
 }

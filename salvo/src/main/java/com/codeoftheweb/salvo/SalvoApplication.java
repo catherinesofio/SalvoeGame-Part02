@@ -108,12 +108,12 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.formLogin().failureHandler((req, res, exc) -> res.sendError(HttpServletResponse.SC_UNAUTHORIZED));
 
 		http.logout().logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler());
+
+		http.sessionManagement().maximumSessions(1).sessionRegistry(sessionRegistry());
 	}
 
 	@Bean
-	public SessionRegistry sessionRegistry() {
-		return new SessionRegistryImpl();
-	}
+	public SessionRegistry sessionRegistry() { return new SessionRegistryImpl(); }
 
 	@Bean
 	public ServletListenerRegistrationBean<HttpSessionEventPublisher> httpSessionEventPublisher() {

@@ -184,29 +184,50 @@ public class Game {
         return data;
     }
 
+    @JsonIgnore
+    public Map<String, Object> getMenuMappedData() {
+        Map<String, Object> data = new HashMap<>();
+
+        data.put("id", this.id);
+        data.put("state", this.state.toString());
+
+        GamePlayer opponent = gamePlayers.stream().findFirst().get();
+        Map<String, Object> player = new HashMap<String, Object>();
+        player.put("id", opponent.getPlayerId());
+        player.put("state", opponent.getState());
+
+        Map<String, Object> gps = new HashMap<>();
+        gps.put("opponent", player);
+        data.put("gamePlayers", gps);
+
+        return data;
+    }
+
+    @JsonIgnore
     public Map<String, Object> getMenuMappedData(Long userId) {
         Map<String, Object> data = new HashMap<>();
 
         data.put("id", this.id);
-        data.put("state", this.state);
+        data.put("state", this.state.toString());
 
-        GamePlayer opponent = this.gamePlayers.stream().filter(x -> x.getPlayerId() != userId).findAny().get();
-        data.put("opponent", (opponent != null) ? opponent.getPlayerId() : -1);
-
-        List<Map<String, Object>> gps = new ArrayList<>();
+        Map<String, Object> gps = new HashMap<>();
         Map<String, Object> player;
         for (GamePlayer gp : this.gamePlayers) {
             player = new HashMap<String, Object>();
-
-            player.put("id", gp.getId());
             player.put("state", gp.getState());
 
             if (gp.getPlayerId() != userId) {
-                data.put("opponent", );
-            } else {
+                player.put("id", gp.getPlayerId());
 
+                gps.put("opponent", player);
+            } else {
+                player.put("id", gp.getId());
+
+                gps.put("player", player);
             }
         }
+
+        data.put("gamePlayers", gps);
 
         return data;
     }

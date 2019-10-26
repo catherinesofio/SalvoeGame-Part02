@@ -22,7 +22,7 @@ export default {
         QuestInfo
     },
     computed: {
-        ...mapState(['quests'])
+        ...mapState(['matches'])
     },
     methods: {
         ...mapActions(['createMatch'])
