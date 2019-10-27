@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Nav :user="user" />
+        <Nav :user='this.user' />
         <Spacer />
         <router-view />
     </div>
@@ -40,7 +40,7 @@ export default {
         }
     },
     mounted: function() {
-        this.interval = setInterval(this.updateInfo, this.time);
+        this.updateInfo();
     },
     beforeDestroy: function() {
         clearInterval(this.interval);

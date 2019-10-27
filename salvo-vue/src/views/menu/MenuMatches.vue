@@ -10,7 +10,7 @@
                 <MatchInfo v-for="match in this.matches" v-bind:key="match.id" :id="match.id" :opponent="getName(match.gamePlayers.opponent)" :isOnline="isOnline(match.gamePlayers.opponent)" :state="getStates(match)" />
             </tbody>
         </table>
-        <button v-on:click='this.createMatch'>🗡️ CREATE QUEST 🗡️</button>
+        <button v-on:click='this.createMatch'>🗡️ CREATE MATCH 🗡️</button>
     </div>
 </template>
 
@@ -36,8 +36,9 @@ export default {
         },
         getStates: function(data) {
             let opponent = data.gamePlayers.opponent;
+            let player = data.gamePlayers.player;
 
-            return { game: data.state , opponent: (opponent != null) ? opponent.state : '' };
+            return { game: data.state , opponent: (opponent != null) ? opponent.state : '', player: (player != null) ? player.state : '' };
         }
     }
 };

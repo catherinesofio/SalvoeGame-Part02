@@ -11,7 +11,7 @@
                 <th>STATUS</th>
             </thead>
             <tbody>
-                <UserMatchInfo v-for='match in this.getMatches' v-bind:key='match.id' :showCurrent='showCurrent' :opponent='getName(match.gamePlayers.opponent)' :isOnline='isOnline(match.gamePlayers.opponent)' :state='getStates(match)' />
+                <UserMatchInfo v-for='match in this.getMatches' v-bind:key='match.gamePlayers.player.id' :id='match.gamePlayers.player.id' :showCurrent='showCurrent' :opponent='getName(match.gamePlayers.opponent)' :isOnline='isOnline(match.gamePlayers.opponent)' :state='getStates(match)' />
             </tbody>
         </table>
     </div>
@@ -51,8 +51,9 @@ export default {
         },
         getStates: function(data) {
             let opponent = data.gamePlayers.opponent;
+            let player = data.gamePlayers.player;
 
-            return { game: data.state , opponent: (opponent != null) ? opponent.state : '' };
+            return { game: data.state , opponent: (opponent != null) ? opponent.state : '', player: (player != null) ? player.state : '' };
         }
     }
 };

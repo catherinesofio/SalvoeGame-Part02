@@ -53,10 +53,10 @@ const store = new Vuex.Store({
       await axios.get('/api/matches').then(response => {
         let data = JSON.parse(JSON.stringify(response.data));
 
-        let users = data.users;
-        state.users = users.sort(function(a, b) {
+        let users = data.users.sort(function(a, b) {
           return a.id - b.id;
         });
+        state.users = users;
         state.matches = data.matches;
         state.userMatches = data.userMatches;
         state.leaderboards = users.map(function(user) {
@@ -82,14 +82,28 @@ const store = new Vuex.Store({
       await axios.post('/api/logout').finally(() => { 
         context.commit('SET_USER', null)});
     },
-    joinMatch: (context, params) => {
-      //JOIN MATCH
+    createMatch: async (context) => {
+      await axios.post('/api/games').then(response => {
+        router.push({ name: 'game', params: { gp: response.data } });
+      });
     },
-    createMatch: (context) => {
-      //CREATE MATCH
+    joinMatch: async (context, gm) => {
+      await axios.post('/api/game/' + gm + '/players').then(response => {
+        router.push({ name: 'game', params: { gp: response.data } });
+      });
     },
-    loadMatch: (context, params) => {
-      //LOAD MATCH
+    loadMatch: (context, gp) => {
+      router.push({ name: 'game', params: { gp: gp } });
+    },
+    getMatchData: (context, { gp, callback }) => {
+      axios.get('/api/game_view/' + gp).then(response => {
+        callback(response.data);
+      });
+    },
+    getTurnData: (context, { gp, tn, callback }) => {
+      axios.get('/api/game_view/' + gp + '/turns/' + tn).then(response => {
+        callback(response.data);
+      });
     }
   }
 });

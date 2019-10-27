@@ -41,7 +41,7 @@ const routes = [
     ]
   },
   {
-    path: '/game',
+    path: '/game/:gp',
     name: 'game',
     component: Game,
     children: [
@@ -70,7 +70,7 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   let userExists = store.state.user != null;
 
-  if (to.path.includes('/menu') && !userExists) {
+  if (to.path.includes('/menu') && !userExists || to.path.includes('/game') && !userExists) {
     next({ name: 'login', replace: true });
   }
   
