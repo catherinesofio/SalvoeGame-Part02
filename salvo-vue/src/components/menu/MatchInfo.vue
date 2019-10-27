@@ -4,6 +4,7 @@
             <IconOnline :isOnline="this.isOnline" />
             <h2>{{ this.opponent }}</h2>
         </td>
+        <td>{{ this.state }}</td>
         <td>
             <button v-on:click='triggerJoinMatch'>🗡️</button>
         </td>
@@ -15,7 +16,7 @@ import IconOnline from '@/components/IconOnline.vue';
 import { mapActions } from 'vuex';
 
 export default {
-    props: ['id', 'opponent', 'isOnline'],
+    props: ['id', 'opponent', 'isOnline', 'state'],
     components: {
         IconOnline
     },

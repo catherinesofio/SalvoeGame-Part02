@@ -1,7 +1,7 @@
 <template>
     <tr>
         <td>
-            <IconOnline v-if='this.showCurrent' v-bind:isOnline='this.isOnline' />
+            <IconOnline v-if='this.showCurrent && opponentExist' v-bind:isOnline='this.isOnline' />
             {{ this.opponent }}
         </td>
         <td>{{ this.state }}</td>
@@ -19,6 +19,11 @@ export default {
     props: ['showCurrent', 'id', 'opponent', 'isOnline', 'state'],
     components: {
         IconOnline
+    },
+    computed: {
+        opponentExist: function() {
+            return this.opponent != '';
+        }
     },
     methods: {
         ...mapActions(['loadMatch']),

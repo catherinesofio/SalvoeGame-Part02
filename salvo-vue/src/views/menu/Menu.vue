@@ -15,8 +15,8 @@ export default {
     name: 'Menu',
     data: function() {
         return {
-            interval,
-            time: 2500
+            interval: null,
+            time: 30000
         }
     },
     components: {
@@ -25,14 +25,20 @@ export default {
     },
     computed: {
         ...mapState(['user']),
+        userExists: function() {
+            return this.user != null;
+        }
     },
     methods: {
         updateInfo: function() {
-            this.$store.commit('UPDATE_INFO'); 
+            if (this.userExists) {
+                this.$store.commit('UPDATE_INFO');
 
-            this.interval = setInterval(this.updateInfo, this.time);
+                clearInterval(this.interval);
+                this.interval = setInterval(this.updateInfo, this.time);
+            }
         }
-    }
+    },
     mounted: function() {
         this.interval = setInterval(this.updateInfo, this.time);
     },

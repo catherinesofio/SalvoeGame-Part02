@@ -3,8 +3,8 @@ import VueRouter from 'vue-router';
 import store from '@/store/index.js';
 import Login from '../views/Login.vue';
 import Menu from '../views/menu/Menu.vue';
-import MenuQuests from '../views/menu/MenuQuests.vue';
-import MenuUserQuests from '../views/menu/MenuUserQuests.vue';
+import MenuMatches from '../views/menu/MenuMatches.vue';
+import MenuUserMatches from '../views/menu/MenuUserMatches.vue';
 import MenuLeaderboards from '../views/menu/MenuLeaderboards.vue';
 import Game from '../views/game/Game.vue';
 import GameView from '../views/game/GameView.vue';
@@ -23,16 +23,16 @@ const routes = [
   {
     path: '/menu',
     name: 'menu',
-    redirect: '/menu/quests',
+    redirect: '/menu/matches',
     component: Menu,
     children: [
       {
-        path: 'quests',
-        component: MenuQuests
+        path: 'matches',
+        component: MenuMatches
       },
       {
-        path: 'my-quests',
-        component: MenuUserQuests
+        path: 'my-matches',
+        component: MenuUserMatches
       },
       {
         path: 'leaderboards',
@@ -71,11 +71,11 @@ router.beforeEach((to, from, next) => {
   let userExists = store.state.user != null;
 
   if (to.path.includes('/menu') && !userExists) {
-    next({ path: '/login', replace: true });
+    next({ name: 'login', replace: true });
   }
   
   if (to.path == '/login' && userExists) {
-    next({ path: '/menu', replace: true });
+    next({ name: 'menu', replace: true });
   }
 
   next();

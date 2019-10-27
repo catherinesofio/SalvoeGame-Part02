@@ -8,7 +8,7 @@
                 <th>POINTS</th>
             </thead>
             <tbody>
-                <LeaderboardInfo v-for='user in this.leaderboards' v-bind:key='user.username' :position='user.position' :username='user.username' :points='user.points' />
+                <LeaderboardInfo v-for='(user, index) in this.leaderboards' v-bind:key='index' :position='index + 1' :username='getName(index + 1)' :points='user.points' />
             </tbody>
         </table>
     </div>
@@ -16,14 +16,20 @@
 
 <script>
 import LeaderboardInfo from '@/components/menu/LeaderboardInfo.vue';
-import { mapState } from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 
 export default {
     components: {
         LeaderboardInfo
     },
     computed: {
-        ...mapState(['leaderboards'])
+        ...mapState(['leaderboards']),
+        ...mapGetters(['getUserName'])
+    },
+    methods: {
+        getName: function (id) {
+            return this.getUserName(id);
+        }
     }
 };
 </script>

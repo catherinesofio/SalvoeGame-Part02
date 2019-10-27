@@ -1,7 +1,7 @@
 <template>
     <div>
-        <router-link to='/menu/quests'>📜</router-link>
-        <router-link to='/menu/my-quests'>⚔️</router-link>
+        <router-link to='/menu/matches'>📜</router-link>
+        <router-link to='/menu/my-matches'>⚔️</router-link>
         <router-link to='/menu/leaderboards'>🏆</router-link>
     </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
     <div>
         <h1>{{ getName }}</h1>
-        <button v-on:click='logout'>🚪</button>
+        <button v-on:click='triggerLogout'>🚪</button>
     </div>
 </template>
 
@@ -16,7 +16,10 @@ export default {
         }
     },
     methods: {
-        ...mapActions(['logout'])
+        ...mapActions(['logout']),
+        triggerLogout: function() {
+            this.logout();
+        }
     }
 };
 </script>
