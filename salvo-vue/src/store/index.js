@@ -25,8 +25,8 @@ const store = new Vuex.Store({
     }
   },
   mutations: {
-    INIT_USER: async state => {
-      await axios.get('/api/user').then(response => { 
+    INIT_USER: state => {
+      axios.get('/api/user').then(response => { 
         let data = JSON.parse(JSON.stringify(response.data));
         data = (data.name == null) ? null : data;
 
@@ -40,7 +40,7 @@ const store = new Vuex.Store({
       
       checkUser(value);
     },
-    UPDATE_INFO: async state => {
+    UPDATE_INFO: state => {
       if (state.user == null) {
         state.users = [];
         state.matches = [];
@@ -50,7 +50,7 @@ const store = new Vuex.Store({
         return;
       }
 
-      await axios.get('/api/matches').then(response => {
+      axios.get('/api/matches').then(response => {
         let data = JSON.parse(JSON.stringify(response.data));
 
         let users = data.users.sort(function(a, b) {
@@ -73,22 +73,27 @@ const store = new Vuex.Store({
     }
   },
   actions: {
-    login: async (context, params) => {
-      await axios.post('/api/login', new URLSearchParams(params)).finally(() => {
+    register: ({ context, dispatch }, params) => {
+      axios.post('/api/register', new URLSearchParams(params)).then(() => {
+        dispatch('login', { email: params.email, password: params.password });
+      });
+    },
+    login: (context, params) => {
+      axios.post('/api/login', new URLSearchParams(params)).finally(() => {
         context.commit('INIT_USER');
       });
     },
-    logout: async (context) => {
-      await axios.post('/api/logout').finally(() => { 
+    logout: (context) => {
+      axios.post('/api/logout').finally(() => { 
         context.commit('SET_USER', null)});
     },
-    createMatch: async (context) => {
-      await axios.post('/api/games').then(response => {
+    createMatch: (context) => {
+      axios.post('/api/games').then(response => {
         router.push({ name: 'game', params: { gp: response.data } });
       });
     },
-    joinMatch: async (context, gm) => {
-      await axios.post('/api/game/' + gm + '/players').then(response => {
+    joinMatch: (context, gm) => {
+      axios.post('/api/game/' + gm + '/players').then(response => {
         router.push({ name: 'game', params: { gp: response.data } });
       });
     },

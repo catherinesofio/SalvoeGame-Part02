@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import store from '@/store/index.js';
-import Login from '../views/Login.vue';
+import Auth from '../views/Auth.vue';
 import Menu from '../views/menu/Menu.vue';
 import MenuMatches from '../views/menu/MenuMatches.vue';
 import MenuUserMatches from '../views/menu/MenuUserMatches.vue';
@@ -17,9 +17,8 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login
-  }
-  ,
+    component: Auth
+  },
   {
     path: '/menu',
     name: 'menu',
