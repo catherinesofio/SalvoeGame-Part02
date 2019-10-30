@@ -1,5 +1,6 @@
 # MindHub-Course05 (ON GOING)
-## Introduction to Java 2 - Course details: https://mindhubweb.com/cursos/full-stack-desarrollo-web/
+## Introduction to Java 2
+Course details: https://mindhubweb.com/cursos/full-stack-desarrollo-web/
 [Project 01](https://github.com/catherinesofio/MindHub-Course01) -
 [Project 02](https://github.com/catherinesofio/MindHub-Course02) -
 [Project 03](https://github.com/catherinesofio/MindHub-Course03) -
