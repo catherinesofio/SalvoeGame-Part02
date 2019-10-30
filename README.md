@@ -9,7 +9,7 @@ This project is divided into two modules: this is the second one. It consists on
 Made by Catalina Sofio Avogadro.
 <br/>
 <br/>
-Other parts of this course:
+Other parts of this course:<br/>
 * Project 01: https://github.com/catherinesofio/MindHub-Course01<br/>
 * Project 02: https://github.com/catherinesofio/MindHub-Course02<br/>
 * Project 03: https://github.com/catherinesofio/MindHub-Course03<br/>
