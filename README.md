@@ -10,7 +10,7 @@ Made by Catalina Sofio Avogadro.
 <br/>
 <br/>
 Other parts of this course:
-* Project 01: https://github.com/catherinesofio/MindHub-Course01
-* Project 02: https://github.com/catherinesofio/MindHub-Course02
-* Project 03: https://github.com/catherinesofio/MindHub-Course03
-* Project 04: https://github.com/catherinesofio/MindHub-Course04
+* Project 01: https://github.com/catherinesofio/MindHub-Course01<br/>
+* Project 02: https://github.com/catherinesofio/MindHub-Course02<br/>
+* Project 03: https://github.com/catherinesofio/MindHub-Course03<br/>
+* Project 04: https://github.com/catherinesofio/MindHub-Course04<br/>
