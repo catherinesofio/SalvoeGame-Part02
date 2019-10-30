@@ -100,6 +100,12 @@ const store = new Vuex.Store({
     loadMatch: (context, gp) => {
       router.push({ name: 'game', params: { gp: gp } });
     },
+    getShipsTemplate: (context, callback) => {
+      axios.get('/api/templates/ships').then(response => callback(response.data));
+    },
+    getSalvoesTemplate: (context, callback) => {
+      axios.get('/api/templates/salvoes').then(response => callback(response.data));
+    },
     getMatchData: (context, { gp, callback }) => {
       axios.get('/api/game_view/' + gp).then(response => {
         callback(response.data);
