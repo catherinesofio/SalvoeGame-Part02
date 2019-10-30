@@ -11,7 +11,7 @@
                 <th>STATUS</th>
             </thead>
             <tbody>
-                <UserMatchInfo v-for='match in this.getMatches' v-bind:key='match.gamePlayers.player.id' :id='match.gamePlayers.player.id' :showCurrent='showCurrent' :opponent='getName(match.gamePlayers.opponent)' :isOnline='isOnline(match.gamePlayers.opponent)' :state='getStates(match)' />
+                <UserMatchInfo v-for='match in this.getMatches' :key='match.gamePlayers.player.id' :id='match.gamePlayers.player.id' :showCurrent='showCurrent' :opponent='getName(match.gamePlayers.opponent)' :isOnline='isOnline(match.gamePlayers.opponent)' :state='getStates(match)' />
             </tbody>
         </table>
     </div>

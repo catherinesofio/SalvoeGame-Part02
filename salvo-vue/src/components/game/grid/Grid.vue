@@ -6,21 +6,23 @@
         </thead>
         <tbody>
             <tr v-for='x in headers' v-bind:key='x'>
-                <th>{{ headersY[x] }}</th>
-                <Cell v-for='y in headers' v-bind:key='y' :id='getCellId(x, y)' :isEmpty='isOccupied(x, y)' />
+                <th>{{ headersY[x - 1] }}</th>
+                <Cell v-for='y in headers' v-bind:key='y' :id='getCellId(x, y)' :isOccupied='isOccupied(x, y)' />
             <tr/>
         </tbody>
     </table>
 </template>
 
 <script>
-import Cell from '@/components/grid/Cell.vue';
+import Cell from '@/components/game/grid/Cell.vue';
 
 export default {
     props: ['id', 'occupiedCells'],
-    data: {
-        headers: 10,
-        headersY: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+    data: function() {
+        return {
+            headers: 10,
+            headersY: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+        };
     },
     components: {
         Cell

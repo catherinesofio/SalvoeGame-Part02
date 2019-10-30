@@ -1,19 +1,20 @@
 <template>
-    <td v-bind:id='id' v-bind:isEmpty='isEmpty'></td>
+    <td class='cell' :id='id' :isOccupied='isOccupied'></td>
 </template>
 
 <script>
 export default {
-    props: ['id', 'isEmpty']
+    props: ['id', 'isOccupied']
 };
 </script>
 
-<style scoped>
-td[isEmpty=true] {
-    color: blue;
+<style>
+.cell {
+    width: var(--cell-size);
+    background-color: lightskyblue;
 }
 
-td[isEmpty=false] {
-    color: gray;
+.cell[isOccupied=true] {
+    background-color: grey;
 }
 </style>

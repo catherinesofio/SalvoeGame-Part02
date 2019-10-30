@@ -106,6 +106,12 @@ const store = new Vuex.Store({
     getSalvoesTemplate: (context, callback) => {
       axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
+    setShips: (context, { gp, params }) => {
+      axios.post('/api/games/players/' + gp + '/ships', new URLSearchParams(params));
+    },
+    setSalvoes: (context, { gp, tn, params }) => {
+      axios.post('/api/game_view/' + gp + '/turns/' + tn, new URLSearchParams(params));
+    },
     getMatchData: (context, { gp, callback }) => {
       axios.get('/api/game_view/' + gp).then(response => {
         callback(response.data);

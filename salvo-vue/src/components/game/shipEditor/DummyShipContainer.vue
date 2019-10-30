@@ -1,11 +1,11 @@
 <template>
-    <div>
-        <DummyShip v-for='ship in ships' v-bind:key='ship' />
+    <div id='shipContainer'>
+        <DummyShip v-for='(ship, index) in ships' v-bind:key='index' :type='ship.type' :size='ship.size' />
     </div>
 </template>
 
 <script>
-import DummyShip from '@/components/game/ships/DummyShip.vue';
+import DummyShip from '@/components/game/shipEditor/DummyShip.vue';
 import { mapActions } from 'vuex';
 
 export default {
@@ -28,3 +28,13 @@ export default {
     }
 };
 </script>
+
+<style>
+#shipContainer {
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    height: 5em;/*var(--cell-size);*/
+    background-color: rgba(0,0,0,0.5);
+}
+</style>

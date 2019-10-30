@@ -1,16 +1,36 @@
 <template>
     <div>
         <h1>SHIPS</h1>
-        <ShipEditor />
+        <DummyShipContainer />
+        <Grid :id='id' :occupiedCells='[]' />
+        <button v-on:click='triggerSubmit' :disabled='!allShipsPlaced'>SUBMIT</button>
     </div>
 </template>
 
 <script>
-import ShipEditor from '@/components/game/ShipEditor.vue';
+import Grid from '@/components/game/grid/Grid.vue';
+import DummyShipContainer from '@/components/game/shipEditor/DummyShipContainer.vue';
+import { mapActions } from 'vuex';
 
 export default {
+    data: function() {
+        return {
+            id: 'player',
+            data: [],
+            allShipsPlaced: false
+        };
+    },
     components: {
-        ShipEditor
+        Grid,
+        DummyShipContainer
+    },
+    methods: {
+        ...mapActions(['setShips']),
+        triggerSubmit: function() {
+            if (this.allShipsPlaced) {
+                this.setShips({ gp: this.$route.params.gp, params: this.data });
+            }
+        }
     }
 };
 </script>

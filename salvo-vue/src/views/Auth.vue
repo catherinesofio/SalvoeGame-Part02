@@ -1,12 +1,10 @@
 <template>
-    <div>
-        <div v-if='login'>
-            <button v-on:click='setLogin(false)'>REGISTER</button>
-            <LoginForm />
-        </div>
-        <div v-if='!login'>
-            <button v-on:click='setLogin(true)'>LOGIN</button>
-            <RegisterForm />
+    <div class='view'>
+        <div class='auth'>
+            <button v-on:click='setLogin(true)' :disabled='login'>LOGIN</button>
+            <button v-on:click='setLogin(false)' :disabled='!login'>REGISTER</button>
+            <LoginForm v-if='login' />
+            <RegisterForm v-if='!login' />
         </div>
     </div>
 </template>
@@ -33,3 +31,14 @@ export default {
     }
 };
 </script>
+
+<style>
+.auth {
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--color-01);
+}
+</style>

@@ -7,7 +7,7 @@
                 <th>STATE</th>
             </thead>
             <tbody>
-                <MatchInfo v-for="match in this.matches" v-bind:key="match.id" :id="match.id" :opponent="getName(match.gamePlayers.opponent)" :isOnline="isOnline(match.gamePlayers.opponent)" :state="getStates(match)" />
+                <MatchInfo v-for="match in this.matches" :key="match.id" :id="match.id" :opponent="getName(match.gamePlayers.opponent)" :isOnline="isOnline(match.gamePlayers.opponent)" :state="getStates(match)" />
             </tbody>
         </table>
         <button v-on:click='this.createMatch'>🗡️ CREATE MATCH 🗡️</button>

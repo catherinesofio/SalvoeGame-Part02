@@ -8,7 +8,7 @@
                 <th>POINTS</th>
             </thead>
             <tbody>
-                <LeaderboardInfo v-for='(user, index) in this.leaderboards' v-bind:key='index' :position='index + 1' :username='getName(index + 1)' :points='user.points' />
+                <LeaderboardInfo v-for='(user, index) in this.leaderboards' :key='index' :position='index + 1' :username='getName(index + 1)' :points='user.points' />
             </tbody>
         </table>
     </div>

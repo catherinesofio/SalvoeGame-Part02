@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class='view'>
         <Nav :user='this.user' />
         <Spacer />
         <router-view />
@@ -16,7 +16,10 @@ export default {
     data: function() {
         return {
             gp: 0,
-            data: {}
+            data: {},
+            turn: -1,
+            interval: null,
+            time: 30000
         };
     },
     components: {
@@ -27,9 +30,10 @@ export default {
         ...mapState(['user'])
     },
     methods: {
-        ...mapActions(['getMatchData']),
+        ...mapActions(['getMatchData', 'getTurnData']),
         setMatchData: function(data) {
             this.data = data;
+            this.turn = data.turn;
             let path = '/menu';
 
             switch (data.state) {
@@ -45,11 +49,27 @@ export default {
             }
             
             this.$router.push({ path: path });
+
+            clearInterval(this.interval);
+            this.interval = setInterval(this.triggerUpdateMatchData, this.time);
+        },
+        triggerUpdateMatchData: function() {
+            this.getTurnData({ gp: this.gp, tn: this.turn, callback: this.updateMatchData });
+        },
+        updateMatchData: function(data) {
+            this.data = data;
+            this.turn = data.turn;
+
+            clearInterval(this.interval);
+            this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         }
     },
     mounted: function() {
         this.gp = this.$route.params.gp;
         this.getMatchData({ gp: this.gp, callback: this.setMatchData });
+    },
+    beforeDestroy: function() {
+        clearInterval(this.interval);
     }
 }
 </script>

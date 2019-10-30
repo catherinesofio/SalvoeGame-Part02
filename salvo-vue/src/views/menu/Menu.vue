@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class='view'>
         <Nav :user='this.user' />
         <Spacer />
         <router-view />
@@ -17,7 +17,7 @@ export default {
         return {
             interval: null,
             time: 30000
-        }
+        };
     },
     components: {
         Nav,
