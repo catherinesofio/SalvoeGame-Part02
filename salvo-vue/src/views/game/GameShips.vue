@@ -10,6 +10,7 @@
 <script>
 import Grid from '@/components/game/grid/Grid.vue';
 import DummyShipContainer from '@/components/game/shipEditor/DummyShipContainer.vue';
+import GizmoObject from '@/components/game/shipEditor/gizmoObject/GizmoObject.vue';
 import { mapActions } from 'vuex';
 
 export default {

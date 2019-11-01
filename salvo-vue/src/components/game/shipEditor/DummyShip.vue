@@ -1,5 +1,5 @@
 <template>
-    <div :class='getClass' :isPositioned='isPositioned' :size='size' :orientation='orientation' v-on:click='select'></div>
+    <div :id='type' :class='getClass' :isPositioned='isPositioned' :size='size' :orientation='orientation' v-on:click='select($event)'></div>
 </template>
 
 <script>
@@ -8,8 +8,10 @@ export default {
     data: function() {
         return {
             orientation: 'horizontal',
+            parent: null,
             isPositioned: false,
-            cell: ''
+            cell: '',
+            obj: null
         };
     },
     computed: {
@@ -18,17 +20,24 @@ export default {
         }
     },
     methods: {
-        select: function() {
-            console.log("selected askjdhkas");
+        select: function(e) {
+
         },
-        setShipData: function({ isPositioned, orientation, cell }) {
+        unselect: function(e) {
+
+        },
+        setShipData: function({ parent, isPositioned, orientation, cell }) {
+            this.parent = parent;
             this.isPositioned = isPositioned;
             this.orientation = orientation;
             this.cell = cell;
         },
         getShipData: function() {
-            return { size: this.size, orientation: this.orientation, isPositioned: this.isPositioned, cell: this.cell };
+            return { size: this.size, orientation: this.orientation, parent: this.parent, isPositioned: this.isPositioned, cell: this.cell, obj: this.obj };
         }
+    },
+    mounted: function() {
+        this.obj = document.getElementById(this.type);
     }
 };
 </script>
