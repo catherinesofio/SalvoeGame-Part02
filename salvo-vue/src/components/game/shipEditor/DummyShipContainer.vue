@@ -1,6 +1,6 @@
 <template>
     <div id='shipContainer'>
-        <DummyShip v-for='(ship, index) in ships' v-bind:key='index' :type='ship.type' :size='ship.size' />
+        <DummyShip v-for='(ship, index) in ships' v-bind:key='index' :type='ship.type' :size='ship.size' :callback='callback' />
     </div>
 </template>
 
@@ -12,6 +12,7 @@ export default {
     components: {
         DummyShip
     },
+    props: ['callback'],
     data: function() {
         return {
             ships: []
@@ -19,8 +20,8 @@ export default {
     },
     methods: {
         ...mapActions(['getShipsTemplate']),
-        setShips: function(data) {
-            this.ships = data;
+        setShips: function(ships) {
+            this.ships = ships;
         }
     },
     mounted: function() {

@@ -1,16 +1,12 @@
 <template>
-    <div :id='type' :class='getClass' :isPositioned='isPositioned' :size='size' :orientation='orientation' v-on:click='select($event)'></div>
+    <div :class='getClass' :size='size' orientation='horizontal' isPositioned='false' v-on:click='triggerSelect'></div>
 </template>
 
 <script>
 export default {
-    props: ['type', 'size'],
+    props: ['type', 'size', 'callback'],
     data: function() {
         return {
-            orientation: 'horizontal',
-            parent: null,
-            isPositioned: false,
-            cell: '',
             obj: null
         };
     },
@@ -20,24 +16,12 @@ export default {
         }
     },
     methods: {
-        select: function(e) {
-
-        },
-        unselect: function(e) {
-
-        },
-        setShipData: function({ parent, isPositioned, orientation, cell }) {
-            this.parent = parent;
-            this.isPositioned = isPositioned;
-            this.orientation = orientation;
-            this.cell = cell;
-        },
-        getShipData: function() {
-            return { size: this.size, orientation: this.orientation, parent: this.parent, isPositioned: this.isPositioned, cell: this.cell, obj: this.obj };
+        triggerSelect: function() {
+            this.callback(this.obj);
         }
     },
     mounted: function() {
-        this.obj = document.getElementById(this.type);
+        this.obj = document.getElementsByClassName(this.type.toLowerCase())[0];
     }
 };
 </script>
@@ -46,6 +30,7 @@ export default {
 .ship {
     position: relative;
     background-color: gainsboro;
+    z-index: var(--layer-foreground);
 }
 
 .ship[size='2'][orientation='vertical'] {

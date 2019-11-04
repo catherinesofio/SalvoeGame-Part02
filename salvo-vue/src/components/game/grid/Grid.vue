@@ -2,12 +2,12 @@
     <table v-bind:id='getGridId'>
         <thead>
             <th></th>
-            <th v-for='x in headers' v-bind:key='x'>{{ x }}</th>
+            <th v-for='x in gridHeaders' v-bind:key='x'>{{ x }}</th>
         </thead>
         <tbody>
-            <tr v-for='x in headers' v-bind:key='x'>
-                <th>{{ headersY[x - 1] }}</th>
-                <Cell v-for='y in headers' v-bind:key='y' :id='getCellId(x, y)' :isOccupied='isOccupied(x, y)' />
+            <tr v-for='(y, index) in gridHeadersY' v-bind:key='index'>
+                <th>{{ y }}</th>
+                <Cell v-for='x in gridHeaders' v-bind:key='x' :id='getCellId(x, y)' :isOccupied='isOccupied(x, y)' />
             <tr/>
         </tbody>
     </table>
@@ -15,29 +15,25 @@
 
 <script>
 import Cell from '@/components/game/grid/Cell.vue';
+import { mapState } from 'vuex';
 
 export default {
     props: ['id', 'occupiedCells'],
-    data: function() {
-        return {
-            headers: 10,
-            headersY: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
-        };
-    },
     components: {
         Cell
     },
     computed: {
+        ...mapState(['gridHeaders', 'gridHeadersY']),
         getGridId: function() {
             return this.id + '-table';
         }
     },
     methods: {
         getCellId: function(x, y) {
-            return this.id + '-' + this.headersY[y] + x;
+            return this.id + '-' + y + x;
         },
         isOccupied: function(x, y) {
-            return this.occupiedCells.includes(this.headersY[y] + x);
+            return this.occupiedCells.includes(this.gridHeadersY[y] + x);
         }
     }
 };

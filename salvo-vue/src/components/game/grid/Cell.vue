@@ -10,11 +10,16 @@ export default {
 
 <style>
 .cell {
+    position: relative;
     width: var(--cell-size);
     background-color: lightskyblue;
 }
 
 .cell[isOccupied=true] {
     background-color: grey;
+}
+
+.cell .ship {
+    position: absolute;
 }
 </style>

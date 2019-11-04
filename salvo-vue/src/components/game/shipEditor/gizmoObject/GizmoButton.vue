@@ -1,18 +1,13 @@
 <template>
-    <button class='btn' :type='type' v-on:click='triggerCallback' :disabled='disable'></button>
+    <button class='btn' :type='type' v-on:click='triggerCallback' isBlocked='false'></button>
 </template>
 
 <script>
 export default {
     props: ['type', 'callback'],
-    data: function() {
-        return {
-            disable: true
-        };
-    },
     methods: {
         triggerCallback: function() {
-            this.disable = this.callback(this.type);
+            this.disable = this.callback(this.type, this.setDisabled);
         }
     }  
 };
@@ -20,28 +15,30 @@ export default {
 
 <style>
 .btn {
-    display: block;
     position: absolute;
-    width: calc(var(--cell-size) / 2);
-    height: calc(var(--cell-size / 2));
+    width: var(--gizmo-size);
+    height: var(--gizmo-size);
+    background-color: var(--gizmo-color);
+    z-index: var(--layer-foreground);
 }
 
-.btn[disabled] {
+.btn[isBlocked=false] {
+    position: absolute;
+    display: block;
+}
+
+.btn[isBlocked=true] {
     display: none;
 }
 
 .btn[type='accept'] {
     bottom: -50%;
     right: 100%;
-    top: calc(-1 * var(--cell-size));;
-    right: calc(-1 * var(--cell-size));;
 }
 
 .btn[type='cancel'] {
     bottom: -50%;
     left: 100%;
-    top: calc(-1 * var(--cell-size));;
-    right: calc(-1 * var(--cell-size));;
 }
 
 .btn[type='rotate'] {
@@ -51,7 +48,7 @@ export default {
 
 .btn[type='east'] {
     top: 50%;
-    left: calc(-1 * var(--cell-size));
+    right: calc(-1 * var(--cell-size));
     transform: translateY(-50%);
     background-color: greenyellow;
 }
@@ -71,7 +68,7 @@ export default {
 }
 
 .btn[type='south'] {
-    top: calc(-1 * var(--cell-size));
+    bottom: calc(-1 * var(--cell-size));
     left: 50%;
     transform: translateX(-50%);
     background-color: navy;

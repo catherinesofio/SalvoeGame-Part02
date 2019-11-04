@@ -11,6 +11,6 @@ footer {
     width: 100vw;
     text-align: center;
     background-color: var(--color-03);
-    z-index: var(--layer-middle);
+    z-index: var(--layer-background);
 }
 </style>

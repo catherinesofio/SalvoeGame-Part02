@@ -18,7 +18,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 nav, nav * {
     z-index: var(--layer-ui);
 }
