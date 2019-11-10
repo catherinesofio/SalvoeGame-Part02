@@ -27,8 +27,12 @@ export default {
             parent: null,
             currParent: null,
             placed: null,
-            cellX: '',
-            cellY: ''
+            prevX: 0,
+            prevY: 0,
+            cellX: 0,
+            cellY: 0,
+            prevCells: [],
+            occupiedCells: []
         };
     },
     components: {
@@ -56,13 +60,31 @@ export default {
             this.orientation = this.currOrientation = this.ship.getAttribute('orientation');
 
             this.parent = this.ship.parentNode;
-            this.placed = this.ship.getAttribute('isPositioned');
-            this.placed = (this.placed != true) ? false : true;
+            this.placed = (this.ship.getAttribute('isPositioned') == 'true') ? true : false;
+            this.prevCells = [];
+
             if (this.placed) {
                 let parentId = this.parent.getAttribute('id');
 
-                this.cellX = parseInt(parentId.substring(0, (this.tableId.length + 2)));
-                this.cellY = this.gridHeadersY.indexOf(parentId.substring(0, (this.tableId.length + 1))[0]);
+                this.prevX = this.cellX = parseInt(parentId.substring(this.tableId.length + 2));
+                this.prevY = this.cellY = this.gridHeadersY.indexOf(parentId.substring(this.tableId.length + 1)[0]);
+
+                let offsetX = 0;
+                let offsetY = 0;
+                switch(this.orientation) {
+                    case 'horizontal':
+                        offsetX = 1;
+                        break;
+                    default:
+                        offsetY = 1;
+                        break;
+                }
+
+                let cell;
+                for (let i = 0; i < this.size; i++) {
+                    cell = this.gridHeadersY[(this.cellY + (i * offsetY))] + '' + (this.cellX + (i * offsetX));
+                    this.prevCells.push(cell);
+                }
             } else {
                 this.cellX = 5;
                 this.cellY = 5;
@@ -77,7 +99,43 @@ export default {
             this.checkObjPosition();
         },
         triggerPlace: function() {
-            this.ship.setAttribute('isPositioned', true);
+            let offsetX = 0;
+            let offsetY = 0;
+            let cell;
+
+            if (this.placed) {
+                switch(this.orientation) {
+                    case 'horizontal':
+                        offsetX = 1;
+                        break;
+                    default:
+                        offsetY = 1;
+                        break;
+                }
+
+                for (let i = 0; i < this.size; i++) {
+                    cell = this.gridHeadersY[(this.cellY + (i * offsetY))] + '' + (this.cellX + (i * offsetX));
+                    this.occupiedCells.splice(this.occupiedCells.indexOf(cell))
+                }
+            }
+
+            switch(this.currOrientation) {
+                case 'horizontal':
+                    offsetX = 1;
+                    break;
+                default:
+                    offsetY = 1;
+                    break;
+            }
+
+            for (let i = 0; i < this.size; i++) {
+                cell = this.gridHeadersY[(this.cellY + (i * offsetY))] + '' + (this.cellX + (i * offsetX));
+                if (!this.occupiedCells.includes(cell)) {
+                    this.occupiedCells.push(cell);
+                }
+            }
+            
+            this.ship.setAttribute('isPositioned', 'true');
             this.currParent.appendChild(this.ship);
             this.parent = this.currParent;
             this.orientation = this.currOrientation;
@@ -206,12 +264,26 @@ export default {
         checkObjPosition: function() {
             let offsetX = 0;
             let offsetY = 0;
+            let cell;
 
-            if (this.currOrientation == 'horizontal') {
-                offsetX = 1;
-            } else {
-                offsetY = 1;
+            switch(this.currOrientation) {
+                case 'horizontal':
+                    offsetX = 1;
+                    break;
+                default:
+                    offsetY = 1;
+                    break;
             }
+
+            for (let i = 0; i < this.size; i++) {
+                cell = this.gridHeadersY[(this.cellY + (i * offsetY))] + '' + (this.cellX + (i * offsetX));
+                if (this.occupiedCells.includes(cell) && !this.prevCells.includes(cell)) {
+                    this.handlers[4].setAttribute('isBlocked', true);
+                    return;
+                }
+            }
+
+            this.handlers[4].setAttribute('isBlocked', false);
         }
     },
     mounted: function() {
@@ -223,6 +295,7 @@ export default {
         this.handlers.push(document.querySelector('[type="south"]'));
         this.handlers.push(document.querySelector('[type="west"]'));
         this.handlers.push(document.querySelector('[type="east"]'));
+        this.handlers.push(document.querySelector('[type="accept"]'));
     }
 };
 </script>

@@ -77,8 +77,8 @@ export default {
             this.ship = null; 
             
             for (let i = this.ships.length - 1; i >= 0; i--) {
-                if (this.ships[i].getAttribute('isPositioned') != true) {
-                        return false;
+                if (this.ships[i].getAttribute('isPositioned') != 'true') {
+                    return false;
                 }
             }
 
