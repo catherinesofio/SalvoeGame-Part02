@@ -108,8 +108,8 @@ const store = new Vuex.Store({
     getSalvoesTemplate: (context, callback) => {
       axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
-    setShips: (context, { gp, params }) => {console.log(serializeObjArray(params));
-      axios.post('/api/games/players/' + gp + '/ships', serializeObjArray(params));
+    setShips: (context, { gp, params }) => {
+      fetch('/api/games/players/' + gp + '/ships', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } });
     },
     setSalvoes: (context, { gp, tn, params }) => {
       axios.post('/api/game_view/' + gp + '/turns/' + tn, new URLSearchParams(params));
