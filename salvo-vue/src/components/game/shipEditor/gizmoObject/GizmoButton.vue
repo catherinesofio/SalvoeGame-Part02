@@ -19,7 +19,7 @@ export default {
     width: var(--gizmo-size);
     height: var(--gizmo-size);
     background-color: var(--gizmo-color);
-    z-index: var(--layer-foreground);
+    z-index: var(--gizmo-btn);
 }
 
 .btn[isBlocked=false] {
@@ -42,8 +42,8 @@ export default {
 }
 
 .btn[type='rotate'] {
-    top: calc(-1 * var(--cell-size));;
-    right: calc(-1 * var(--cell-size));;
+    top: calc(-1 * var(--cell-size));
+    right: calc(-1 * var(--cell-size));
 }
 
 .btn[type='east'] {

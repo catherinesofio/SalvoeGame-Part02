@@ -104,18 +104,9 @@ export default {
             let cell;
 
             if (this.placed) {
-                switch(this.orientation) {
-                    case 'horizontal':
-                        offsetX = 1;
-                        break;
-                    default:
-                        offsetY = 1;
-                        break;
-                }
-
-                for (let i = 0; i < this.size; i++) {
-                    cell = this.gridHeadersY[(this.cellY + (i * offsetY))] + '' + (this.cellX + (i * offsetX));
-                    this.occupiedCells.splice(this.occupiedCells.indexOf(cell))
+                for (let i = this.prevCells.length - 1; i >= 0; i--) {
+                    cell = this.prevCells[i];
+                    this.occupiedCells.splice(this.occupiedCells.indexOf(cell), 1);
                 }
             }
 
@@ -302,8 +293,10 @@ export default {
 
 <style>
 :root {
-    --gizmo-width: 1;
-    --gizmo-height: 2;
+    --gizmo-size: 2;
+    --gizmo-obj: 8;
+    --gizmo-ship: 9;
+    --gizmo-btn: 10;
 }
 
 #gizmo-obj {
@@ -313,12 +306,13 @@ export default {
     width: calc((var(--gizmo-width)) * var(--cell-size));
     height: calc((var(--gizmo-height)) * var(--cell-size));
     padding: 0.25em;
-    z-index: var(--gizmo-index);
+    z-index: var(--gizmo-obj);
 }
 
 #gizmo-obj .ship {
     position: absolute;
     top: 0 !important;
     left: 0;
+    z-index: var(--gizmo-ship);
 }
 </style>

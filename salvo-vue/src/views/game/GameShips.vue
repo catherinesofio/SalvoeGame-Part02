@@ -13,6 +13,7 @@ import Grid from '@/components/game/grid/Grid.vue';
 import GizmoObject from '@/components/game/shipEditor/gizmoObject/GizmoObj.vue';
 import DummyShipContainer from '@/components/game/shipEditor/DummyShipContainer.vue';
 import { mapState, mapActions } from 'vuex';
+import { log } from 'util';
 
 export default {
     data: function() {
@@ -36,34 +37,35 @@ export default {
         ...mapActions(['setShips']),
         triggerSubmit: function() {
             if (this.allShipsPlaced) {
-                let data = this.ships.forEach(ship => {
-                    let parentId = ship.parentNode.getAttribute('id');
-                    let cellX = parseInt(parentId.substring(0, (this.tableId.length + 2)));
-                    let cellY = parentId.substring(0, (this.tableId.length + 1))[0];
-                    cellY = gridHeadersY.indexOf(cellY);
+                let data = [];
+                let ship;
+                
+                for (let i = this.ships.length - 1; i >= 0; i--) {
+                    ship = this.ships[i];
 
-                    let factorX = 0;
-                    let factorY = 0;
+                    let parentId = ship.parentNode.getAttribute('id');
+                    let cellX = parseInt(parentId.substring(this.id.length + 2));
+                    let cellY = this.gridHeadersY.indexOf(parentId.substring(this.id.length + 1)[0]);
+
+                    let offsetX = 0;
+                    let offsetY = 0;
                     let orientation = ship.getAttribute('orientation');
                     if (orientation = 'horizontal') {
-                        factorX = 1;
+                        offsetX = 1;
                     } else {
-                        factorY = 1;
+                        offsetY = 1;
                     }
 
                     let locations = [];
                     let size = ship.getAttribute('size');
                     for (let i = 0; i < size; i++) {
-                        locations.push(this.gridHeadersY[(cellY + (i * factorY))] + (cellX + (i * factorX)));
+                        locations.push(this.gridHeadersY[(cellY + (i * offsetY))] + (cellX + (i * offsetX)));
                     }
 
-                    return { 
-                        type: ship.getAttribute('type'),
-                        locations: locations
-                    };
-                }); 
-
-                this.setShips({ gp: this.$route.params.gp, params: data });
+                    data.push({ type: ship.getAttribute('type'), locations: locations });
+                }
+                
+                this.setShips({ gp: '' + this.$route.params.gp + '', params: data });
             }
         },
         selectShip: function(ship) {

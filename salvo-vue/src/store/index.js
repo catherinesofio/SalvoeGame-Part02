@@ -108,8 +108,8 @@ const store = new Vuex.Store({
     getSalvoesTemplate: (context, callback) => {
       axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
-    setShips: (context, { gp, params }) => {
-      axios.post('/api/games/players/' + gp + '/ships', new URLSearchParams(params));
+    setShips: (context, { gp, params }) => {console.log(serializeObjArray(params));
+      axios.post('/api/games/players/' + gp + '/ships', serializeObjArray(params));
     },
     setSalvoes: (context, { gp, tn, params }) => {
       axios.post('/api/game_view/' + gp + '/turns/' + tn, new URLSearchParams(params));
@@ -139,4 +139,14 @@ function checkUser(user) {
 
     router.push({ name: 'menu', replace: true }).catch(err => {});
   }
+}
+
+function serializeObjArray(arr) {
+  let params = new URLSearchParams();
+  arr.forEach((e, i) => {
+    params.append(i, new URLSearchParams(e).toString());
+  });
+
+  return params;
+  //return arr.map(e => new URLSearchParams(e).toString()).join('&');
 }

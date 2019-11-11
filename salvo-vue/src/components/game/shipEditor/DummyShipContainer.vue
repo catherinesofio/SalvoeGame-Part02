@@ -35,7 +35,7 @@ export default {
     box-sizing: border-box;
     position: relative;
     width: 100%;
-    height: 5em;/*var(--cell-size);*/
+    height: 5em;
     background-color: rgba(0,0,0,0.5);
 }
 </style>

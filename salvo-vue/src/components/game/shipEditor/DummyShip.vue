@@ -1,5 +1,5 @@
 <template>
-    <div :class='getClass' :size='size' orientation='horizontal' isPositioned='false' v-on:click='triggerSelect'></div>
+    <div :class='getClass' :type='type' :size='size' orientation='horizontal' isPositioned='false' v-on:click='triggerSelect'></div>
 </template>
 
 <script>
