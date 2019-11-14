@@ -35,6 +35,7 @@ export default {
     components: {
         Grid,
         Ship
-    }
+    },
+    
 };
 </script>>
