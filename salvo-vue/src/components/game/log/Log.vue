@@ -1,8 +1,8 @@
 <template>
     <li>
-        <span>{{ getTurn() }}</span>
-        <p>{{ getMessage() }}</p>
-        <span>{{ getDate() }}</span>
+        <span>{{ getTurn }}</span>
+        <p>{{ getMessage }}</p>
+        <span>{{ getDate }}</span>
     </li>
 </template>
 
@@ -13,6 +13,10 @@ export default {
     props: ['data'],
     computed: {
         getMessage: function() {
+            if (this.data == null) {
+                return '';
+            }
+
             let message = data.message;
             let params = data.params;
 
@@ -32,10 +36,10 @@ export default {
             return message;
         },
         getTurn: function() {
-            return this.data.turn;
+            return (this.data != null) ? this.data.turn : '';
         },
         getDate: function() {
-            return this.data.date;
+            return (this.data != null) ? this.data.date : '';
         }
     },
     methods: {

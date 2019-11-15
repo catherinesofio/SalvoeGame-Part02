@@ -3,12 +3,14 @@
         <Nav :user='this.user' />
         <Spacer />
         <router-view :gp='gp' :turn='turn' :data='data' />
+        <LogManager :data='data' />
     </div>
 </template>
 
 <script>
 import Nav from '@/components/nav/Nav.vue';
 import Spacer from '@/components/Spacer.vue';
+import LogManager from '@/components/LogManager.vue';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -24,7 +26,8 @@ export default {
     },
     components: {
         Nav,
-        Spacer
+        Spacer,
+        LogManager
     },
     computed: {
         ...mapState(['user'])

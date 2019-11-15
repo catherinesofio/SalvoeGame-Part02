@@ -1,6 +1,6 @@
 <template>
     <ul id='log-container'>
-        <Log />
+        <Log v-for='(log, i) in logs' :key='i' :data='log' />
     </ul>
 </template>
 
