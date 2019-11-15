@@ -1,8 +1,8 @@
 <template>
     <div>
-        <LogContainer :gamePlayers='gamePlayers' :logs='data' />
-        <LogPopup v-if='showNotifications' :logs='logQueue' : />
-        <span v-if='getQueueCount > 0'></span>
+        <LogContainer :gamePlayers='gamePlayers' :logs='getLogs' />
+        <LogPopup v-if='showN' :logs='logQueue' />
+        <span v-if='getQueueIsFull'>{{ getQueueCount }}</span>
     </div>
 </template>
 
@@ -14,11 +14,12 @@ export default {
     props: ['data'],
     data: function() {
         return {
-            count = -1,
-            queueIndex = -1,
+            count: -1,
+            queueIndex: -1,
             logQueue: [],
             gamePlayers: [],
-            showNotifications: true
+            showN: true,
+            showL: false
         };
     },
     components: {
@@ -27,30 +28,44 @@ export default {
     },
     watch: {
         data: function(newValue, oldValue) {
-            if (newValue != oldValue) {
-                this.count = this.data.logs.length;
+            if (newValue != oldValue && newValue != null && newValue != 'undefined') {
+                this.count = newValue.logs.length;
                 this.queueIndex = this.count - 1;
+                this.setGamePlayers(newValue.gamePlayers);
             }
         }
     },
     computed: {
+        getLogs: function() {
+            return (this.data != null) ? this.data.logs: [];
+        },
         getQueueCount: function() {
             return this.logQueue.length;
+        },
+        getQueueIsFull: function() {
+            return this.getQueueCount > 0;
         }
     },
     methods: {
         closeNotification: function() {
             this.queueIndex = Math.min(this.queueIndex + 1, this.ge);
 
-            this.logQueue = (index > -1) ? data.logs.slice(index): [];
+            this.logQueue = (index > -1) ? this.data.logs.slice(index): [];
         },
         showNotifications: function(value) {
-
+            this.showN = value;
+        },
+        showLog: function(value) {
+            this.showL = value;
+        },
+        setGamePlayers: function(gamePlayers) {
+            this.gamePlayers = gamePlayers.map(gp => { return { id: gp.id, player: gp.player }; });
         }
     },
-    mounted: function() {
-        this.logQueue = this.data;
-        this.queueIndex = this.data.length;
+    beforeMount: function() {
+        this.logQueue = (this.data != null) ? this.data.logs : [];
+        this.queueIndex = this.logQueue.length;
+        this.setGamePlayers((this.data != null) ? this.data.gamePlayers : null);
     }
 };
 </script>

@@ -17,8 +17,8 @@ export default {
                 return '';
             }
 
-            let message = data.message;
-            let params = data.params;
+            let message = this.data.message;
+            let params = this.data.params;
 
             if (params != null) {
                 if (params.length > 1) {
@@ -31,7 +31,7 @@ export default {
                 message = message.replace('{ss}', params);
             }
 
-            message = message.replace('{gp}', this.getUserName(data.gamePlayerId));
+            message = message.replace('{gp}', this.getUserName(this.data.gamePlayerId));
             
             return message;
         },

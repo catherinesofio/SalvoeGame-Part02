@@ -10,7 +10,7 @@
 <script>
 import Nav from '@/components/nav/Nav.vue';
 import Spacer from '@/components/Spacer.vue';
-import LogManager from '@/components/LogManager.vue';
+import LogManager from '@/components/game/log/LogManager.vue';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -18,7 +18,7 @@ export default {
     data: function() {
         return {
             gp: 0,
-            data: {},
+            data: null,
             turn: -1,
             interval: null,
             time: 30000

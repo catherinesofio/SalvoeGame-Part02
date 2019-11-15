@@ -25,26 +25,26 @@ export default {
             this.count = newValue.length;
 
             if (this.count > 0) {
-                interval = setInterval(this.time, this.afterInterval);
+                this.interval = setInterval(this.time, this.afterInterval);
             }
         }
     },
     computed: {
         getData: function() {
-            return (logs.length > 0) ? logs[0]: null;
+            return (this.logs.length > 0) ? this.logs[0]: null;
         }
     },
     methods: {
         triggerClose: function() {
-            clearInterval(interval);
+            clearInterval(this.interval);
             this.callback();
         }
     },
     mounted: function() {
-        interval = setInterval(this.time, this.triggerClose);
+        this.interval = setInterval(this.time, this.triggerClose);
     },
     beforeDestroy: function() {
-        clearInterval(interval);
+        clearInterval(this.interval);
     }
 };
 </script>
