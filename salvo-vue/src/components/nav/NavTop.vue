@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h1>{{ getName }}</h1>
         <button v-on:click='triggerLogout'>🚪</button>
+        <span>{{ getName }}</span>
     </div>
 </template>
 

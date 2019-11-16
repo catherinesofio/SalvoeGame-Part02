@@ -4,11 +4,7 @@
 
 <script>
 export default {
-    props: [('id', 'type', 'size', 'locations', 'isDown')],
-    data: function() {
-        return {
-        };
-    },
+    props: ['id', 'type', 'size', 'locations', 'isDown'],
     computed: {
         getClass: function() {
             return 'ship ' + this.type;

@@ -13,7 +13,7 @@ export default {
     data: function() {
         return {
             count: 0,
-            time: 3000,
+            time: 15000,
             interval: null
         }
     },

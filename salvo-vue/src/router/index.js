@@ -50,10 +50,12 @@ const routes = [
       },
       {
         path: 'view',
+        name: 'view',
         component: GameView
       },
       {
         path: 'results',
+        name: 'results',
         component: GameResults
       }
     ]

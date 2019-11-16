@@ -1,6 +1,6 @@
 <template>
     <li>
-        <span>{{ getTurn }}</span>
+        <span>TURN: {{ getTurn }}</span>
         <p>{{ getMessage }}</p>
         <span>{{ getDate }}</span>
     </li>
@@ -10,8 +10,14 @@
 import { mapGetters } from 'vuex';
 
 export default {
-    props: ['data'],
+    props: ['data', 'gamePlayers'],
+    data: function() {
+        return {
+            user: null
+        };
+    },
     computed: {
+        ...mapGetters(['getUserName']),
         getMessage: function() {
             if (this.data == null) {
                 return '';
@@ -31,7 +37,7 @@ export default {
                 message = message.replace('{ss}', params);
             }
 
-            message = message.replace('{gp}', this.getUserName(this.data.gamePlayerId));
+            message = message.replace('{gp}', this.getPlayerName(this.data.gamePlayerId));
             
             return message;
         },
@@ -40,10 +46,17 @@ export default {
         },
         getDate: function() {
             return (this.data != null) ? this.data.date : '';
+        },
+        getUser: function() {
+
         }
     },
     methods: {
-        ...mapGetters(['getUserName'])
+        getPlayerName: function(gp) {
+            let id = parseInt(this.gamePlayers.filter(x => x.id == gp)[0].player.id);
+            
+            return this.getUserName(id);
+        }
     }
 };
 </script>>

@@ -61,7 +61,7 @@ html, body {
 
 .view {
   box-sizing: border-box;
-  position: absolute;
+  position: relative;
   right: 0;
   top: 0;
   width: 100%;
@@ -74,5 +74,30 @@ html, body {
 
 li {
   list-style-type: none;
+}
+
+.container-intro {
+  position: relative;
+  width: 100%;
+  height: 25%;
+}
+
+.container-body {
+  position: relative;
+  width: 100%;
+  height: 75%;
+}
+
+.container-half {
+  box-sizing: border-box;
+  position: relative;
+  width: 50%;
+  height: 50%;
+}
+
+.content-left { 
+  position: relative;
+  top: 0;
+  right: 0;
 }
 </style>

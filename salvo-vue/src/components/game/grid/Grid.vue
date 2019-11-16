@@ -33,7 +33,7 @@ export default {
             return this.id + '-' + y + x;
         },
         isOccupied: function(x, y) {
-            return this.occupiedCells.includes(this.gridHeadersY[y] + x);
+            return this.occupiedCells.includes(y + x);
         }
     }
 };

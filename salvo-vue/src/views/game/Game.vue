@@ -2,7 +2,7 @@
     <div class='view'>
         <Nav :user='this.user' />
         <Spacer />
-        <router-view :gp='gp' :turn='turn' :data='data' />
+        <router-view :gp='gp' :turn='turn' :data='data' :ships='ships' />
         <LogManager :data='data' />
     </div>
 </template>
@@ -19,9 +19,10 @@ export default {
         return {
             gp: 0,
             data: null,
+            ships: [],
             turn: -1,
             interval: null,
-            time: 30000
+            time: 5000
         };
     },
     components: {
@@ -36,6 +37,7 @@ export default {
         ...mapActions(['getMatchData', 'getTurnData']),
         setMatchData: function(data) {
             this.data = data;
+            this.ships = data.gamePlayers.filter(x => x.id == this.gp)[0].ships.all;
             this.turn = data.turn;
             let path = '/menu';
 

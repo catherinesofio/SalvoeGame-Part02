@@ -109,7 +109,9 @@ const store = new Vuex.Store({
       axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
     setShips: (context, { gp, params }) => {
-      fetch('/api/games/players/' + gp + '/ships', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } });
+      fetch('/api/games/players/' + gp + '/ships', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } }).then(response => {
+        router.push({ name: 'view', params: { gp: gp } });
+      });
     },
     setSalvoes: (context, { gp, tn, params }) => {
       axios.post('/api/game_view/' + gp + '/turns/' + tn, new URLSearchParams(params));
