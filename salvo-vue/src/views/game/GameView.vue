@@ -3,13 +3,14 @@
         <GUI :player='player' :opponent='opponent' />
         <div class='container-intro'>
             <div class='container-half content-left'>
-                <Grid id='player' :occupiedCells='player.occupiedCells' />
+                <Grid id='player' :occupiedCells='player.occupiedCells' :isTurn='false' />
                 <Ship v-for='ship in player.ships' :key='ship.type' id='player' :type='ship.type' :size='ship.size' :locations='ship.locations' :isDown='ship.isDown' />
             </div>
         </div>
         <div class='container-body'>
-            <Grid id='opponent' :occupiedCells='opponent.occupiedCells' />
+            <Grid id='opponent' :occupiedCells='opponent.occupiedCells' :isTurn='isTurn' :maxSelection='salvoesTemplate' :callBack='setCanPlaceSalvoes' />
             <Ship v-for='ship in opponent.ships' :key='ship.type' id='opponent' :type='ship.type' :size='ship.size' :locations='ship.locations' isDown='true' />
+            <button v-if='canPlaceSalvoes'>SUBMIT</button>
         </div>
     </div>
 </template>
@@ -38,7 +39,9 @@ export default {
                 activeShips: 0,
                 occupiedCells: []
             },
-            shipsTemplate: []
+            shipsTemplate: [],
+            salvoesTemplate: 0,
+            canPlaceSalvoes: false
         };
     },
     components: {
@@ -57,10 +60,21 @@ export default {
             }
         }
     },
+    computed: {
+        isTurn: function() {
+            return this.player.state == 'PLAYING_TURN';
+        }
+    },
     methods: {
-        ...mapActions(['getShipsTemplate']),
+        ...mapActions(['getShipsTemplate', 'getSalvoesTemplate']),
         setShips: function(ships) {
             this.shipsTemplate = ships;
+        },
+        setSalvoes: function(salvoes) {
+            this.salvoesTemplate = parseInt(salvoes);
+        },
+        setCanPlaceSalvoes: function(value) {
+            this.canPlaceSalvoes = this.isTurn && value;
         },
         getPlayer: function(gp, opponent) {
             let size;
@@ -86,6 +100,7 @@ export default {
     },
     mounted: function() {
         this.getShipsTemplate(this.setShips);
+        this.getSalvoesTemplate(this.setSalvoes);
     }
 };
 </script>>

@@ -2,7 +2,7 @@
     <div>
         <GizmoObject :tableId='id' :ship='ship' :callback='unselectShip' v-show='showGizmo' />
         <DummyShipContainer :callback='selectShip' />
-        <Grid :id='id' :occupiedCells='[]' />
+        <Grid :id='id' :occupiedCells='[]' :isTurn='false' />
         <button v-on:click='triggerSubmit' :disabled='!allShipsPlaced'>SUBMIT</button>
     </div>
 </template>
