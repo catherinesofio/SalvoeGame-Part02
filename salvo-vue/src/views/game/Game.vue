@@ -3,7 +3,7 @@
         <Nav :user='this.user' />
         <Spacer />
         <router-view :gp='gp' :turn='turn' :data='data' :ships='ships' />
-        <LogManager :data='data' />
+        <LogManager :data='data' :logs='logs' />
     </div>
 </template>
 
@@ -20,6 +20,7 @@ export default {
             gp: 0,
             data: null,
             ships: [],
+            logs: [],
             turn: -1,
             interval: null,
             time: 5000
@@ -38,7 +39,8 @@ export default {
         setMatchData: function(data) {
             this.data = data;
             this.ships = data.gamePlayers.filter(x => x.id == this.gp)[0].ships.all;
-            this.turn = data.turn;
+            this.logs = data.logs;
+            this.turn = data.turn - 1;
             let path = '/menu';
 
             switch (data.state) {
@@ -67,8 +69,19 @@ export default {
         },
         updateMatchData: function(data) {
             this.data = data;
-            this.turn = data.turn;
+            this.turn = data.turn - 1;
+            
+            let isIncluded = false;
+            data.logs.forEach(log => {
+                isIncluded = this.logs.some(x => {
+                    return x.turn == log.turn && x.gamePlayerId == log.gamePlayerId && x.message == log.message;
+                });
 
+                if (!isIncluded) {
+                    this.logs.push(log);
+                }
+            });
+            
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         }

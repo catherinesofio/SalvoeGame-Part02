@@ -8,9 +8,16 @@
 
 <script>
 import PlayerGUI from '@/components/game/GUI/PlayerGUI.vue';
+import { mapActions } from 'vuex';
 
 export default {
     props: ['player', 'opponent'],
+    data: function() {
+        return {
+            salvoesTemplate: 0,
+            currSalvoes: -1
+        };
+    },
     components: {
         PlayerGUI
     },
@@ -18,6 +25,15 @@ export default {
         opponentExists: function() {
             return this.opponent.id > -1;
         }
+    },
+    methods: {
+        ...mapActions(['getSalvoesTemplate']),
+        setSalvoes: function(salvoes) {
+            this.salvoesTemplate = salvoes;
+        }
+    },
+    mounted: function() {
+        this.getSalvoesTemplate(this.setSalvoes);
     }
 };
 </script>

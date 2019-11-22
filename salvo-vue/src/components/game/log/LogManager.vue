@@ -6,7 +6,7 @@
             <button v-on:click='switchLog'>🗨️</button>
         </div>
         <LogPopup v-if='showNotifications' :logs='logQueue' />
-        <LogContainer v-if='showLog' :gamePlayers='gamePlayers' :logs='getLogs' />
+        <LogContainer v-if='showLog' :gamePlayers='gamePlayers' :logs='logs' />
     </div>
 </template>
 
@@ -15,7 +15,7 @@ import LogContainer from '@/components/game/log/LogContainer.vue';
 import LogPopup from '@/components/game/log/LogContainer.vue';
 
 export default {
-    props: ['data'],
+    props: ['data', 'logs'],
     data: function() {
         return {
             count: 0,
@@ -40,9 +40,6 @@ export default {
         }
     },
     computed: {
-        getLogs: function() {
-            return (this.data != null) ? this.data.logs: [];
-        },
         getQueueCount: function() {
             return this.logQueue.length;
         },
@@ -54,7 +51,7 @@ export default {
         closeNotification: function() {
             this.queueIndex = Math.min(this.queueIndex + 1, this.ge);
 
-            this.logQueue = (index > -1) ? this.data.logs.slice(index): [];
+            this.logQueue = (index > -1) ? this.data.logs.slice(index) : [];
         },
         switchNotifications: function() {
             this.showNotifications = !this.showNotifications;
