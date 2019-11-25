@@ -2,6 +2,7 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 import router from '@/router/index.js';
+import { bus } from '@/main.js';
 
 Vue.use(Vuex);
 
@@ -113,8 +114,10 @@ const store = new Vuex.Store({
         router.push({ name: 'view', params: { gp: gp } });
       });
     },
-    setSalvoes: (context, { gp, tn, params }) => {
-      axios.post('/api/game_view/' + gp + '/turns/' + tn, new URLSearchParams(params));
+    setSalvoes: (context, { gp, params }) => {
+      fetch('/api/games/players/' + gp + '/salvoes', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } }).then(response => {
+        bus.$emit('trigger-instant-refresh');
+      });
     },
     getMatchData: (context, { gp, callback }) => {
       axios.get('/api/game_view/' + gp).then(response => {

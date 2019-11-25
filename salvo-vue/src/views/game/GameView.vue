@@ -1,24 +1,25 @@
 <template>
     <div class='view'>
-        <GUI :player='player' :opponent='opponent' />
+        <GUI :gp='gp' :turn='turn' :player='player' :opponent='opponent' />
         <div class='container-intro'>
             <div class='container-half content-left'>
-                <Grid id='player' :occupiedCells='player.occupiedCells' :isTurn='false' />
+                <GridSimple id='player' :occupiedCells='player.occupiedCells' :salvoes='player.salvoes' />
                 <Ship v-for='ship in player.ships' :key='ship.type' id='player' :type='ship.type' :size='ship.size' :locations='ship.locations' :isDown='ship.isDown' />
             </div>
         </div>
         <div class='container-body'>
-            <Grid id='opponent' :occupiedCells='opponent.occupiedCells' :isTurn='isTurn' :maxSelection='salvoesTemplate' :callBack='setCanPlaceSalvoes' />
+            <GridSelectable id='opponent' :occupiedCells='opponent.occupiedCells' :salvoes='opponent.salvoes' :isTurn='isTurn' />
             <Ship v-for='ship in opponent.ships' :key='ship.type' id='opponent' :type='ship.type' :size='ship.size' :locations='ship.locations' isDown='true' />
-            <button v-if='canPlaceSalvoes'>SUBMIT</button>
         </div>
     </div>
 </template>
 
 <script>
 import GUI from '@/components/game/GUI/GUI.vue';
-import Grid from '@/components/game/grid/Grid.vue';
+import GridSimple from '@/components/game/grid/GridSimple.vue';
+import GridSelectable from '@/components/game/grid/GridSelectable.vue';
 import Ship from '@/components/game/Ship.vue';
+import { bus } from '@/main.js';
 import { mapActions } from 'vuex';
 
 export default {
@@ -30,32 +31,41 @@ export default {
                 state: '',
                 ships: [],
                 activeShips: 0,
-                occupiedCells: []
+                occupiedCells: [],
+                salvoes: []
             },
             opponent: {
                 id: -1,
                 state: '',
                 ships: [],
                 activeShips: 0,
-                occupiedCells: []
+                occupiedCells: [],
+                salvoes: []
             },
-            shipsTemplate: [],
-            salvoesTemplate: 0,
-            canPlaceSalvoes: false
+            shipsTemplate: []
         };
     },
     components: {
         GUI,
-        Grid,
+        GridSimple,
+        GridSelectable,
         Ship
     },
     watch: {
         data: function (newValue, oldValue) {
             if (newValue != oldValue && newValue != null && newValue != 'undefined' && this.shipsTemplate != []) {
-                this.player = this.getPlayer(newValue.gamePlayers.filter(gp => gp.id == this.gp)[0], false);
+                let p = newValue.gamePlayers.filter(gp => gp.id == this.gp)[0];
+                let pSalvoes = this.player.salvoes;
+                let o = newValue.gamePlayers.filter(gp => gp.id != this.gp)[0];
+                let oSalvoes = this.opponent.salvoes;
 
-                if (newValue.gamePlayers.length > 1) {
-                    this.opponent = this.getPlayer(newValue.gamePlayers.filter(gp => gp.id != this.gp)[0], true);
+                this.player = this.getPlayer(p, false);
+
+                if (o != null) {
+                    this.opponent = this.getPlayer(o, true);
+
+                    this.player['salvoes'] = this.updateSalvoes(pSalvoes, o.salvoes);
+                    this.opponent['salvoes'] = this.updateSalvoes(oSalvoes, p.salvoes);
                 }
             }
         }
@@ -69,12 +79,6 @@ export default {
         ...mapActions(['getShipsTemplate', 'getSalvoesTemplate']),
         setShips: function(ships) {
             this.shipsTemplate = ships;
-        },
-        setSalvoes: function(salvoes) {
-            this.salvoesTemplate = parseInt(salvoes);
-        },
-        setCanPlaceSalvoes: function(value) {
-            this.canPlaceSalvoes = this.isTurn && value;
         },
         getPlayer: function(gp, opponent) {
             let size;
@@ -96,11 +100,17 @@ export default {
             };
             
             return player;
+        },
+        updateSalvoes: function(o, n) {
+            if (n.length == 0 || (o.length > 0 && o[o.length - 1].turn == n[0].turn)) {
+                return o;
+            }
+
+            return o.concat(n);
         }
     },
     mounted: function() {
         this.getShipsTemplate(this.setShips);
-        this.getSalvoesTemplate(this.setSalvoes);
     }
 };
 </script>>

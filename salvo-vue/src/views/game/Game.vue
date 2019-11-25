@@ -11,6 +11,7 @@
 import Nav from '@/components/nav/Nav.vue';
 import Spacer from '@/components/Spacer.vue';
 import LogManager from '@/components/game/log/LogManager.vue';
+import { bus } from '@/main.js';
 import { mapState, mapActions } from 'vuex';
 
 export default {
@@ -84,6 +85,10 @@ export default {
             
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
+        },
+        triggerInstantRefresh: function() {
+            clearInterval(this.interval);
+            this.triggerUpdateMatchData();
         }
     },
     mounted: function() {
@@ -92,6 +97,7 @@ export default {
     },
     beforeDestroy: function() {
         clearInterval(this.interval);
+        bus.$on('trigger-instant-refresh', this.triggerInstantRefresh);
     }
 }
 </script>
@@ -165,5 +171,19 @@ export default {
     padding: 0.25em;
     padding-right: 0.3em;
     padding-left: 0.3em;
+}
+
+.cell {
+    position: relative;
+    width: var(--cell-size);
+    background-color: lightskyblue;
+}
+
+.cell[isOccupied=true], .cell[isSelected=true] {
+    background-color: grey;
+}
+
+.cell .ship {
+    position: absolute;
 }
 </style>
