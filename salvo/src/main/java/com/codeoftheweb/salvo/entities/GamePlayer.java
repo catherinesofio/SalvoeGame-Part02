@@ -109,7 +109,7 @@ public class GamePlayer {
         if (asPlayer) {
             data.put("all", this.ships.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
         } else {
-            data.put("sunkShips", this.ships.stream().map(x -> x.getMappedData()).collect(Collectors.toList()));
+            data.put("sunkShips", this.ships.stream().filter(x -> x.isDown()).map(x -> x.getMappedData()).collect(Collectors.toList()));
         }
 
         return data;

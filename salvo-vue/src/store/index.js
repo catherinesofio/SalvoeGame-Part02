@@ -29,13 +29,15 @@ const store = new Vuex.Store({
   },
   mutations: {
     INIT_USER: state => {
+      bus.$emit('start-load');
       axios.get('/api/user').then(response => { 
         let data = JSON.parse(JSON.stringify(response.data));
         data = (data.name == null) ? null : data;
-
+        
         state.user = data;
       }).finally(() => {
         checkUser(state.user);
+        bus.$emit('end-load');
       });
     },
     SET_USER: (state, value) => {
@@ -49,13 +51,13 @@ const store = new Vuex.Store({
         state.matches = [];
         state.userMatches = { current: [], history: [] };
         state.leaderboards = [];
-
+        
         return;
       }
-
+      
       axios.get('/api/matches').then(response => {
         let data = JSON.parse(JSON.stringify(response.data));
-
+        
         let users = data.users.sort(function(a, b) {
           return a.id - b.id;
         });
@@ -64,10 +66,10 @@ const store = new Vuex.Store({
         state.userMatches = data.userMatches;
         state.leaderboards = users.map(function(user) {
           let scores = user.scores;
-
+          
           let points = (scores.won + (scores.lost / 2)) * 100 / (scores.won + scores.lost + scores.tied);
           points = (Number.isNaN(points)) ? 0 : points;
-
+          
           return { id: user.id, points: points };
         }).sort(function(a, b) {
           return a.points - b.points;
@@ -101,12 +103,14 @@ const store = new Vuex.Store({
       });
     },
     loadMatch: (context, gp) => {
-      router.push({ name: 'game', params: { gp: gp } });
+      bus.$emit('start-load');
+      router.push({ name: 'game', params: { gp: gp } }).finally(() => { bus.$emit('end-load'); });
     },
     getShipsTemplate: (context, callback) => {
       axios.get('/api/templates/ships').then(response => callback(response.data));
     },
     getSalvoesTemplate: (context, callback) => {
+      bus.$emit('start-load');
       axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
     setShips: (context, { gp, params }) => {
@@ -120,8 +124,10 @@ const store = new Vuex.Store({
       });
     },
     getMatchData: (context, { gp, callback }) => {
+      bus.$emit('start-load');
       axios.get('/api/game_view/' + gp).then(response => {
         callback(response.data);
+        bus.$emit('end-load');
       });
     },
     getTurnData: (context, { gp, tn, callback }) => {
@@ -144,14 +150,4 @@ function checkUser(user) {
 
     router.push({ name: 'menu', replace: true }).catch(err => {});
   }
-}
-
-function serializeObjArray(arr) {
-  let params = new URLSearchParams();
-  arr.forEach((e, i) => {
-    params.append(i, new URLSearchParams(e).toString());
-  });
-
-  return params;
-  //return arr.map(e => new URLSearchParams(e).toString()).join('&');
 }

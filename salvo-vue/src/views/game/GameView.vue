@@ -9,7 +9,7 @@
         </div>
         <div class='container-body'>
             <GridSelectable id='opponent' :occupiedCells='opponent.occupiedCells' :salvoes='opponent.salvoes' :isTurn='isTurn' />
-            <Ship v-for='ship in opponent.ships' :key='ship.type' id='opponent' :type='ship.type' :size='ship.size' :locations='ship.locations' isDown='true' />
+            <Ship v-for='ship in opponent.ships' :key='ship.type' id='opponent' :type='ship.type' :size='ship.size' :locations='ship.locations' :isDown='true' />
         </div>
     </div>
 </template>
@@ -30,6 +30,11 @@ export default {
                 id: -1,
                 state: '',
                 ships: [],
+                a: {
+                    all: [],
+                    sunkShips: [],
+                    activeShips: 0
+                },
                 activeShips: 0,
                 occupiedCells: [],
                 salvoes: []
@@ -38,6 +43,10 @@ export default {
                 id: -1,
                 state: '',
                 ships: [],
+                a: {
+                    sunkShips: [],
+                    activeShips: 0
+                },
                 activeShips: 0,
                 occupiedCells: [],
                 salvoes: []
@@ -55,16 +64,17 @@ export default {
         data: function (newValue, oldValue) {
             if (newValue != oldValue && newValue != null && newValue != 'undefined' && this.shipsTemplate != []) {
                 let p = newValue.gamePlayers.filter(gp => gp.id == this.gp)[0];
-                let pSalvoes = this.player.salvoes;
                 let o = newValue.gamePlayers.filter(gp => gp.id != this.gp)[0];
-                let oSalvoes = this.opponent.salvoes;
 
                 this.player = this.getPlayer(p, false);
 
                 if (o != null) {
+                    let pSalvoes = this.player.salvoes;
+                    let oSalvoes = this.opponent.salvoes;
+                    
                     this.opponent = this.getPlayer(o, true);
-
                     this.player['salvoes'] = this.updateSalvoes(pSalvoes, o.salvoes);
+
                     this.opponent['salvoes'] = this.updateSalvoes(oSalvoes, p.salvoes);
                 }
             }
@@ -81,8 +91,19 @@ export default {
             this.shipsTemplate = ships;
         },
         getPlayer: function(gp, opponent) {
+            if (gp == 'undefined') {
+                return {
+                    id: -1,
+                    state: '',
+                    ships: [],
+                    activeShips: 0,
+                    occupiedCells: [],
+                    salvoes: []
+                }
+            }
+
             let size;
-            let ships = (opponent) ? gp.ships.sunkShips : this.ships;
+            let ships = (opponent) ? gp.ships.sunkShips : gp.ships.all;
             
             ships = ships.map(ship => {
                 size = this.shipsTemplate.filter(x => x.type == ship.type)[0].size;
@@ -96,7 +117,8 @@ export default {
                 state: gp.state,
                 ships: ships,
                 activeShips: parseInt(gp.ships.activeShips),
-                occupiedCells: locations
+                occupiedCells: locations,
+                salvoes: []
             };
             
             return player;
@@ -110,6 +132,7 @@ export default {
         }
     },
     mounted: function() {
+        bus.$emit('trigger-data-reload', false);
         this.getShipsTemplate(this.setShips);
     }
 };

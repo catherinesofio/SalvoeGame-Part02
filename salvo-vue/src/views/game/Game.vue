@@ -65,6 +65,14 @@ export default {
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
+        setFinalData: function(data) {
+            this.data = data;
+            this.logs = data.logs;
+        },
+        triggerReloadMatchData: function(isFinal) {
+            clearInterval(this.interval);
+            this.getMatchData({ gp: this.gp, callback: (isFinal) ? this.setFinalData : this.setMatchData });
+        },
         triggerUpdateMatchData: function() {
             this.getTurnData({ gp: this.gp, tn: this.turn, callback: this.updateMatchData });
         },
@@ -97,6 +105,7 @@ export default {
     },
     beforeDestroy: function() {
         clearInterval(this.interval);
+        bus.$on('trigger-data-reload', this.triggerReloadMatchData);
         bus.$on('trigger-instant-refresh', this.triggerInstantRefresh);
     }
 }

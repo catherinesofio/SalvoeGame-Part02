@@ -2,16 +2,19 @@
   <div id='app' class='container'>
     <router-view/>
     <Footer />
+    <Loading />
   </div>
 </template>
 
 <script>
 import Footer from '@/components/Footer.vue';
+import Loading from '@/components/Loading.vue';
 
 export default {
   name: 'App',
   components: {
-    Footer
+    Footer,
+    Loading
   }
 };
 </script>

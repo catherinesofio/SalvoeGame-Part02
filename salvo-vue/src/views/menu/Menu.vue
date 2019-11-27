@@ -7,6 +7,7 @@
 </template>
 
 <script>
+import { bus } from '@/main.js';
 import Nav from '@/components/nav/Nav.vue';
 import Spacer from '@/components/Spacer.vue';
 import { mapState } from 'vuex';
@@ -16,7 +17,7 @@ export default {
     data: function() {
         return {
             interval: null,
-            time: 30000
+            time: 5000
         };
     },
     components: {
