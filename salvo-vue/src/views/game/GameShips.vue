@@ -12,7 +12,6 @@ import Grid from '@/components/game/grid/GridSimple.vue';
 import GizmoObject from '@/components/game/shipEditor/gizmoObject/GizmoObj.vue';
 import DummyShipContainer from '@/components/game/shipEditor/DummyShipContainer.vue';
 import { mapState, mapActions } from 'vuex';
-//import { log } from 'util';
 
 export default {
     data: function() {

@@ -30,11 +30,6 @@ export default {
                 id: -1,
                 state: '',
                 ships: [],
-                a: {
-                    all: [],
-                    sunkShips: [],
-                    activeShips: 0
-                },
                 activeShips: 0,
                 occupiedCells: [],
                 salvoes: []
@@ -43,10 +38,6 @@ export default {
                 id: -1,
                 state: '',
                 ships: [],
-                a: {
-                    sunkShips: [],
-                    activeShips: 0
-                },
                 activeShips: 0,
                 occupiedCells: [],
                 salvoes: []
@@ -91,7 +82,7 @@ export default {
             this.shipsTemplate = ships;
         },
         getPlayer: function(gp, opponent) {
-            if (gp == 'undefined') {
+            if (gp == 'undefined' || gp == null) {
                 return {
                     id: -1,
                     state: '',

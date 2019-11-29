@@ -2,12 +2,12 @@
     <div class='view'>
         <Nav :user='this.user' />
         <Spacer />
-        <router-view :gp='gp' :turn='turn' :data='data' :ships='ships' />
+        <router-view :gp='gp' :turn='turn' :data='data' />
         <LogManager :data='data' :logs='logs' />
     </div>
 </template>
 
-<script>
+<script>//BORRE SHIPS, IMPORTANTE!
 import Nav from '@/components/nav/Nav.vue';
 import Spacer from '@/components/Spacer.vue';
 import LogManager from '@/components/game/log/LogManager.vue';
@@ -20,11 +20,10 @@ export default {
         return {
             gp: 0,
             data: null,
-            ships: [],
             logs: [],
             turn: -1,
             interval: null,
-            time: 5000
+            time: 10000
         };
     },
     components: {
@@ -39,7 +38,6 @@ export default {
         ...mapActions(['getMatchData', 'getTurnData']),
         setMatchData: function(data) {
             this.data = data;
-            this.ships = data.gamePlayers.filter(x => x.id == this.gp)[0].ships.all;
             this.logs = data.logs;
             this.turn = data.turn - 1;
             let path = '/menu';
@@ -65,21 +63,28 @@ export default {
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
-        setFinalData: function(data) {
-            this.data = data;
-            this.logs = data.logs;
-        },
-        triggerReloadMatchData: function(isFinal) {
-            clearInterval(this.interval);
-            this.getMatchData({ gp: this.gp, callback: (isFinal) ? this.setFinalData : this.setMatchData });
-        },
-        triggerUpdateMatchData: function() {
-            this.getTurnData({ gp: this.gp, tn: this.turn, callback: this.updateMatchData });
-        },
         updateMatchData: function(data) {
-            this.data = data;
+            let oldTurn = this.turn;
             this.turn = data.turn - 1;
+            this.data.state = data.state;
             
+            if (data.state != 'WAITING' && oldTurn != this.turn) {
+                let player = this.data.gamePlayers.filter(x => x.id == this.gp);
+                let playerUpdate = data.gamePlayers.filter(x => x.id == this.gp);
+                let opponent = this.data.gamePlayers.filter(x => x.id != this.gp);
+                let opponentUpdate = data.gamePlayers.filter(x => x.id != this.gp);
+
+                this.data.gamePlayers = [];
+
+                player = this.updatePlayer(opponent, opponentUpdate, true);
+                this.data.gamePlayers.push(player);
+
+                if (opponent != null && opponent != 'undefined') {
+                    opponent = Player(opponent, opponentUpdate, true);
+                    this.data.gamePlayers.push(opponent);
+                }   
+            }
+
             let isIncluded = false;
             data.logs.forEach(log => {
                 isIncluded = this.logs.some(x => {
@@ -94,9 +99,54 @@ export default {
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
+        updatePlayer: function(n, o, isOpponent) {
+            o.ships.activeShips = n.ships.activeShips;
+
+            if (!isOpponent && n.ships.sunkShips.length > 0) {
+                let ships = o.ships.all;
+                let nShips = n.ships.sunkShips;
+
+                if (nShips != null && nShips != 'undefined' && !ships.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
+                    let temp;
+
+                    for (let i = ships.length - 1; i >= 0; i--) {
+                        temp = nShips.filter(x => x.type == ships[i].type)[0];
+
+                        if (temp != null && temp != 'undefined') {
+                            ships[i] = temp;
+                        }
+                    }
+                    
+                    o.ships.all = ships;
+                }
+                
+            } else if (isOpponent && n.ships.sunkShips.length > 0) {
+                if (!o.ships.sunkShips.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
+                    o.ships.sunkShips = o.ships.sunkShips.concat(nShips);
+                }
+            }
+
+            if (n.salvoes.length > 0 && !o.salvoes.some(x => x.turn != n.salvoes[0].turn)) {
+                o.salvoes = o.salvoes.concat(n.salvoes);
+            }
+
+            return o;
+        },
+        setFinalData: function(data) {
+            this.data = data;
+            this.logs = data.logs;
+            this.turn = data.turn - 1;
+        },
+        triggerUpdateMatchData: function() {
+            this.getTurnData({ gp: this.gp, tn: this.turn, callback: this.updateMatchData });
+        },
         triggerInstantRefresh: function() {
             clearInterval(this.interval);
             this.triggerUpdateMatchData();
+        },
+        triggerReloadMatchData: function(isFinal) {
+            clearInterval(this.interval);
+            this.getMatchData({ gp: this.gp, callback: (isFinal) ? this.setFinalData : this.setMatchData });
         }
     },
     mounted: function() {
