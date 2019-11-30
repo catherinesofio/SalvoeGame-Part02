@@ -14,13 +14,20 @@ export default {
         };
     },
     methods: {
-        setIsLoading: function(value) {
-            this.isLoading = value;
+        showLoading: function() {
+            this.isLoading = true;
+        },
+        hideLoading: function() {
+            this.isLoading = false;
         }
     },
     mounted: function() {
-        bus.$on('start-load', () => { this.setIsLoading(true); });
-        bus.$on('end-load', () => { this.setIsLoading(false); });
+        bus.$on('start-load', this.showLoading);
+        bus.$on('end-load', this.hideLoading);
+    },
+    destroyed: function() {
+        bus.$off('start-load', this.showLoading);
+        bus.$off('end-load', this.hideLoading);
     }
 };
 </script>

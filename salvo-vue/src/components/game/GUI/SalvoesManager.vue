@@ -71,7 +71,10 @@ export default {
     },
     mounted: function() {
         this.getSalvoesTemplate(this.setSalvoesTemplate);
-        bus.$on('check-salvoe', data => { this.checkSalvoe(data); });
+        bus.$on('check-salvoe', this.checkSalvoe);
+    },
+    destroyed: function() {
+        bus.$off('check-salvoe', this.checkSalvoe);
     }
 };
 </script>

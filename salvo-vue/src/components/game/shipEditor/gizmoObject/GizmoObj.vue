@@ -42,14 +42,14 @@ export default {
         ...mapState(['gridHeaders', 'gridHeadersY'])
     },
     watch: {
-        ship: function (newValue, oldValue) {
-            if (oldValue != null) {
-                oldValue.setAttribute('orientation', this.orientation);
-                this.parent.appendChild(oldValue);
+        ship: function (n, o) {
+            if (o != null) {
+                o.setAttribute('orientation', this.orientation);
+                this.parent.appendChild(o);
             }
             
-            this.ship = newValue;
-            if (newValue != null) {
+            this.ship = n;
+            if (n != null) {
                 this.updateData();
             }
         }

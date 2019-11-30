@@ -110,7 +110,6 @@ const store = new Vuex.Store({
       axios.get('/api/templates/ships').then(response => callback(response.data));
     },
     getSalvoesTemplate: (context, callback) => {
-      bus.$emit('start-load');
       axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
     setShips: (context, { gp, params }) => {
@@ -119,16 +118,11 @@ const store = new Vuex.Store({
       });
     },
     setSalvoes: (context, { gp, params }) => {
-      fetch('/api/games/players/' + gp + '/salvoes', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } }).then(response => {
-        bus.$emit('trigger-instant-refresh');
-      });
+      fetch('/api/games/players/' + gp + '/salvoes', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } }).finally(() => { bus.$emit('trigger-instant-refresh'); });
     },
     getMatchData: (context, { gp, callback }) => {
       bus.$emit('start-load');
-      axios.get('/api/game_view/' + gp).then(response => {
-        callback(response.data);
-        bus.$emit('end-load');
-      });
+      axios.get('/api/game_view/' + gp).then(response => { callback(response.data); }).finally(() => { bus.$emit('end-load'); });
     },
     getTurnData: (context, { gp, tn, callback }) => {
       axios.get('/api/game_view/' + gp + '/turns/' + tn).then(response => {

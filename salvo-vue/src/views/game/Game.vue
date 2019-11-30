@@ -23,7 +23,7 @@ export default {
             logs: [],
             turn: -1,
             interval: null,
-            time: 10000
+            time: 2500
         };
     },
     components: {
@@ -32,7 +32,10 @@ export default {
         LogManager
     },
     computed: {
-        ...mapState(['user'])
+        ...mapState(['user']),
+        getData: function() {
+            return this.data;
+        }
     },
     methods: {
         ...mapActions(['getMatchData', 'getTurnData']),
@@ -59,30 +62,28 @@ export default {
             }
             
             this.$router.push({ path: path });
-
+            console.log(44);
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
-        updateMatchData: function(data) {
+        updateMatchData: function(data) {console.log('33');
             let oldTurn = this.turn;
             this.turn = data.turn - 1;
             this.data.state = data.state;
             
-            if (data.state != 'WAITING' && oldTurn != this.turn) {
-                let player = this.data.gamePlayers.filter(x => x.id == this.gp);
-                let playerUpdate = data.gamePlayers.filter(x => x.id == this.gp);
-                let opponent = this.data.gamePlayers.filter(x => x.id != this.gp);
-                let opponentUpdate = data.gamePlayers.filter(x => x.id != this.gp);
+            let player = this.data.gamePlayers.filter(x => x.id == this.gp)[0];
+            let playerUpdate = data.gamePlayers.filter(x => x.id == this.gp)[0];
+            let opponent = this.data.gamePlayers.filter(x => x.id != this.gp)[0];
+            let opponentUpdate = data.gamePlayers.filter(x => x.id != this.gp)[0];
 
-                this.data.gamePlayers = [];
+            this.data.gamePlayers = [];
 
-                player = this.updatePlayer(opponent, opponentUpdate, true);
-                this.data.gamePlayers.push(player);
+            player = this.updatePlayer(player, playerUpdate, false);
+            this.data.gamePlayers.push(player);
 
-                if (opponent != null && opponent != 'undefined') {
-                    opponent = Player(opponent, opponentUpdate, true);
-                    this.data.gamePlayers.push(opponent);
-                }   
+            if (opponent) {
+                opponent = this.updatePlayer(opponent, opponentUpdate, true);
+                this.data.gamePlayers.push(opponent);
             }
 
             let isIncluded = false;
@@ -106,7 +107,7 @@ export default {
                 let ships = o.ships.all;
                 let nShips = n.ships.sunkShips;
 
-                if (nShips != null && nShips != 'undefined' && !ships.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
+                if (ships.length > 0 && !ships.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
                     let temp;
 
                     for (let i = ships.length - 1; i >= 0; i--) {
@@ -121,12 +122,15 @@ export default {
                 }
                 
             } else if (isOpponent && n.ships.sunkShips.length > 0) {
-                if (!o.ships.sunkShips.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
-                    o.ships.sunkShips = o.ships.sunkShips.concat(nShips);
+                let ships = o.ships.sunkShips;
+                let nShips = n.ships.sunkShips;
+
+                if (ships.length > 0 && !ships.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
+                    o.ships.sunkShips = ships.concat(nShips);
                 }
             }
 
-            if (n.salvoes.length > 0 && !o.salvoes.some(x => x.turn != n.salvoes[0].turn)) {
+            if (n.salvoes.length > 0 && o.salvoes != 'undefined' && o.salvoes != null && !o.salvoes.some(x => x.turn != n.salvoes[0].turn)) {
                 o.salvoes = o.salvoes.concat(n.salvoes);
             }
 
@@ -146,17 +150,23 @@ export default {
         },
         triggerReloadMatchData: function(isFinal) {
             clearInterval(this.interval);
-            this.getMatchData({ gp: this.gp, callback: (isFinal) ? this.setFinalData : this.setMatchData });
+
+            let callback = (isFinal) ? this.setFinalData : this.setMatchData;
+            this.getMatchData({ gp: this.gp, callback: callback });
         }
     },
     mounted: function() {
         this.gp = this.$route.params.gp;
         this.getMatchData({ gp: this.gp, callback: this.setMatchData });
+
+        bus.$on('trigger-instant-refresh', this.triggerInstantRefresh);
+        bus.$on('trigger-data-reload', this.triggerReloadMatchData);
     },
     beforeDestroy: function() {
         clearInterval(this.interval);
-        bus.$on('trigger-data-reload', this.triggerReloadMatchData);
-        bus.$on('trigger-instant-refresh', this.triggerInstantRefresh);
+        
+        bus.$off('trigger-instant-refresh', this.triggerInstantRefresh);
+        bus.$off('trigger-data-reload', this.triggerReloadMatchData);
     }
 }
 </script>

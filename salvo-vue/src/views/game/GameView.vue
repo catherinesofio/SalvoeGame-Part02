@@ -19,11 +19,10 @@ import GUI from '@/components/game/GUI/GUI.vue';
 import GridSimple from '@/components/game/grid/GridSimple.vue';
 import GridSelectable from '@/components/game/grid/GridSelectable.vue';
 import Ship from '@/components/game/Ship.vue';
-import { bus } from '@/main.js';
 import { mapActions } from 'vuex';
 
 export default {
-    props: ['gp', 'turn', 'data', 'ships'],
+    props: { gp: Number, turn: Number, data: Object },
     data: function() {
         return {
             player: {
@@ -52,22 +51,17 @@ export default {
         Ship
     },
     watch: {
-        data: function (newValue, oldValue) {
-            if (newValue != oldValue && newValue != null && newValue != 'undefined' && this.shipsTemplate != []) {
-                let p = newValue.gamePlayers.filter(gp => gp.id == this.gp)[0];
-                let o = newValue.gamePlayers.filter(gp => gp.id != this.gp)[0];
+        data: function (n, o) {console.log(n);
+            if (n != null && n != 'undefined') {
+                let player = n.gamePlayers.filter(gp => gp.id == this.gp)[0];
+                this.player = this.getPlayer(player, false);
 
-                this.player = this.getPlayer(p, false);
+                let opponent = n.gamePlayers.filter(gp => gp.id != this.gp)[0];
+                this.opponent = this.getPlayer(opponent, true);
 
-                if (o != null) {
-                    let pSalvoes = this.player.salvoes;
-                    let oSalvoes = this.opponent.salvoes;
-                    
-                    this.opponent = this.getPlayer(o, true);
-                    this.player['salvoes'] = this.updateSalvoes(pSalvoes, o.salvoes);
-
-                    this.opponent['salvoes'] = this.updateSalvoes(oSalvoes, p.salvoes);
-                }
+                this.swapSalvoes();
+                console.log(player);
+                console.log(opponent);
             }
         }
     },
@@ -87,7 +81,7 @@ export default {
                     id: -1,
                     state: '',
                     ships: [],
-                    activeShips: 0,
+                    activeShips: '',
                     occupiedCells: [],
                     salvoes: []
                 }
@@ -109,21 +103,19 @@ export default {
                 ships: ships,
                 activeShips: parseInt(gp.ships.activeShips),
                 occupiedCells: locations,
-                salvoes: []
+                salvoes: gp.salvoes
             };
             
             return player;
         },
-        updateSalvoes: function(o, n) {
-            if (n.length == 0 || (o.length > 0 && o[o.length - 1].turn == n[0].turn)) {
-                return o;
-            }
+        swapSalvoes: function() {
+            let temp = this.player.salvoes;
 
-            return o.concat(n);
+            this.player.salvoes = this.opponent.salvoes;
+            this.opponent.salvoes = temp;
         }
     },
     mounted: function() {
-        bus.$emit('trigger-data-reload', false);
         this.getShipsTemplate(this.setShips);
     }
 };
