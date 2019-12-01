@@ -25,7 +25,7 @@ export default {
         bus.$on('start-load', this.showLoading);
         bus.$on('end-load', this.hideLoading);
     },
-    destroyed: function() {
+    beforeDestroy: function() {
         bus.$off('start-load', this.showLoading);
         bus.$off('end-load', this.hideLoading);
     }

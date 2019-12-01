@@ -3,18 +3,21 @@
     <router-view/>
     <Footer />
     <Loading />
+    <PopUp />
   </div>
 </template>
 
 <script>
 import Footer from '@/components/Footer.vue';
 import Loading from '@/components/Loading.vue';
+import PopUp from '@/components/PopUp.vue';
 
 export default {
   name: 'App',
   components: {
     Footer,
-    Loading
+    Loading,
+    PopUp
   }
 };
 </script>

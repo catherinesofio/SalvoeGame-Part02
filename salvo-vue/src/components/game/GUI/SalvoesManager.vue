@@ -10,7 +10,7 @@ import { bus } from '@/main.js';
 import { mapActions } from 'vuex';
 
 export default {
-    props: ['isTurn', 'gp'],
+    props: ['isTurn', 'gp', 'turn'],
     data: function() {
         return {
             salvoesLeft: 0,
@@ -47,11 +47,13 @@ export default {
                 this.salvoesLeft += 1;
 
                 state = false;
+                cell.innerHTML = '';
             } else if (this.salvoesPlaced.length < this.salvoesTemplate) {
                 this.salvoesPlaced.push(cell);
                 this.salvoesLeft -= 1;
 
                 state = true;
+                cell.innerHTML = this.turn;
             }
 
             callback(state);
@@ -73,7 +75,7 @@ export default {
         this.getSalvoesTemplate(this.setSalvoesTemplate);
         bus.$on('check-salvoe', this.checkSalvoe);
     },
-    destroyed: function() {
+    beforeDestroy: function() {
         bus.$off('check-salvoe', this.checkSalvoe);
     }
 };

@@ -5,7 +5,7 @@
             {{ this.opponent }}
         </td>
         <td>{{ this.state }}</td>
-        <td v-if='this.showCurrent'>
+        <td v-if='showCurrent'>
             <button v-on:click='triggerLoadMatch'>🗡️</button>
         </td>
     </tr>
@@ -28,9 +28,7 @@ export default {
     methods: {
         ...mapActions(['loadMatch']),
         triggerLoadMatch: function() {
-            if (this.showCurrent) {
-                this.loadMatch(this.id);
-            }
+            this.loadMatch(this.id);
         }
     }
 };

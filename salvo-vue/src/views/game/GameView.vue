@@ -1,5 +1,5 @@
 <template>
-    <div class='view'>
+    <div><!-- class='view' -->
         <GUI :gp='gp' :turn='turn' :player='player' :opponent='opponent' />
         <div class='container-intro'>
             <div class='container-half content-left'>
@@ -20,9 +20,10 @@ import GridSimple from '@/components/game/grid/GridSimple.vue';
 import GridSelectable from '@/components/game/grid/GridSelectable.vue';
 import Ship from '@/components/game/Ship.vue';
 import { mapActions } from 'vuex';
+import { bus } from '@/main.js';
 
 export default {
-    props: { gp: Number, turn: Number, data: Object },
+    props: ['gp', 'turn', 'data'],
     data: function() {
         return {
             player: {
@@ -51,8 +52,8 @@ export default {
         Ship
     },
     watch: {
-        data: function (n, o) {console.log(n);
-            if (n != null && n != 'undefined') {
+        data: function (n) {
+            if (n && this.shipsTemplate.length > 0) {
                 let player = n.gamePlayers.filter(gp => gp.id == this.gp)[0];
                 this.player = this.getPlayer(player, false);
 
@@ -60,8 +61,6 @@ export default {
                 this.opponent = this.getPlayer(opponent, true);
 
                 this.swapSalvoes();
-                console.log(player);
-                console.log(opponent);
             }
         }
     },
@@ -116,6 +115,7 @@ export default {
         }
     },
     mounted: function() {
+        bus.$emit('trigger-instant-refresh');
         this.getShipsTemplate(this.setShips);
     }
 };

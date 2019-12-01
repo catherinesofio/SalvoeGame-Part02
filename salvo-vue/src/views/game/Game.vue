@@ -7,7 +7,7 @@
     </div>
 </template>
 
-<script>//BORRE SHIPS, IMPORTANTE!
+<script>
 import Nav from '@/components/nav/Nav.vue';
 import Spacer from '@/components/Spacer.vue';
 import LogManager from '@/components/game/log/LogManager.vue';
@@ -32,18 +32,16 @@ export default {
         LogManager
     },
     computed: {
-        ...mapState(['user']),
-        getData: function() {
-            return this.data;
-        }
+        ...mapState(['user'])
     },
     methods: {
         ...mapActions(['getMatchData', 'getTurnData']),
         setMatchData: function(data) {
             this.data = data;
             this.logs = data.logs;
-            this.turn = data.turn - 1;
+            this.turn = data.turn;
             let path = '/menu';
+            let player = data.gamePlayers[0];
 
             switch (data.state) {
                 case 'WAITING':
@@ -57,34 +55,56 @@ export default {
                     path = '/game/' + this.gp + '/view';
                     break;
                 case 'FINISHED':
-                    path = '/game/' + this.gp + '/results';
+                    console.log('hey');
+                    bus.$emit('open-popUp', {
+                        title: player.state,
+                        details: 'juejue',
+                        direction: '/menu/matches',
+                        button: 'K cool'
+                    });
+
+                    return false;
                     break;
             }
             
             this.$router.push({ path: path });
-            console.log(44);
+            
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
-        updateMatchData: function(data) {console.log('33');
-            let oldTurn = this.turn;
-            this.turn = data.turn - 1;
-            this.data.state = data.state;
-            
-            let player = this.data.gamePlayers.filter(x => x.id == this.gp)[0];
+        updateMatchData: function(data) {
             let playerUpdate = data.gamePlayers.filter(x => x.id == this.gp)[0];
+
+            if (data.state == 'FINISHED') {
+                console.log('hey');
+                bus.$emit('open-popUp', {
+                    title: playerUpdate.state,
+                    details: 'juejue',
+                    direction: '/menu/matches',
+                    button: 'K cool'
+                });
+
+                clearInterval(this.interval);
+                return false;
+            }
+
+            let oldTurn = this.turn;
+            this.turn = data.turn;
+            
+            let player = this.data.gamePlayers.filter(x => x.id == this.gp)[0];4
             let opponent = this.data.gamePlayers.filter(x => x.id != this.gp)[0];
             let opponentUpdate = data.gamePlayers.filter(x => x.id != this.gp)[0];
 
-            this.data.gamePlayers = [];
+            let gps = [];
 
-            player = this.updatePlayer(player, playerUpdate, false);
-            this.data.gamePlayers.push(player);
+            player = this.updatePlayer(playerUpdate, player, false, oldTurn);
+            gps.push(player);
 
             if (opponent) {
-                opponent = this.updatePlayer(opponent, opponentUpdate, true);
-                this.data.gamePlayers.push(opponent);
+                opponent = this.updatePlayer(opponentUpdate, opponent, true, oldTurn);
+                gps.push(opponent);
             }
+            this.data = Object.assign({}, this.data, { turn: this.turn, state: data.state, gamePlayers: [player, opponent] });
 
             let isIncluded = false;
             data.logs.forEach(log => {
@@ -100,7 +120,7 @@ export default {
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
-        updatePlayer: function(n, o, isOpponent) {
+        updatePlayer: function(n, o, isOpponent, oldTurn) {
             o.ships.activeShips = n.ships.activeShips;
 
             if (!isOpponent && n.ships.sunkShips.length > 0) {
@@ -130,7 +150,9 @@ export default {
                 }
             }
 
-            if (n.salvoes.length > 0 && o.salvoes != 'undefined' && o.salvoes != null && !o.salvoes.some(x => x.turn != n.salvoes[0].turn)) {
+            o.state = n.state;
+
+            if (oldTurn != this.turn && n.salvoes.length > 0 && o.salvoes != 'undefined' && o.salvoes != null && !o.salvoes.some(x => x.turn != n.salvoes[0].turn)) {
                 o.salvoes = o.salvoes.concat(n.salvoes);
             }
 
@@ -139,7 +161,7 @@ export default {
         setFinalData: function(data) {
             this.data = data;
             this.logs = data.logs;
-            this.turn = data.turn - 1;
+            this.turn = data.turn;
         },
         triggerUpdateMatchData: function() {
             this.getTurnData({ gp: this.gp, tn: this.turn, callback: this.updateMatchData });
@@ -156,9 +178,9 @@ export default {
         }
     },
     mounted: function() {
-        this.gp = this.$route.params.gp;
+        this.gp = parseInt(this.$route.params.gp);
         this.getMatchData({ gp: this.gp, callback: this.setMatchData });
-
+        
         bus.$on('trigger-instant-refresh', this.triggerInstantRefresh);
         bus.$on('trigger-data-reload', this.triggerReloadMatchData);
     },
