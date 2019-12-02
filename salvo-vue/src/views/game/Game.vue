@@ -41,7 +41,6 @@ export default {
             this.logs = data.logs;
             this.turn = data.turn;
             let path = '/menu';
-            let player = data.gamePlayers[0];
 
             switch (data.state) {
                 case 'WAITING':
@@ -55,15 +54,8 @@ export default {
                     path = '/game/' + this.gp + '/view';
                     break;
                 case 'FINISHED':
-                    console.log('hey');
-                    bus.$emit('open-popUp', {
-                        title: player.state,
-                        details: 'juejue',
-                        direction: '/menu/matches',
-                        button: 'K cool'
-                    });
-
-                    return false;
+                    path = '/game/' + this.gp + '/view';
+                    this.triggerPopUp(data.gamePlayers.filter(g => g.id == this.gp)[0].state);
                     break;
             }
             
@@ -72,57 +64,51 @@ export default {
             clearInterval(this.interval);
             this.interval = setInterval(this.triggerUpdateMatchData, this.time);
         },
-        updateMatchData: function(data) {
-            let playerUpdate = data.gamePlayers.filter(x => x.id == this.gp)[0];
-
-            if (data.state == 'FINISHED') {
-                console.log('hey');
-                bus.$emit('open-popUp', {
-                    title: playerUpdate.state,
-                    details: 'juejue',
-                    direction: '/menu/matches',
-                    button: 'K cool'
-                });
-
-                clearInterval(this.interval);
-                return false;
-            }
-
+        updateMatchData: function(data) {     
+            //TURN       
             let oldTurn = this.turn;
             this.turn = data.turn;
             
-            let player = this.data.gamePlayers.filter(x => x.id == this.gp)[0];4
+            //GAMEPLAYERS
+            let playerUpdate = data.gamePlayers.filter(x => x.id == this.gp)[0];
+            let player = this.data.gamePlayers.filter(x => x.id == this.gp)[0];
             let opponent = this.data.gamePlayers.filter(x => x.id != this.gp)[0];
             let opponentUpdate = data.gamePlayers.filter(x => x.id != this.gp)[0];
 
-            let gps = [];
-
             player = this.updatePlayer(playerUpdate, player, false, oldTurn);
+            opponent = this.updatePlayer(opponentUpdate, opponent, true, oldTurn);
+            
+            let gps = [];
             gps.push(player);
+            gps.push(opponent);
+            gps = gps.filter(x => isValid(x));
+            
+            this.data = Object.assign({}, this.data, { turn: data.turn, state: data.state, gamePlayers: gps });
 
-            if (opponent) {
-                opponent = this.updatePlayer(opponentUpdate, opponent, true, oldTurn);
-                gps.push(opponent);
-            }
-            this.data = Object.assign({}, this.data, { turn: this.turn, state: data.state, gamePlayers: [player, opponent] });
-
-            let isIncluded = false;
-            data.logs.forEach(log => {
-                isIncluded = this.logs.some(x => {
-                    return x.turn == log.turn && x.gamePlayerId == log.gamePlayerId && x.message == log.message;
-                });
-
-                if (!isIncluded) {
-                    this.logs.push(log);
-                }
-            });
+            //LOGS
+            this.updateLogs(data.logs, oldTurn);
             
             clearInterval(this.interval);
-            this.interval = setInterval(this.triggerUpdateMatchData, this.time);
+            if (data.state == 'FINISHED') {
+                this.triggerPopUp(playerUpdate.state);
+            } else {
+                this.interval = setInterval(this.triggerUpdateMatchData, this.time);
+            }
         },
         updatePlayer: function(n, o, isOpponent, oldTurn) {
+            if (!isValid(o) || !isValid(n)) {
+                return null;
+            }
+
+            //GENERAL
+            o.state = n.state;
             o.ships.activeShips = n.ships.activeShips;
 
+            if (oldTurn == this.turn) {
+                return o;
+            }
+
+            //SHIPS
             if (!isOpponent && n.ships.sunkShips.length > 0) {
                 let ships = o.ships.all;
                 let nShips = n.ships.sunkShips;
@@ -133,7 +119,7 @@ export default {
                     for (let i = ships.length - 1; i >= 0; i--) {
                         temp = nShips.filter(x => x.type == ships[i].type)[0];
 
-                        if (temp != null && temp != 'undefined') {
+                        if (isValid(temp)) {
                             ships[i] = temp;
                         }
                     }
@@ -150,13 +136,48 @@ export default {
                 }
             }
 
-            o.state = n.state;
-
-            if (oldTurn != this.turn && n.salvoes.length > 0 && o.salvoes != 'undefined' && o.salvoes != null && !o.salvoes.some(x => x.turn != n.salvoes[0].turn)) {
+            //SALVOES
+            if (n.salvoes.length > 0 && isValid(o.salvoes) && !o.salvoes.some(x => x.turn == n.salvoes[0].turn)) {
                 o.salvoes = o.salvoes.concat(n.salvoes);
             }
 
             return o;
+        },
+        updateLogs: function(logs, oldTurn) {
+            let isIncluded = false;
+            console.log(oldTurn);
+            if (!isValid(logs) || logs.length == 0) {
+                return false;console.log(logs);
+            } 
+            else if (logs[0].turn == 0) {console.log(logs);
+                logs.forEach(log => {
+                    isIncluded = this.logs.some(x => {
+                        return x.turn == log.turn && x.gamePlayerId == log.gamePlayerId && x.message == log.message;
+                    });
+
+                    if (!isIncluded) {console.log('no');
+                        this.logs.push(log);
+                    }
+                });
+            } else {
+                logs.forEach(log => {
+                    isIncluded = this.logs.some(x => {
+                        return x.turn == log.turn && x.gamePlayerId == log.gamePlayerId && x.message == log.message;
+                    });
+
+                    if (!isIncluded && oldTurn != this.turn) {
+                        this.logs.push(log);
+                    }
+                });
+            }
+        },
+        triggerPopUp: function(state) {
+            bus.$emit('open-popUp', {
+                title: state,
+                details: 'juejue',
+                direction: '/menu/matches',
+                button: 'K cool'
+            });
         },
         setFinalData: function(data) {
             this.data = data;
@@ -262,6 +283,14 @@ export default {
     padding: 0.25em;
     padding-right: 0.3em;
     padding-left: 0.3em;
+}
+
+.ship[isDown='true'] {
+    background-color: red;
+}
+
+.ship[isDown='false'] {
+    background-color: gainsboro;
 }
 
 .cell {

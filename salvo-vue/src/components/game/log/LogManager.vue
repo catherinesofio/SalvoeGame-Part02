@@ -32,7 +32,7 @@ export default {
     },
     watch: {
         data: function(newValue, oldValue) {
-            if (newValue != oldValue && newValue != null && newValue != 'undefined') {
+            if (newValue && newValue != oldValue) {
                 this.count = newValue.logs.length;
                 this.queueIndex = this.count - 1;
                 this.setGamePlayers(newValue.gamePlayers);

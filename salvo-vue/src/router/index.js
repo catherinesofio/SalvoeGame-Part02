@@ -9,7 +9,6 @@ import MenuLeaderboards from '../views/menu/MenuLeaderboards.vue';
 import Game from '../views/game/Game.vue';
 import GameView from '../views/game/GameView.vue';
 import GameShips from '../views/game/GameShips.vue';
-import GameResults from '../views/game/GameResults.vue';
 
 Vue.use(VueRouter);
 
@@ -52,11 +51,6 @@ const routes = [
         path: 'view',
         name: 'view',
         component: GameView
-      },
-      {
-        path: 'results',
-        name: 'results',
-        component: GameResults
       }
     ]
   }

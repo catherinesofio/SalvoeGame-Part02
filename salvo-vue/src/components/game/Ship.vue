@@ -12,7 +12,7 @@ export default {
         getOrientation: function() {
             let a = this.locations[0].charAt(0);
             let b = this.locations[1].charAt(0);
-
+            
             return (a == b) ? 'horizontal' : 'vertical';
         }
     },

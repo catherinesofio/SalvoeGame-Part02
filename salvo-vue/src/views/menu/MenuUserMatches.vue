@@ -44,16 +44,16 @@ export default {
             this.showCurrent = value;
         },
         getName: function(user) {
-            return (user != null) ? this.getUserName(user.id) : '';
+            return (isValid(user)) ? this.getUserName(user.id) : '';
         },
         isOnline: function(user) {
-            return (user != null) ? this.userIsOnline(user.id) : false;
+            return (isValid(user)) ? this.userIsOnline(user.id) : false;
         },
         getStates: function(data) {
             let opponent = data.gamePlayers.opponent;
             let player = data.gamePlayers.player;
 
-            return { game: data.state , opponent: (opponent != null) ? opponent.state : '', player: (player != null) ? player.state : '' };
+            return { game: data.state , opponent: (isValid(opponent)) ? opponent.state : '', player: (isValid(player)) ? player.state : '' };
         }
     }
 };

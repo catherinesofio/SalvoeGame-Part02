@@ -27,7 +27,7 @@ export default {
     computed: {
         ...mapState(['user']),
         userExists: function() {
-            return this.user != null;
+            return isValid(this.user);
         }
     },
     methods: {

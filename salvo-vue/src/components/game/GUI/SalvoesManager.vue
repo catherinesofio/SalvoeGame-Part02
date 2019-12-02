@@ -63,6 +63,7 @@ export default {
             let params = [];
             let index = ('opponent-').length;
             params = this.salvoesPlaced.map(salvoe => {
+                salvoe.setAttribute('isOccupied', true);
                 location = salvoe.getAttribute('id').slice(index);
                 return { cell: location };
             });

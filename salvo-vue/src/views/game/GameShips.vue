@@ -48,7 +48,7 @@ export default {
                     let offsetX = 0;
                     let offsetY = 0;
                     let orientation = ship.getAttribute('orientation');
-                    if (orientation = 'horizontal') {
+                    if (orientation == 'horizontal') {
                         offsetX = 1;
                     } else {
                         offsetY = 1;

@@ -58,7 +58,9 @@ export default {
                 this.player = this.getPlayer(player, false);
 
                 let opponent = n.gamePlayers.filter(gp => gp.id != this.gp)[0];
-                this.opponent = this.getPlayer(opponent, true);
+                if (isValid(opponent)) {
+                    this.opponent = this.getPlayer(opponent, true);
+                }
 
                 this.swapSalvoes();
             }
@@ -71,11 +73,11 @@ export default {
     },
     methods: {
         ...mapActions(['getShipsTemplate', 'getSalvoesTemplate']),
-        setShips: function(ships) {
-            this.shipsTemplate = ships;
+        setShips: function(data) {
+            this.shipsTemplate = data;
         },
         getPlayer: function(gp, opponent) {
-            if (gp == 'undefined' || gp == null) {
+            if (!isValid(gp)) {
                 return {
                     id: -1,
                     state: '',
@@ -110,12 +112,12 @@ export default {
         swapSalvoes: function() {
             let temp = this.player.salvoes;
 
-            this.player.salvoes = this.opponent.salvoes;
-            this.opponent.salvoes = temp;
+            this.player = Object.assign({}, this.player, { salvoes: this.opponent.salvoes });
+            this.opponent = Object.assign({}, this.opponent, { salvoes: temp });
         }
     },
     mounted: function() {
-        bus.$emit('trigger-instant-refresh');
+        bus.$emit('trigger-data-reload');
         this.getShipsTemplate(this.setShips);
     }
 };

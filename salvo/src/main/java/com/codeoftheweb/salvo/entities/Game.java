@@ -34,7 +34,7 @@ public class Game {
     public Game() {}
 
     public Game(Date creationDate) {
-        this.turn = 1L;
+        this.turn = 0L;
         this.creationDate = creationDate;
         this.state = GameStates.WAITING;
         this.gameLogs = new ArrayList<>();
