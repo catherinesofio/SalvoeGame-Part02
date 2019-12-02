@@ -1,5 +1,7 @@
 <template>
-    <td class='cell' v-on:click='select' :id='id' :isOccupied='isOccupied' :isSelected='isSelected'></td>
+    <td class='cell' v-on:click='select' :id='id' :isOccupied='isOccupied' :isSelected='isSelected'>
+        <span class='cell-content'></span>
+    </td>
 </template>
 
 <script>
@@ -9,14 +11,15 @@ export default {
     props: ['id', 'isOccupied', 'salvoe', 'isTurn'],
     data: function() {
         return {
+            content: null,
             isSelected: false
         };
     },
     watch: {
         salvoe: function(n, o) {
-            if (n != null) {
+            if (isValid(n)) {
                 this.$el.setAttribute('success', n.success);
-                this.$el.innerHTML = n.turn;
+                this.content.innerHTML = n.turn;
             }
         }
     },
@@ -31,6 +34,7 @@ export default {
         }
     },
     mounted: function() {
+        this.content = this.$el.querySelector('.cell-content');
         this.isSelected = this.isOccupied;
     }
 };

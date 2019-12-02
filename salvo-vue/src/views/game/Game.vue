@@ -102,15 +102,15 @@ export default {
                 return n;
             }
 
-            //GENERAL
             o.state = n.state;
-            o.ships.activeShips = n.ships.activeShips;
 
-            if (oldTurn == this.turn) {
+            if (oldTurn == this.turn && !o.state.includes('FINISHED')) {
                 return o;
             }
 
             //SHIPS
+            o.ships.activeShips = n.ships.activeShips;
+
             if (!isOpponent && n.ships.sunkShips.length > 0) {
                 let ships = o.ships.all;
                 let nShips = n.ships.sunkShips;
@@ -133,7 +133,9 @@ export default {
                 let ships = o.ships.sunkShips;
                 let nShips = n.ships.sunkShips;
 
-                if (ships.length > 0 && !ships.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
+                if (ships.length == 0 && nShips.length > 0) {
+                    o.ships.sunkShips = nShips;
+                } else if (ships.length > 0 && !ships.some(x => x.sunkInTurn == nShips[0].sunkInTurn)) {
                     o.ships.sunkShips = ships.concat(nShips);
                 }
             }
@@ -314,7 +316,7 @@ export default {
 }
 
 .cell[success='false'] {
-    background-color: red;
+    background-color: lightcoral;
 }
 
 .cell .ship {

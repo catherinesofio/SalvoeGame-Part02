@@ -47,13 +47,13 @@ export default {
                 this.salvoesLeft += 1;
 
                 state = false;
-                cell.innerHTML = '';
+                cell.querySelector('.cell-content').innerHTML = '';
             } else if (this.salvoesPlaced.length < this.salvoesTemplate) {
                 this.salvoesPlaced.push(cell);
                 this.salvoesLeft -= 1;
 
                 state = true;
-                cell.innerHTML = this.turn;
+                cell.querySelector('.cell-content').innerHTML = this.turn;
             }
 
             callback(state);
