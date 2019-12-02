@@ -96,8 +96,10 @@ export default {
             }
         },
         updatePlayer: function(n, o, isOpponent, oldTurn) {
-            if (!isValid(o) || !isValid(n)) {
+            if (!isOpponent && !isValid(o) || !isValid(n)) {
                 return null;
+            } else if (isOpponent && !isValid(o)) {
+                return n;
             }
 
             //GENERAL
@@ -145,17 +147,17 @@ export default {
         },
         updateLogs: function(logs, oldTurn) {
             let isIncluded = false;
-            console.log(oldTurn);
+            
             if (!isValid(logs) || logs.length == 0) {
-                return false;console.log(logs);
+                return false;
             } 
-            else if (logs[0].turn == 0) {console.log(logs);
+            else if (logs[0].turn == 0) {
                 logs.forEach(log => {
                     isIncluded = this.logs.some(x => {
                         return x.turn == log.turn && x.gamePlayerId == log.gamePlayerId && x.message == log.message;
                     });
 
-                    if (!isIncluded) {console.log('no');
+                    if (!isIncluded) {
                         this.logs.push(log);
                     }
                 });

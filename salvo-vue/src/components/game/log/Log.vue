@@ -19,7 +19,7 @@ export default {
     computed: {
         ...mapGetters(['getUserName']),
         getMessage: function() {
-            if (this.data == null) {
+            if (!isValid(this.data)) {
                 return '';
             }
 
@@ -36,7 +36,7 @@ export default {
                 message = message.replace('{st}', params);
                 message = message.replace('{ss}', params);
             }
-
+            
             message = message.replace('{gp}', this.getPlayerName(this.data.gamePlayerId));
             
             return message;

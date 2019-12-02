@@ -60,7 +60,7 @@ export default {
             this.showLog = !this.showLog;
         },
         setGamePlayers: function(gamePlayers) {
-            if (gamePlayers != null) {
+            if (isValid(gamePlayers)) {
                 this.gamePlayers = gamePlayers.map(gp => { 
                     return { id: gp.id, player: gp.player };
                 });
