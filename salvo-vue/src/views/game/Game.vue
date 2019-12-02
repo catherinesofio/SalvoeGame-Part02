@@ -301,8 +301,20 @@ export default {
     background-color: lightskyblue;
 }
 
-.cell[isOccupied=true], .cell[isSelected=true] {
+.cell[isOccupied='true'] {
     background-color: grey;
+}
+
+.cell[isSelected='true'] {
+    background-color: whitesmoke;
+}
+
+.cell[success='true'] {
+    background-color: green;
+}
+
+.cell[success='false'] {
+    background-color: red;
 }
 
 .cell .ship {

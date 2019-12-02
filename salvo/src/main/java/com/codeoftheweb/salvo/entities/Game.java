@@ -55,7 +55,7 @@ public class Game {
     public GameStates getAndRefreshState() {
         if (this.state == GameStates.WAITING && gamePlayers.stream().filter(x -> x.getState() == PlayerStates.WAITING_PLAYER).count() == 2) {
             this.state = GameStates.PLAYING;
-
+            this.turn = 1L;
             for (GamePlayer gp : this.gamePlayers) {
                 gp.setState(PlayerStates.PLAYING_TURN);
             }

@@ -34,13 +34,13 @@ export default {
         },
         isOccupied: function(x, y) {
             let cell = y + x;
-            let salvoe = (this.salvoes != null && this.salvoes != 'undefined') ? this.salvoes.some(x => x.cell == cell) : false;
+            let salvoe = (isValid(this.salvoes)) ? this.salvoes.some(x => x.cell == cell) : false;
 
             return this.occupiedCells.includes(cell) || salvoe;
         },
         getSalvoe: function(x, y) {
             let cell = y + x;
-            let salvoe = (this.salvoes != null && this.salvoes != 'undefined') ? this.salvoes.filter(x => x.cell == cell) : [];
+            let salvoe = (isValid(this.salvoes)) ? this.salvoes.filter(x => x.cell == cell) : [];
 
             return (salvoe.length > 0) ? salvoe[0] : null;
         }

@@ -53,7 +53,7 @@ export default {
     },
     watch: {
         data: function (n) {
-            if (n && this.shipsTemplate.length > 0) {
+            if (isValid(n) && this.shipsTemplate.length > 0) {
                 let player = n.gamePlayers.filter(gp => gp.id == this.gp)[0];
                 this.player = this.getPlayer(player, false);
 
