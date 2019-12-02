@@ -31,11 +31,16 @@ export default {
         LogPopup
     },
     watch: {
-        data: function(newValue, oldValue) {
-            if (newValue && newValue != oldValue) {
-                this.count = newValue.logs.length;
-                this.queueIndex = this.count - 1;
-                this.setGamePlayers(newValue.gamePlayers);
+        data: function(n, o) {
+            if (isValid(n) && n != o) {
+                this.setGamePlayers(n.gamePlayers);
+            }
+        },
+        logs: function(n, o) {
+            if (isValid(n) && n.length > this.count) {
+                this.count = n.length;
+
+                this.logQueue = this.logQueue.concat(n.slice(this.queueIndex));
             }
         }
     },
@@ -70,8 +75,8 @@ export default {
         }
     },
     mounted: function() {
-        this.setGamePlayers((this.data != null) ? this.data.gamePlayers : null);
-        this.logQueue = (this.data != null) ? this.data.logs : [];
+        this.setGamePlayers((isValid(this.data)) ? this.data.gamePlayers : null);
+        this.logQueue = (isValid(this.logs)) ? this.logs : [];
         
         let length = this.logQueue.length;
         this.count = length;
