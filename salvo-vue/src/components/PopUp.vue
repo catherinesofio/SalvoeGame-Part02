@@ -3,8 +3,7 @@
         <h1>{{ title }}</h1>
         <p>{{ details }}</p>
         <router-link :to='direction'>
-            <span v-on:click='closePopUp'></span>
-            {{ button }}
+            <span v-on:click='closePopUp'>{{ button }}</span>
         </router-link>
     </div>
 </template>
