@@ -11,11 +11,6 @@ import { mapGetters } from 'vuex';
 
 export default {
     props: ['data', 'gamePlayers'],
-    data: function() {
-        return {
-            user: null
-        };
-    },
     computed: {
         ...mapGetters(['getUserName']),
         getMessage: function() {
@@ -26,7 +21,7 @@ export default {
             let message = this.data.message;
             let params = this.data.params;
 
-            if (params != null) {
+            if (isValid(params)) {
                 if (params.length > 1) {
                     params = params.join(', ');
                 } else if (params.length == 1) {
@@ -42,13 +37,10 @@ export default {
             return message;
         },
         getTurn: function() {
-            return (this.data != null) ? this.data.turn : '';
+            return (isValid(this.data)) ? this.data.turn : '';
         },
         getDate: function() {
-            return (this.data != null) ? this.data.date : '';
-        },
-        getUser: function() {
-
+            return (isValid(this.data)) ? this.data.date : '';
         }
     },
     methods: {

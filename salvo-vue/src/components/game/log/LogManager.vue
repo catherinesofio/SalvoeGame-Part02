@@ -5,21 +5,22 @@
             <button v-on:click='switchNotifications'>⚡</button>
             <button v-on:click='switchLog'>🗨️</button>
         </div>
-        <LogPopup v-if='showNotifications' :logs='logQueue' />
+        <LogPopup v-if='showNotifications' :logs='logQueue' :gamePlayers='gamePlayers' />
         <LogContainer v-if='showLog' :gamePlayers='gamePlayers' :logs='logs' />
     </div>
 </template>
 
 <script>
 import LogContainer from '@/components/game/log/LogContainer.vue';
-import LogPopup from '@/components/game/log/LogContainer.vue';
+import LogPopup from '@/components/game/log/LogPopup.vue';
+import { bus } from '@/main.js';
 
 export default {
     props: ['data', 'logs'],
     data: function() {
         return {
             count: 0,
-            queueIndex: -1,
+            queueIndex: 0,
             logQueue: [],
             gamePlayers: [],
             showNotifications: true,
@@ -54,15 +55,29 @@ export default {
     },
     methods: {
         closeNotification: function() {
-            this.queueIndex = Math.min(this.queueIndex + 1, this.ge);
-
-            this.logQueue = (index > -1) ? this.data.logs.slice(index) : [];
+            let index = this.queueIndex = Math.min(this.queueIndex + 1, this.count);
+            
+            console.log(this.logQueue);
+            this.logQueue = (index > 0 && index < this.count) ? this.logs.slice(index) : [];
+            console.log(this.logQueue);
+            if (this.showNotifications && this.logQueue.length > 0) {
+                bus.$emit('open-notification');
+            }
         },
         switchNotifications: function() {
             this.showNotifications = !this.showNotifications;
+
+            if (!this.showNotifications) {
+                this.closeNotification();
+            }
         },
         switchLog: function() {
             this.showLog = !this.showLog;
+
+            if (this.showLog) {
+                this.queueIndex = this.count;
+                this.logQueue = [];
+            }
         },
         setGamePlayers: function(gamePlayers) {
             if (isValid(gamePlayers)) {
@@ -81,6 +96,11 @@ export default {
         let length = this.logQueue.length;
         this.count = length;
         this.queueIndex = length - 1;
+
+        bus.$on('close-notification', this.closeNotification);
+    },
+    beforeDestroy: function() {
+        bus.$off('close-notification', this.closeNotification);
     }
 };
 </script>
