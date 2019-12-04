@@ -1,5 +1,5 @@
 <template>
-    <div v-if='count > 0'>
+    <div v-if='getShow'>
         <Log :data='getData' :gamePlayers='gamePlayers' />
         <button v-on:click='triggerClose'>X</button>
     </div>
@@ -14,8 +14,9 @@ export default {
     data: function() {
         return {
             count: 0,
-            time: 2500,
-            interval: null
+            time: 3000,
+            interval: null,
+            isPaused: false
         }
     },
     components: {
@@ -24,13 +25,16 @@ export default {
     watch: {
         logs: function(n, o){
             this.count = n.length;
-
-            if (o.length == 0 && this.count > 0) {console.log('khe');
+            
+            if (o.length == 0 && this.count > 0) {
                 this.triggerOpen();
             }
         }
     },
     computed: {
+        getShow: function() {
+            return this.count > 0 && !this.isPaused;
+        },
         getData: function() {
             return (this.logs.length > 0) ? this.logs[0] : null;
         }
@@ -38,22 +42,34 @@ export default {
     methods: {
         triggerClose: function() {
             clearInterval(this.interval);
-
-            bus.$emit('close-notification');
+            
+            bus.$emit('notification-close');
         },
         triggerOpen: function() {
-            this.interval = setInterval(this.time, this.triggerClose);
+            this.interval = setInterval(this.triggerClose, this.time);
+        },
+        triggerPause: function() {
+            isPaused = true;
+
+            clearInterval(this.interval);
+        },
+        triggerResume: function() {
+            isPaused = false;
+
+            this.interval = setInterval(this.triggerClose, this.time);
         }
     },
     mounted: function() {
-        this.interval = setInterval(this.time, this.triggerClose);
-        
-        bus.$on('open-notification', this.triggerOpen);
+        bus.$on('notification-open', this.triggerOpen);
+        bus.$on('notification-pause', this.triggerPause);
+        bus.$on('notification-resume', this.triggerResume);
     },
     beforeDestroy: function() {
         clearInterval(this.interval);
 
-        bus.$off('open-notification', this.triggerOpen);
+        bus.$off('notification-open', this.triggerOpen);
+        bus.$off('notification-pause', this.triggerPause);
+        bus.$off('notification-resume', this.triggerResume);
     }
 };
 </script>

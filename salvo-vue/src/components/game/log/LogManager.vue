@@ -57,11 +57,10 @@ export default {
         closeNotification: function() {
             let index = this.queueIndex = Math.min(this.queueIndex + 1, this.count);
             
-            console.log(this.logQueue);
             this.logQueue = (index > 0 && index < this.count) ? this.logs.slice(index) : [];
-            console.log(this.logQueue);
+            
             if (this.showNotifications && this.logQueue.length > 0) {
-                bus.$emit('open-notification');
+                bus.$emit('notification-open');
             }
         },
         switchNotifications: function() {
@@ -69,6 +68,8 @@ export default {
 
             if (!this.showNotifications) {
                 this.closeNotification();
+            } else {
+                bus.$emit('notification-open');
             }
         },
         switchLog: function() {
@@ -77,6 +78,12 @@ export default {
             if (this.showLog) {
                 this.queueIndex = this.count;
                 this.logQueue = [];
+            }
+
+            if (this.showNotifications && this.showLog) {
+                bus.$emit('notification-pause');
+            } else if (this.showNotifications && !this.showLog) {
+                bus.$emit('notification-resume');
             }
         },
         setGamePlayers: function(gamePlayers) {
@@ -97,10 +104,10 @@ export default {
         this.count = length;
         this.queueIndex = length - 1;
 
-        bus.$on('close-notification', this.closeNotification);
+        bus.$on('notification-close', this.closeNotification);
     },
     beforeDestroy: function() {
-        bus.$off('close-notification', this.closeNotification);
+        bus.$off('notification-close', this.closeNotification);
     }
 };
 </script>
