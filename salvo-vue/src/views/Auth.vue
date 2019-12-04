@@ -36,9 +36,33 @@ export default {
 .auth {
     box-sizing: border-box;
     position: absolute;
-    top: 50%;
+    top: 45%;
     left: 50%;
+    padding: calc(var(--padding) / 1.25);
     transform: translate(-50%, -50%);
-    background-color: var(--color-01);
+    background-image: var(--background-panel);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    border-style: solid;
+    border-color: var(--color-02);
+    border-width: var(--border-width);
+}
+
+.auth fieldset {
+    margin-top: var(--margin);
+    margin-bottom: var(--margin);
+    background-color: var(--color-03);
+    border-radius: var(--border-radius);   
+}
+
+.auth label, .auth input {
+    text-transform: lowercase;
+    padding-left: calc(var(--padding) / 4);
+    padding-right: calc(var(--padding) / 4);
+}
+
+.auth input {
+    border-top-right-radius: var(--border-radius);
+    border-bottom-right-radius: var(--border-radius);
 }
 </style>

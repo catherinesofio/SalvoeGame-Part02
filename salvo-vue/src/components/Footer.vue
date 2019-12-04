@@ -1,6 +1,6 @@
 <template>
     <footer>
-        <p>Made by <a href='https://www.linkedin.com/in/catalina-sofio-avogadro/'>Catherine Sofio</a></p>
+        <p>MADE BY <a href='https://www.linkedin.com/in/catalina-sofio-avogadro/'>CATHERINE SOFIO</a></p>
     </footer>
 </template>
 
@@ -11,6 +11,7 @@ footer {
     width: 100vw;
     text-align: center;
     background-color: var(--color-03);
-    z-index: var(--layer-background);
+    box-shadow: var(--box-shadow);
+    z-index: var(--layer-middle-footer);
 }
 </style>
