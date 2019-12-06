@@ -1,5 +1,5 @@
 <template>
-    <div v-if='show'>
+    <div v-if='show' class='pop-up'>
         <h1>{{ title }}</h1>
         <p>{{ details }}</p>
         <router-link :to='direction'>
@@ -42,3 +42,9 @@ export default {
     }
 };
 </script>
+
+<style>
+.pop-up, .pop-up * {
+    z-index: var(--layer-popup);
+}
+</style>

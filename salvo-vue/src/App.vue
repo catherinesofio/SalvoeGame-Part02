@@ -3,7 +3,7 @@
     <BackgroundPattern />
     <Footer />
     <router-view/>
-    <!--<Loading />
+    <Loading />
     <PopUp />-->
   </div>
 </template>
@@ -27,7 +27,6 @@ export default {
 
 <style>
 @import url('https://fonts.googleapis.com/css?family=Calistoga&display=swap');
-
 @import url('https://fonts.googleapis.com/css?family=Solway&display=swap');
 
 :root {
@@ -35,14 +34,17 @@ export default {
   --layer-background: 0;
   --layer-background-pattern: 1;
   /* MIDDLE: 5-9 */
-  --layer-middle: 5;
+  --layer-middle-nav: 5;
+  --layer-middle: 6;
   --layer-middle-footer: 9;
   /* FOREGROUND: 10-14 */
   --layer-foreground: 10;
   /* NAV: 15-19 */
   --layer-ui: 15;
   /* POPUPS: 20-24 */
-  --layer-popup: 20;
+  --layer-notification: 20;
+  --layer-log: 21;
+  --layer-popup: 22;
 
   --spacer-height: 10vh;
 
@@ -88,6 +90,7 @@ html {
 
 html * {
   font-family: solway;
+  overflow: hidden;
 }
 
 body, .container {
@@ -120,7 +123,7 @@ a {
   color: var(--color-08);
 }
 
-button {
+button, .btn {
   margin-right: var(--margin);
   padding: calc(var(--padding) / 2);
   text-transform: uppercase;
@@ -128,7 +131,7 @@ button {
   color: var(--color-00);
   background-color: var(--color-08);
   border-radius: var(--border-radius);
-  border-width: calc(var(--border-width) / 2);
+  border-width: calc(var(--border-width) / 1.5);
   border-color: var(--color-00);
   border-style: solid;
   outline: none;
@@ -148,31 +151,32 @@ button:active {
   margin: 0;
   padding: 0;
 
-  z-index: var(--layer-foreground);
+  z-index: var(--layer-middle);
 }
 
-/*.container-intro {
-  position: relative;
-  width: 100%;
-  height: 25%;
+.view-panel {
+  margin: calc(var(--margin) * 2);
+  margin-top: 0;
+  padding: var(--padding);
+  height: 65vh;
+  background-color: var(--color-04);
+  overflow: hidden;
+  overflow-y: scroll;
+  border-bottom-left-radius: var(--border-radius);
+  border-bottom-right-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  border-style: solid;
+  border-color: var(--color-00);
+  border-width: var(--border-width);
 }
 
-.container-body {
-  position: relative;
-  width: 100%;
-  height: 75%;
+.td-join {
+  display: flex;
+  align-items: center;
 }
 
-.container-half {
-  box-sizing: border-box;
-  position: relative;
-  width: 50%;
-  height: 50%;
+.fixed {
+  position: sticky;
+  bottom: 0;
 }
-
-.content-left { 
-  position: relative;
-  top: 0;
-  right: 0;
-}*/
 </style>

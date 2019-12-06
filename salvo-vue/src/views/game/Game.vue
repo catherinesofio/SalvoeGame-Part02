@@ -299,8 +299,8 @@ export default {
 
 .cell {
     position: relative;
-    width: var(--cell-size);
-    background-color: lightskyblue;
+    /*width: var(--cell-size);*/
+    background-color: var(--color-09);
 }
 
 .cell[isOccupied='true'] {

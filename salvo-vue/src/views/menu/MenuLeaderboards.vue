@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class='view-panel'>
         <table>
             <caption>LEADERBOARDS</caption>
             <thead>

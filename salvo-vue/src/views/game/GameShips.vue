@@ -90,3 +90,37 @@ export default {
     }
 };
 </script>
+
+<style>
+#player-table {
+    margin: var(--margin);
+    width: calc(100vw - (var(--margin) * 2));
+}
+
+#player-table th {
+    width: calc(100vw / 15);
+    height: calc(100vw / 15);
+    background-color: black;/*var(--color-00);*/
+}
+
+#player-table td {
+    width: calc(100vw / 15);
+    height: calc(100vw / 15);
+}
+
+#player-table thead :first-child {
+    border-top-left-radius: var(--border-radius);
+}
+
+#player-table thead :last-child {
+    border-top-right-radius: var(--border-radius);
+}
+
+#player-table tbody :last-child th {
+    border-bottom-left-radius: var(--border-radius);
+}
+
+#player-table tbody :last-child :last-child {
+    border-bottom-right-radius: var(--border-radius);
+}
+</style>

@@ -34,8 +34,11 @@ export default {
 #shipContainer {
     box-sizing: border-box;
     position: relative;
-    width: 100%;
+    width: calc(100vw - (var(--margin) * 2));
     height: 5em;
+    margin-top: calc(var(--spacer-height) / 2);
+    margin-left: var(--margin);
     background-color: rgba(0,0,0,0.5);
+    border-radius: var(--border-radius);
 }
 </style>

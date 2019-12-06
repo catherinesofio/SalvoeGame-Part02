@@ -22,11 +22,4 @@ export default {
 nav * {
     z-index: var(--layer-ui);
 }
-
-nav {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: var(--layer-middle);
-}
 </style>

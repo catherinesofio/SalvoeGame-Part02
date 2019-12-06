@@ -12,7 +12,12 @@ export default {
 div {
     width: 1em;
     height: 1em;
+    margin-right: var(--margin);
     background-color: lightgray;
+    border-radius: 100px;
+    border-style: solid;
+    border-color: var(--color-00);
+    border-width: var(--border-width);
 }
 
 div[isOnline=true] {

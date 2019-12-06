@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class='view-panel'>
         <div>
             <button v-on:click='setShowCurrent(true)'>CURRENT</button>
             <button v-on:click='setShowCurrent(false)'>HISTORY</button>
