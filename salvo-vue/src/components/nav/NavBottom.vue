@@ -10,6 +10,12 @@
 div {
     width: 100vw;
     position: absolute;
-    bottom: 2em;
+    align-items: baseline;
+    bottom: calc(var(--text-size-03) + (var(--padding) * 2));
+    text-align: center;
+}
+
+div, div * {
+    z-index: var(--layer-ui) !important;
 }
 </style>

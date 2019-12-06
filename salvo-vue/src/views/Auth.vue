@@ -44,14 +44,14 @@ export default {
     border-radius: var(--border-radius);
     box-shadow: var(--box-shadow);
     border-style: solid;
-    border-color: var(--color-02);
+    border-color: var(--color-04);
     border-width: var(--border-width);
 }
 
 .auth fieldset {
     margin-top: var(--margin);
     margin-bottom: var(--margin);
-    background-color: var(--color-03);
+    background-color: var(--color-05);
     border-radius: var(--border-radius);   
 }
 

@@ -1,7 +1,7 @@
 <template>
     <div>
         <button v-on:click='triggerLogout'>🚪</button>
-        <span>{{ getName }}</span>
+        <h1>{{ getName }}</h1>
     </div>
 </template>
 
@@ -26,8 +26,13 @@ export default {
 
 <style scoped>
 div {
-    width: 100vw;
+    display: flex;
+    align-items: center;
     position: absolute;
     top: 0;
+    width: 100vw;
+    height: var(--spacer-height);
+    padding: calc(var(--padding) / 3);
+    background-color: var(--color-10);
 }
 </style>

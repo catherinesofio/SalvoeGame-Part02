@@ -26,6 +26,10 @@ export default {
 </script>
 
 <style>
+@import url('https://fonts.googleapis.com/css?family=Calistoga&display=swap');
+
+@import url('https://fonts.googleapis.com/css?family=Solway&display=swap');
+
 :root {
   /* BACKGROUND: 0-4 */
   --layer-background: 0;
@@ -52,24 +56,25 @@ export default {
   --text-size-02: 1.5em;
   --text-size-03: 1em;
 
-  --color-font: #ffffff;
-  /*--color-font: #EEF1E6;*/
-  --color-00: #fff8ab;
-  --color-01: #fff9aa;
-  --color-02: #ffd5B8;
-  --color-03: #FF756D;
-  --color-04: #B88BAD;
-  --color-05: #ACECD5;
-  --color-06: #799FCB;
-  --color-07: #85DE77;
+  --color-00: #ffffff;
+  --color-01: #fff8ab;
+  --color-02: #fff9aa;
+  --color-04: #ffd5B8;
+  --color-05: #FF756D;
+  --color-06: #E0BBE4;
+  --color-07: #B88BAD;
+  --color-08: #ACECD5;
+  --color-09: #799FCB;
+  --color-10: #85DE77;
+  --color-11: #77DD77;
 
-  --box-shadow: 0em 0em 1em var(--color-02);
+  --box-shadow: 0em 0em 1em var(--color-4);
 
   --border-width: 0.2em;
 
-  --background-app: linear-gradient(to bottom, var(--color-01), var(--color-02));
-  --background-panel: linear-gradient(to bottom left, var(--color-00), var(--color-01));
-  --background-footer: linear-gradient(to bottom right, var(--color-03), var(--color-02));
+  --background-app: linear-gradient(to bottom, var(--color-02), var(--color-04));
+  --background-panel: linear-gradient(to bottom left, var(--color-01), var(--color-02));
+  --background-footer: linear-gradient(to bottom right, var(--color-05), var(--color-04));
 
   --background-pattern: url('../public/assets/pattern-paw.png');
 }
@@ -78,7 +83,11 @@ html {
   box-sizing: border-box;
   width: 100vw;
   height: 100vh;
-  color: var(--color-font);
+  color: var(--color-00);
+}
+
+html * {
+  font-family: solway;
 }
 
 body, .container {
@@ -108,7 +117,7 @@ p {
 
 a {
   text-decoration: none;
-  color: var(--color-05);
+  color: var(--color-08);
 }
 
 button {
@@ -116,12 +125,17 @@ button {
   padding: calc(var(--padding) / 2);
   text-transform: uppercase;
   font-weight: bold;
-  color: var(--color-font);
-  background-color: var(--color-05);
+  color: var(--color-00);
+  background-color: var(--color-08);
   border-radius: var(--border-radius);
   border-width: calc(var(--border-width) / 2);
-  border-color: var(--color-05);
+  border-color: var(--color-00);
   border-style: solid;
+  outline: none;
+}
+
+button:active {
+  background-color: var(--color-09);
 }
 
 .view {
@@ -134,7 +148,7 @@ button {
   margin: 0;
   padding: 0;
 
-  z-index: var(--layer-middle);
+  z-index: var(--layer-foreground);
 }
 
 /*.container-intro {
