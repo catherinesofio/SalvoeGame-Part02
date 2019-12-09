@@ -4,7 +4,7 @@
     <Footer />
     <router-view/>
     <Loading />
-    <PopUp />-->
+    <PopUp />
   </div>
 </template>
 
@@ -39,6 +39,9 @@ export default {
   --layer-middle-footer: 9;
   /* FOREGROUND: 10-14 */
   --layer-foreground: 10;
+  --layer-foreground-cells: 11;
+  --layer-foreground-ships: 12;
+  --layer-foreground-gizmo: 13;
   /* NAV: 15-19 */
   --layer-ui: 15;
   /* POPUPS: 20-24 */
@@ -48,7 +51,9 @@ export default {
 
   --spacer-height: 10vh;
 
-  --cell-size: 1em;
+  --cell-size: calc(100vw / 15);
+  --gizmo-width: 1;
+  --gizmo-height: 1;
 
   --margin: 0.5em;
   --padding: 1.5em;
@@ -91,6 +96,7 @@ html {
 html * {
   font-family: solway;
   overflow: hidden;
+  scroll-behavior: smooth;
 }
 
 body, .container {
@@ -168,6 +174,7 @@ button:active {
   border-style: solid;
   border-color: var(--color-00);
   border-width: var(--border-width);
+  border-top-width: 0;
 }
 
 .td-join {

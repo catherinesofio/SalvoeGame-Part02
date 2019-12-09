@@ -292,27 +292,20 @@ export default {
 </script>
 
 <style>
-:root {
-    --gizmo-size: 2;
-    --gizmo-obj: 8;
-    --gizmo-ship: 9;
-    --gizmo-btn: 10;
-}
-
 #gizmo-obj {
     position: absolute;
     top: 0;
     left: 0;
     width: calc((var(--gizmo-width)) * var(--cell-size));
     height: calc((var(--gizmo-height)) * var(--cell-size));
-    padding: 0.25em;
-    z-index: var(--gizmo-obj);
+    padding: var(--padding);
+    z-index: var(--layer-foreground-gizmo);
 }
 
 #gizmo-obj .ship {
     position: absolute;
     top: 0 !important;
     left: 0;
-    z-index: var(--gizmo-ship);
+    z-index: var(--layer-foreground-gizmo);
 }
 </style>

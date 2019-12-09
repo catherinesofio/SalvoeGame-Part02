@@ -74,7 +74,7 @@ export default {
         },
         switchLog: function() {
             this.showLog = !this.showLog;
-
+            
             if (this.showLog) {
                 this.queueIndex = this.count;
                 this.logQueue = [];
@@ -105,9 +105,11 @@ export default {
         this.queueIndex = length - 1;
 
         bus.$on('notification-close', this.closeNotification);
+        bus.$on('trigger-switch-log', this.switchLog);
     },
     beforeDestroy: function() {
         bus.$off('notification-close', this.closeNotification);
+        bus.$off('trigger-switch-log', this.switchLog);
     }
 };
 </script>

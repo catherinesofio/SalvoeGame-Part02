@@ -1,5 +1,5 @@
 <template>
-    <li>
+    <li class='log'>
         <span>TURN: {{ getTurn }}</span>
         <p>{{ getMessage }}</p>
         <span>{{ getDate }}</span>
@@ -51,4 +51,11 @@ export default {
         }
     }
 };
-</script>>
+</script>
+
+<style>
+.log {
+    padding: var(--padding);
+    background-color: var(--color-06);
+}
+</style>

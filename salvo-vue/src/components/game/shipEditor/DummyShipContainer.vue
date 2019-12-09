@@ -34,11 +34,15 @@ export default {
 #shipContainer {
     box-sizing: border-box;
     position: relative;
-    width: calc(100vw - (var(--margin) * 2));
-    height: 5em;
-    margin-top: calc(var(--spacer-height) / 2);
+    width: calc((var(--cell-size) * 5) + (var(--padding) * 2));
+    height: calc(var(--cell-size) * 3);
     margin-left: var(--margin);
-    background-color: rgba(0,0,0,0.5);
+    padding: var(--padding);
+    background-color: var(--color-05);
     border-radius: var(--border-radius);
+    overflow: hidden;
+    overflow-y: scroll;
+    border-width: var(--border);
+    border-style: solid;
 }
 </style>

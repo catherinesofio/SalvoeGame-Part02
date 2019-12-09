@@ -1,5 +1,5 @@
 <template>
-    <div v-if='getShow'>
+    <div v-if='getShow' class='notification'>
         <Log :data='getData' :gamePlayers='gamePlayers' />
         <button v-on:click='triggerClose'>X</button>
     </div>
@@ -73,3 +73,23 @@ export default {
     }
 };
 </script>
+
+<style>
+.notification, .notification * {
+    z-index: var(--layer-notification);
+}
+
+.notification {
+    bottom: calc(var(--margin) * 3);
+    left: calc(0vw - (var(--padding)));
+    position: absolute;
+    width: 100vw;;
+    padding: var(--padding);
+}
+
+.notification button {
+    position: absolute;
+    left: calc(100vw - (var(--padding)));
+    top: calc(var(--padding) * 2);
+}
+</style>

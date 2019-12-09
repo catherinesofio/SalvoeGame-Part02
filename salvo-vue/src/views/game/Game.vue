@@ -222,7 +222,7 @@ export default {
 .ship {
     position: relative;
     background-color: gainsboro;
-    z-index: var(--layer-foreground);
+    z-index: var(--layer-foreground-ships);
 }
 
 .ship[size='2'][orientation='vertical'] {
@@ -299,8 +299,11 @@ export default {
 
 .cell {
     position: relative;
-    /*width: var(--cell-size);*/
+    margin: 0;
+    padding: 0;
     background-color: var(--color-09);
+    border-width: 0;
+    z-index: var(--layer-foreground-cells);
 }
 
 .cell[isOccupied='true'] {
@@ -321,5 +324,8 @@ export default {
 
 .cell .ship {
     position: absolute;
+    top: 0!important;
+    left: 0;
+    z-index: var(--layer-foreground-ships);
 }
 </style>

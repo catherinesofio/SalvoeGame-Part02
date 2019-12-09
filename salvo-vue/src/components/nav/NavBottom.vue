@@ -1,8 +1,14 @@
 <template>
     <div>
-        <router-link to='/menu/matches'>📜</router-link>
-        <router-link to='/menu/my-matches'>⚔️</router-link>
-        <router-link to='/menu/leaderboards'>🏆</router-link>
+        <button>
+            <router-link to='/menu/matches'>📜</router-link>
+        </button>
+        <button>
+            <router-link to='/menu/my-matches'>⚔️</router-link>
+        </button>
+        <button>
+            <router-link to='/menu/leaderboards'>🏆</router-link>
+        </button>
     </div>
 </template>
 

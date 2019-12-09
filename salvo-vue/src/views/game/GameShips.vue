@@ -1,9 +1,11 @@
 <template>
     <div>
         <GizmoObject :tableId='id' :ship='ship' :callback='unselectShip' v-show='showGizmo' />
-        <DummyShipContainer :callback='selectShip' />
+        <div class='container-wrap'>
+            <DummyShipContainer :callback='selectShip' />
+            <button v-on:click='triggerSubmit' :disabled='!allShipsPlaced'>SUBMIT</button>
+        </div>
         <Grid :id='id' :occupiedCells='[]' :isTurn='false' />
-        <button v-on:click='triggerSubmit' :disabled='!allShipsPlaced'>SUBMIT</button>
     </div>
 </template>
 
@@ -98,14 +100,15 @@ export default {
 }
 
 #player-table th {
-    width: calc(100vw / 15);
-    height: calc(100vw / 15);
-    background-color: black;/*var(--color-00);*/
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: var(--color-00);
+    color: var(--color-09);
 }
 
 #player-table td {
-    width: calc(100vw / 15);
-    height: calc(100vw / 15);
+    width: var(--cell-size);
+    height: var(--cell-size);
 }
 
 #player-table thead :first-child {
@@ -116,11 +119,21 @@ export default {
     border-top-right-radius: var(--border-radius);
 }
 
-#player-table tbody :last-child th {
-    border-bottom-left-radius: var(--border-radius);
+.container-wrap {
+  margin-top: calc(var(--spacer-height) / 6);
+  box-sizing: border-box;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
-#player-table tbody :last-child :last-child {
-    border-bottom-right-radius: var(--border-radius);
+.container-wrap button {
+  padding: 0;
+  height: 50%;
+  margin-left: var(--margin);
+  margin-right: var(--margin);
+  padding: var(--padding);
+  text-align: center;
 }
 </style>
