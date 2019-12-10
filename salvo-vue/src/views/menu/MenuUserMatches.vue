@@ -1,14 +1,15 @@
 <template>
     <div class='view-panel'>
+        <h1>MY MATCHES</h1>
         <div>
             <button v-on:click='setShowCurrent(true)'>CURRENT</button>
             <button v-on:click='setShowCurrent(false)'>HISTORY</button>
         </div>
-        <table>
-            <caption>MY MATCHES</caption>
+        <table class='custom-table'>
             <thead>
                 <th>CHALLENGER</th>
-                <th>STATUS</th>
+                <th></th>
+                <th v-if='showCurrent'></th>
             </thead>
             <tbody>
                 <UserMatchInfo v-for='match in this.getMatches' :key='match.gamePlayers.player.id' :id='match.gamePlayers.player.id' :showCurrent='showCurrent' :opponent='getName(match.gamePlayers.opponent)' :isOnline='isOnline(match.gamePlayers.opponent)' :state='getStates(match)' />

@@ -1,14 +1,13 @@
 <template>
     <tr>
         <td class='td-join'>
-            <IconOnline v-if='this.showCurrent && opponentExist' v-bind:isOnline='this.isOnline' />
-            <p>{{ this.opponent }}</p>
+           <IconOnline v-if='this.showCurrent && opponentExist' v-bind:isOnline='this.isOnline' />
+            <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
         </td>
         <td>
-            <p>OPP: {{ this.getPlayerState('opponent') }}</p>
-            <p>YOU: {{ this.getPlayerState('player') }}</p>
+            <p>{{ this.getPlayerState('player') }} You</p>
         </td>
-        <td v-if='showCurrent'>
+        <td v-if='showCurrent' class='transparent'>
             <button v-on:click='triggerLoadMatch'>🗡️</button>
         </td>
     </tr>
@@ -26,6 +25,9 @@ export default {
     computed: {
         opponentExist: function() {
             return this.opponent != '';
+        },
+        getOpponentName() {
+            return (this.opponent != '') ? this.opponent : 'Waiting for player...';
         }
     },
     methods: {

@@ -178,13 +178,103 @@ button:active {
   border-top-width: 0;
 }
 
-.td-join {
-  display: flex;
-  align-items: center;
+.view-panel h1 {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-weight: bold;
+  font-size: var(--text-size-01);
 }
 
 .fixed {
   position: sticky;
   bottom: 0;
+}
+
+.td-join {
+  display: flex;
+  align-items: center;
+}
+
+.custom-table, #leaderboards {
+  box-sizing: border-box;
+  width: calc(100vw - (var(--margin) * 11));
+  margin: 0;
+  margin-top: var(--margin);
+  margin-bottom: var(--margin);
+  text-align: center;
+  border-spacing: 0;
+}
+
+.custom-table th, .custom-table td {
+  margin: 0;
+  padding: calc(var(--padding) / 2);
+}
+
+.custom-table th {
+  background-color: var(--color-08);
+  border-width: 0;
+  border-top-width: calc(var(--border-width) / 2);
+  border-bottom-width: calc(var(--border-width) / 2);
+  border-color: var(--color-00);
+  border-style: solid;
+}
+
+.custom-table td {
+  background-color: var(--color-06);
+  border-width: 0;
+  border-bottom-width: calc(var(--border-width) / 2);
+  border-color: var(--color-00);
+  border-style: solid;
+}
+
+.custom-table tbody tr td:first-child, .custom-table thead th:first-child {
+  border-left-width: calc(var(--border-width) / 2);
+  border-color: var(--color-00);
+  border-style: solid;
+}
+
+.custom-table tbody tr td:last-child, .custom-table thead th:last-child {
+  border-right-width: calc(var(--border-width) / 2);
+  border-color: var(--color-00);
+  border-style: solid;
+}
+
+.custom-table thead th:first-child {
+  border-top-left-radius: var(--border-radius);
+}
+
+.custom-table thead th:last-child {
+  border-top-right-radius: var(--border-radius);
+}
+
+.custom-table tbody tr:last-child td:first-child {
+  border-bottom-left-radius: var(--border-radius);
+}
+
+.custom-table tbody tr:last-child td:last-child {
+  border-bottom-right-radius: var(--border-radius);
+}
+
+#leaderboards td {
+  padding: calc(var(--padding) / 2);
+}
+
+#leadearboads tbody tr:nth-child(1) td {
+  background-color: var(--color-11);
+  padding: 0;
+  padding: calc(var(--padding) / 0.75);
+}
+
+#leadearboads tbody tr:nth-child(2) td {
+  background-color: var(--color-02);
+  padding: 0;
+  padding: calc(var(--padding) / 1);
+}
+
+#leadearboads tbody tr:nth-child(3) td {
+  background-color: var(--color-05);
+  padding: 0;
+  padding: calc(var(--padding) / 1.25);
 }
 </style>

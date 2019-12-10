@@ -17,7 +17,7 @@ div {
     border-radius: 100px;
     border-style: solid;
     border-color: var(--color-00);
-    border-width: var(--border-width);
+    border-width: calc(var(--border-width) / 2);
 }
 
 div[isOnline=true] {

@@ -1,7 +1,7 @@
 <template>
     <div class='view-panel'>
-        <table>
-            <caption>LEADERBOARDS</caption>
+        <h1>LEADERBOARDS</h1>
+        <table id='leadearboads' class='custom-table'>
             <thead>
                 <th>RANKING</th>
                 <th>USER</th>

@@ -1,16 +1,16 @@
 <template>
     <div class='view-panel'>
-        <table>
-            <caption>MATCHES</caption>
+        <h1>MATCHES</h1>
+        <button v-on:click='this.createMatch'>🗡️ CREATE MATCH 🗡️</button>
+        <table class='custom-table'>
             <thead>
                 <th>CHALLENGER</th>
-                <th>STATE</th>
+                <th></th>
             </thead>
             <tbody>
                 <MatchInfo v-for="match in this.matches" :key="match.id" :id="match.id" :opponent="getName(match.gamePlayers.opponent)" :isOnline="isOnline(match.gamePlayers.opponent)" :state="getStates(match)" />
             </tbody>
         </table>
-        <button v-on:click='this.createMatch'>🗡️ CREATE MATCH 🗡️</button>
     </div>
 </template>
 

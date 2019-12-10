@@ -53,6 +53,8 @@ export default {
     margin-bottom: var(--margin);
     background-color: var(--color-05);
     border-radius: var(--border-radius);   
+    border-color: var(--color-04);
+    border-style: solid;
 }
 
 .auth label, .auth input {
@@ -64,5 +66,7 @@ export default {
 .auth input {
     border-top-right-radius: var(--border-radius);
     border-bottom-right-radius: var(--border-radius);
+    border-color: var(--color-04);
+    border-style: solid;
 }
 </style>

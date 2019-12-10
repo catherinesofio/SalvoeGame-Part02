@@ -2,11 +2,7 @@
     <tr>
         <td class='td-join'>
             <IconOnline :isOnline="this.isOnline" />
-            <p>{{ this.opponent }}</p>
-        </td>
-        <td>
-            <p>OPP: {{ this.getPlayerState('opponent') }}</p>
-            <p>YOU: {{ this.getPlayerState('player') }}</p>
+            <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
         </td>
         <td>
             <button v-on:click='triggerJoinMatch' class='fixed'>🗡️</button>
@@ -22,6 +18,11 @@ export default {
     props: ['id', 'opponent', 'isOnline', 'state'],
     components: {
         IconOnline
+    },
+    computed: {
+        getOpponentName() {
+            return (this.opponent != '') ? this.opponent : 'Waiting for player...';
+        }
     },
     methods: {
         ...mapActions(['joinMatch']),
