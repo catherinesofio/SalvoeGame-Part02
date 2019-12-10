@@ -293,19 +293,21 @@ export default {
 
 <style>
 #gizmo-obj {
+    box-sizing: border-box;
     position: absolute;
     top: 0;
     left: 0;
-    width: calc((var(--gizmo-width)) * var(--cell-size));
-    height: calc((var(--gizmo-height)) * var(--cell-size));
+    width: calc(var(--gizmo-width) * var(--cell-size));
+    height: calc(var(--gizmo-height) * var(--cell-size));
     padding: var(--padding);
     z-index: var(--layer-foreground-gizmo);
+    overflow: visible;
 }
 
 #gizmo-obj .ship {
     position: absolute;
-    top: 0 !important;
+    top: 0;
     left: 0;
-    z-index: var(--layer-foreground-gizmo);
+    z-index: var(--layer-foreground-ships);
 }
 </style>

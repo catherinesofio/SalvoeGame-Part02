@@ -40,8 +40,9 @@ export default {
   /* FOREGROUND: 10-14 */
   --layer-foreground: 10;
   --layer-foreground-cells: 11;
-  --layer-foreground-ships: 12;
-  --layer-foreground-gizmo: 13;
+  --layer-foreground-gizmo: 12;
+  --layer-foreground-ships: 13;
+  --layer-foreground-btn: 14;
   /* NAV: 15-19 */
   --layer-ui: 15;
   /* POPUPS: 20-24 */

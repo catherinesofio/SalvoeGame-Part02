@@ -1,5 +1,5 @@
 <template>
-    <table v-bind:id='getGridId'>
+    <table v-bind:id='getGridId' class='grid'>
         <thead>
             <th></th>
             <th v-for='x in gridHeaders' v-bind:key='x'>{{ x }}</th>

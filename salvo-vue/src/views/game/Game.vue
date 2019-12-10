@@ -304,6 +304,7 @@ export default {
     background-color: var(--color-09);
     border-width: 0;
     z-index: var(--layer-foreground-cells);
+    overflow: visible;
 }
 
 .cell[isOccupied='true'] {
@@ -324,7 +325,7 @@ export default {
 
 .cell .ship {
     position: absolute;
-    top: 0!important;
+    top: 0;
     left: 0;
     z-index: var(--layer-foreground-ships);
 }

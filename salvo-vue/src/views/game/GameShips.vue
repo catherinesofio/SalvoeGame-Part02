@@ -1,11 +1,11 @@
 <template>
     <div>
-        <GizmoObject :tableId='id' :ship='ship' :callback='unselectShip' v-show='showGizmo' />
         <div class='container-wrap'>
             <DummyShipContainer :callback='selectShip' />
             <button v-on:click='triggerSubmit' :disabled='!allShipsPlaced'>SUBMIT</button>
         </div>
         <Grid :id='id' :occupiedCells='[]' :isTurn='false' />
+        <GizmoObject :tableId='id' :ship='ship' :callback='unselectShip' v-show='showGizmo' />
     </div>
 </template>
 
