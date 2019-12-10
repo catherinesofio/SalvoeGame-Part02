@@ -67,6 +67,7 @@ export default {
   --color-00: #ffffff;
   --color-01: #fff8ab;
   --color-02: #fff9aa;
+  --color-03: #799ABF;
   --color-04: #ffd5B8;
   --color-05: #FF756D;
   --color-06: #E0BBE4;
@@ -197,7 +198,6 @@ button:active {
 }
 
 .custom-table, #leaderboards {
-  box-sizing: border-box;
   width: calc(100vw - (var(--margin) * 11));
   margin: 0;
   margin-top: var(--margin);
@@ -248,33 +248,33 @@ button:active {
   border-top-right-radius: var(--border-radius);
 }
 
-.custom-table tbody tr:last-child td:first-child {
-  border-bottom-left-radius: var(--border-radius);
+.custom-table tfoot td {
+  background-color: var(--color-07);
+  border-width: 0;
+  border-bottom-width: calc(var(--border-width) / 2);
+  border-color: var(--color-00);
+  border-style: solid;
 }
 
-.custom-table tbody tr:last-child td:last-child {
+.custom-table tfoot td:first-child {
+  border-bottom-left-radius: var(--border-radius);
+  border-left-width: calc(var(--border-width) / 2);
+}
+
+.custom-table tfoot  td:last-child {
   border-bottom-right-radius: var(--border-radius);
+  border-right-width: calc(var(--border-width) / 2);
 }
 
 #leaderboards td {
   padding: calc(var(--padding) / 2);
 }
 
-#leadearboads tbody tr:nth-child(1) td {
-  background-color: var(--color-11);
-  padding: 0;
-  padding: calc(var(--padding) / 0.75);
-}
-
-#leadearboads tbody tr:nth-child(2) td {
-  background-color: var(--color-02);
-  padding: 0;
-  padding: calc(var(--padding) / 1);
-}
-
-#leadearboads tbody tr:nth-child(3) td {
+#leadearboads tbody tr:first-child td {
   background-color: var(--color-05);
-  padding: 0;
-  padding: calc(var(--padding) / 1.25);
+}
+
+#leadearboads tbody tr #player {
+  background-color: var(--color-00);
 }
 </style>

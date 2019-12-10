@@ -10,6 +10,10 @@
                 <Cell v-for='x in gridHeaders' v-bind:key='x' :id='getCellId(x, y)' :isOccupied='isOccupied(x, y)' :salvoe='getSalvoe(x, y)' />
             <tr/>
         </tbody>
+        <tfoot>
+            <td></td>
+            <td v-for='x in gridHeaders' v-bind:key='x'></td>
+        </tfoot>
     </table>
 </template>
 

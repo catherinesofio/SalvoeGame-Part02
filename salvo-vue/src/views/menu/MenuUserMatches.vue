@@ -14,6 +14,11 @@
             <tbody>
                 <UserMatchInfo v-for='match in this.getMatches' :key='match.gamePlayers.player.id' :id='match.gamePlayers.player.id' :showCurrent='showCurrent' :opponent='getName(match.gamePlayers.opponent)' :isOnline='isOnline(match.gamePlayers.opponent)' :state='getStates(match)' />
             </tbody>
+            <tfoot>
+                <td></td>
+                <td></td>
+                <td v-if='showCurrent'></td>
+            </tfoot>
         </table>
     </div>
 </template>

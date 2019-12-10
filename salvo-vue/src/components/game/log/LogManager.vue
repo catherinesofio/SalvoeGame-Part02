@@ -1,8 +1,7 @@
 <template>
     <div>
-        <div>
-            <span>{{ getQueueCount }}</span>
-            <button v-on:click='switchNotifications'>⚡</button>
+        <div id='log-panel'>
+            <button v-on:click='switchNotifications'>{{ getQueueCount }} ⚡</button>
             <button v-on:click='switchLog'>🗨️</button>
         </div>
         <LogPopup v-if='showNotifications' :logs='logQueue' :gamePlayers='gamePlayers' />
@@ -113,3 +112,23 @@ export default {
     }
 };
 </script>
+
+<style>
+#log-panel {
+    box-sizing: border-box;
+    text-align: right;
+    width: 100vw;
+    padding: calc(var(--padding) / 2);
+    background-color: var(--color-06);
+    border-width: 0;
+    border-top-width: var(--border-width);
+    border-bottom-width: var(--border-width);
+    border-color: var(--color-00);
+    border-style: solid;
+}
+
+#log-panel * {
+    margin-left: var(--margin);
+    margin-right: var(--margin);
+}
+</style>

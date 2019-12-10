@@ -10,6 +10,10 @@
             <tbody>
                 <MatchInfo v-for="match in this.matches" :key="match.id" :id="match.id" :opponent="getName(match.gamePlayers.opponent)" :isOnline="isOnline(match.gamePlayers.opponent)" :state="getStates(match)" />
             </tbody>
+            <tfoot>
+                <td></td>
+                <td></td>
+            </tfoot>
         </table>
     </div>
 </template>

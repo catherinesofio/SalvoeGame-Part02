@@ -94,31 +94,6 @@ export default {
 </script>
 
 <style>
-#player-table {
-    margin: var(--margin);
-    width: calc(100vw - (var(--margin) * 2));
-}
-
-#player-table th {
-    width: var(--cell-size);
-    height: var(--cell-size);
-    background-color: var(--color-00);
-    color: var(--color-09);
-}
-
-#player-table td {
-    width: var(--cell-size);
-    height: var(--cell-size);
-}
-
-#player-table thead :first-child {
-    border-top-left-radius: var(--border-radius);
-}
-
-#player-table thead :last-child {
-    border-top-right-radius: var(--border-radius);
-}
-
 .container-wrap {
   margin-top: calc(var(--spacer-height) / 6);
   box-sizing: border-box;
@@ -135,5 +110,78 @@ export default {
   margin-right: var(--margin);
   padding: var(--padding);
   text-align: center;
+}
+
+#player-table {
+    margin: var(--margin);
+    width: calc(100vw - (var(--margin) * 2));
+}
+
+#player-table th {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: var(--color-00);
+    color: var(--color-09);
+    border-width: 0;
+    border-color: var(--color-04);
+    border-style: solid;
+}
+
+#player-table thead th {
+    border-top-width: var(--border-width);
+}
+
+#player-table thead th:first-of-type {
+    border-left-width: var(--border-width);
+}
+
+#player-table thead th:last-of-type {
+    border-right-width: var(--border-width);
+}
+
+#player-table tbody th {
+    border-left-width: var(--border-width);
+}
+
+#player-table td {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border-right-width: calc(var(--border-width) / 2);
+    border-bottom-width: calc(var(--border-width) / 2);
+    border-color: var(--color-00);
+    border-style: solid;
+}
+
+#player-table tbody tr td:last-of-type {
+    border-right-width: var(--border-width);
+    border-right-color: var(--color-04);
+    border-style: solid;
+}
+
+#player-table thead :first-child {
+    border-top-left-radius: var(--border-radius);
+}
+
+#player-table thead :last-child {
+    border-top-right-radius: var(--border-radius);
+}
+
+#player-table tfoot td {
+    width: calc(var(--cell-size) / 2);
+    background-color: var(--color-05);
+    border-width: 0;
+    border-bottom-width: var(--border-width);
+    border-color: var(--color-04);
+    border-style: solid;
+}
+
+#player-table tfoot td:first-of-type {
+    border-bottom-left-radius: var(--border-radius);
+    border-left-width: var(--border-width);
+}
+
+#player-table tfoot td:last-child {
+    border-bottom-right-radius: var(--border-radius);
+    border-right-width: var(--border-width);
 }
 </style>

@@ -329,4 +329,8 @@ export default {
     left: 0;
     z-index: var(--layer-foreground-ships);
 }
+
+.grid {
+    border-spacing: 0;
+}
 </style>

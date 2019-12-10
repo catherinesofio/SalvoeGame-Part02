@@ -1,5 +1,5 @@
 <template>
-    <tr>
+    <tr v-bind:id='id'>
         <td>{{ this.position }}</td>
         <td>{{ this.username }}</td>
         <td>{{ this.points }}</td>
@@ -8,6 +8,6 @@
 
 <script>
 export default {
-    props: ['position', 'username', 'points']
+    props: ['position', 'username', 'points', 'id']
 };
 </script>
