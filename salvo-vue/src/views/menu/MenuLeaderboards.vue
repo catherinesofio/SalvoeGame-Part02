@@ -8,7 +8,7 @@
                 <th>POINTS</th>
             </thead>
             <tbody>
-                <LeaderboardInfo v-for='(user, index) in this.leaderboards' :key='index' :position='index + 1' :username='getName(index + 1)' :points='user.points' :id='getId(user.id)' />
+                <LeaderboardInfo v-for='(user, index) in this.leaderboards' :key='index' :position='index + 1' :username='getName(index + 1)' :points='user.points' :isPlayer='getIsPlayer(user.id)' />
             </tbody>
             <tfoot>
                 <td></td>
@@ -35,9 +35,38 @@ export default {
         getName: function (id) {
             return this.getUserName(id);
         },
-        getId: function (id) {
-            return (this.user.id == id) ? 'player' : false;
+        getIsPlayer: function (id) {
+            return (this.user.id == id) ? true : false;
         }
     }
 };
 </script>
+
+<style>
+#leaderboards td {
+  padding: calc(var(--padding) / 2);
+}
+
+#leadearboads tbody tr:first-child td {
+  background-color: var(--color-09);
+}
+
+tr[size=3] td {
+    height: calc(var(--padding) * 4);
+    font-size: calc(var(--text-size-03) * 4);
+}
+
+tr[size=2], tr[size=2] td {
+    height: 10em !important;/*calc(var(--padding) * 3);*/
+    font-size: calc(var(--text-size-03) * 3);
+}
+
+tr[size=1] td {
+    height: calc(var(--padding) * 2);
+    font-size: calc(var(--text-size-03) * 2);
+}
+
+tr[isPlayer=true] td {
+  background-color: var(--color-10);
+}
+</style>

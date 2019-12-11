@@ -1,5 +1,6 @@
 <template>
   <div id='app' class='container'>
+    <!--<MusicPlayer />-->
     <BackgroundPattern />
     <Footer />
     <router-view/>
@@ -13,6 +14,7 @@ import BackgroundPattern from '@/components/BackgroundPattern.vue';
 import Footer from '@/components/Footer.vue';
 import Loading from '@/components/Loading.vue';
 import PopUp from '@/components/PopUp.vue';
+import MusicPlayer from '@/components/MusicPlayer.vue';
 
 export default {
   name: 'App',
@@ -20,7 +22,8 @@ export default {
     BackgroundPattern,
     Footer,
     Loading,
-    PopUp
+    PopUp,
+    MusicPlayer
   }
 };
 </script>
@@ -35,14 +38,13 @@ export default {
   --layer-background-pattern: 1;
   /* MIDDLE: 5-9 */
   --layer-middle-nav: 5;
-  --layer-middle: 6;
+  /*--layer-middle: 6;*/
   --layer-middle-footer: 9;
   /* FOREGROUND: 10-14 */
   --layer-foreground: 10;
-  --layer-foreground-cells: 11;
-  --layer-foreground-gizmo: 12;
-  --layer-foreground-ships: 13;
-  --layer-foreground-btn: 14;
+  --layer-foreground-gizmo: 11;
+  --layer-foreground-ships: 12;
+  --layer-foreground-btn: 13;
   /* NAV: 15-19 */
   --layer-ui: 15;
   /* POPUPS: 20-24 */
@@ -85,7 +87,7 @@ export default {
   --background-panel: linear-gradient(to bottom left, var(--color-01), var(--color-02));
   --background-footer: linear-gradient(to bottom right, var(--color-05), var(--color-04));
 
-  --background-pattern: url('../public/assets/pattern-paw.png');
+  --background-pattern: url('../src/assets/pattern-paw.png');
 }
 
 html {
@@ -118,6 +120,19 @@ html, body {
   overflow-x: hidden !important;
 }
 
+::-webkit-scrollbar {
+  width: calc(var(--cell-size) / 5);
+  background-color: rgba(0, 0 ,0 ,0);
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-06);
+}
+
+::-webkit-scrollbar-thumb:active {
+  background-color: var(--color-09);
+}
+
 li {
   list-style-type: none;
 }
@@ -147,6 +162,21 @@ button, .btn {
 
 button:active {
   background-color: var(--color-09);
+}
+
+button[selected=true], .btn[selected=true] {
+  background-color: var(--color-03);
+}
+
+.help {
+  width: calc(var(--cell-size) * 1.5);
+  height: calc(var(--cell-size) * 1.5);
+  margin: 0;
+  padding: 0;
+  font-size: var(--text-size-03);
+  background-color: var(--color-05);
+  border-width: calc(var(--border-width) / 2);
+  border-radius: 2em;
 }
 
 .view {
@@ -185,11 +215,6 @@ button:active {
   padding: 0;
   font-weight: bold;
   font-size: var(--text-size-01);
-}
-
-.fixed {
-  position: sticky;
-  bottom: 0;
 }
 
 .td-join {
@@ -240,6 +265,10 @@ button:active {
   border-style: solid;
 }
 
+.custom-table tbody tr td:last-child {
+  border-bottom-width: calc(var(--border-width) / 2);
+}
+
 .custom-table thead th:first-child {
   border-top-left-radius: var(--border-radius);
 }
@@ -264,17 +293,5 @@ button:active {
 .custom-table tfoot  td:last-child {
   border-bottom-right-radius: var(--border-radius);
   border-right-width: calc(var(--border-width) / 2);
-}
-
-#leaderboards td {
-  padding: calc(var(--padding) / 2);
-}
-
-#leadearboads tbody tr:first-child td {
-  background-color: var(--color-05);
-}
-
-#leadearboads tbody tr #player {
-  background-color: var(--color-00);
 }
 </style>

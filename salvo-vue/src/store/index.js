@@ -17,7 +17,8 @@ const store = new Vuex.Store({
     },
     leaderboards: [],
     gridHeaders: 10,
-    gridHeadersY: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J']
+    gridHeadersY: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'],
+    badges: ['🥇', '🥈', '🥉']
   },
   getters: {
     getUserName: state => id => {

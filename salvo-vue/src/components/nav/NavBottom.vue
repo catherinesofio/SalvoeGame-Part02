@@ -17,7 +17,7 @@ div {
     width: 100vw;
     position: absolute;
     align-items: baseline;
-    bottom: calc(var(--text-size-03) + (var(--padding) * 2));
+    bottom: calc(var(--text-size-03) + (var(--padding) * 2.75));
     text-align: center;
 }
 

@@ -5,7 +5,7 @@
             <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
         </td>
         <td>
-            <button v-on:click='triggerJoinMatch' class='fixed'>🗡️</button>
+            <button v-on:click='triggerJoinMatch'>🐾</button>
         </td>
     </tr>
 </template>
@@ -34,13 +34,13 @@ export default {
             
             switch (state) {
                 case 'WAITING_PREPARING':
-                    return '⚓';
+                    return '🐈';
                     break;
                 case 'PLAYING_WAITING':
                     return '⏳';
                     break;
                 case 'PLAYING_TURN':
-                    return '💣';
+                    return '💖';
                     break;
                 default:
                     return '🕒';

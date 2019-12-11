@@ -303,7 +303,6 @@ export default {
     padding: 0;
     background-color: var(--color-09);
     border-width: 0;
-    z-index: var(--layer-foreground-cells);
     overflow: visible;
 }
 
@@ -332,5 +331,9 @@ export default {
 
 .grid {
     border-spacing: 0;
+}
+
+.grid * {
+    overflow: visible;
 }
 </style>

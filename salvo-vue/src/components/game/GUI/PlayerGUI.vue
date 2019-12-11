@@ -16,7 +16,7 @@ export default {
     props: ['id', 'state', 'activeShips'],
     data: function() {
         return {
-            states: ['⚓', '💣', '⏳']
+            states: ['🐈', '💖', '⏳', '🕒']
         };
     },
     components: {
@@ -38,8 +38,11 @@ export default {
                 case 'PLAYING_TURN':
                     return this.states[1];
                     break;
-                default:
+                case 'PLAYING_WAITING':
                     return this.states[2]
+                    break;
+                default:
+                    return this.states[3]
                     break;
             }
         }

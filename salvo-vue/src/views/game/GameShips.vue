@@ -115,6 +115,7 @@ export default {
 #player-table {
     margin: var(--margin);
     width: calc(100vw - (var(--margin) * 2));
+    overflow: visible;
 }
 
 #player-table th {

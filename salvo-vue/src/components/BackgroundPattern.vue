@@ -5,6 +5,11 @@
 </template>
 
 <style>
+:root {
+    --animation-speed: 3s;
+    --background-size: 5em;
+}
+
 #background, #background-pattern {
     box-sizing: border-box;
     position: absolute;
@@ -20,8 +25,15 @@
 #background-pattern {
     background-image: var(--background-pattern);
     background-repeat: repeat;
-    background-size: 5em;
+    background-size: var(--background-size);
     mix-blend-mode: soft-light;
     z-index: var(--layer-background-pattern);
+    -webkit-animation: slide var(--animation-speed) linear infinite;
+    animation: slide var(--animation-speed) linear infinite;
+}
+
+@-webkit-keyframes slide {
+    from { background-position: 0em 0em; }
+    to { background-position: var(--background-size) calc(var(--background-size) * -1); }
 }
 </style>

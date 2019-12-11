@@ -7,8 +7,8 @@
         <td>
             <p>{{ this.getPlayerState('player') }} You</p>
         </td>
-        <td v-if='showCurrent' class='transparent'>
-            <button v-on:click='triggerLoadMatch'>🗡️</button>
+        <td v-if='showCurrent'>
+            <button v-on:click='triggerLoadMatch'>🐾</button>
         </td>
     </tr>
 </template>
@@ -40,13 +40,13 @@ export default {
             
             switch (state) {
                 case 'WAITING_PREPARING':
-                    return '⚓';
+                    return '🐈';
                     break;
                 case 'PLAYING_WAITING':
                     return '⏳';
                     break;
                 case 'PLAYING_TURN':
-                    return '💣';
+                    return '💖';
                     break;
                 default:
                     return '🕒';

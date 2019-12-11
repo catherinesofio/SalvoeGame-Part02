@@ -49,12 +49,12 @@ export default {
             this.interval = setInterval(this.triggerClose, this.time);
         },
         triggerPause: function() {
-            isPaused = true;
+            this.isPaused = true;
 
             clearInterval(this.interval);
         },
         triggerResume: function() {
-            isPaused = false;
+            this.isPaused = false;
 
             this.interval = setInterval(this.triggerClose, this.time);
         }
@@ -80,9 +80,9 @@ export default {
 }
 
 .notification {
-    bottom: calc(var(--margin) * 3);
-    left: calc(0vw - (var(--padding)));
     position: absolute;
+    left: calc(0vw - (var(--padding)));
+    bottom: calc(var(--padding) * -1);/*calc(var(--margin) * 3);*/
     width: 100vw;;
     padding: var(--padding);
 }

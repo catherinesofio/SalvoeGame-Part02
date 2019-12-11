@@ -1,8 +1,8 @@
 <template>
     <div class='view'>
         <div class='auth'>
-            <button v-on:click='setLogin(true)' :disabled='login'>LOGIN</button>
-            <button v-on:click='setLogin(false)' :disabled='!login'>REGISTER</button>
+            <button id='btn-login' v-on:click='setLogin(true)' :disabled='login'>LOGIN</button>
+            <button id='btn-register' v-on:click='setLogin(false)' :disabled='!login'>REGISTER</button>
             <LoginForm v-if='login' />
             <RegisterForm v-if='!login' />
         </div>
@@ -17,7 +17,9 @@ export default {
     name: 'Auth',
     data: function() {
         return {
-            login: true
+            login: true,
+            btnLogin: null,
+            btnRegister: null
         };
     },
     components: {
@@ -27,7 +29,21 @@ export default {
     methods: {
         setLogin: function(value) {
             this.login = value;
+
+            if (value) {
+                select(this.btnLogin);
+                unselect(this.btnRegister);
+            } else {
+                select(this.btnRegister);
+                unselect(this.btnLogin);
+            }
         }
+    },
+    mounted: function() {
+        this.btnLogin = this.$el.querySelector('#btn-login');
+        this.btnRegister = this.$el.querySelector('#btn-register');
+
+        select(this.btnLogin);
     }
 };
 </script>
