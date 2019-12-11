@@ -2,8 +2,8 @@
     <div class='view'>
         <Nav :user='this.user' />
         <Spacer />
-        <router-view :gp='gp' :turn='turn' :data='data' />
         <LogManager :data='data' :logs='logs' />
+        <router-view :gp='gp' :turn='turn' :data='data' />
     </div>
 </template>
 

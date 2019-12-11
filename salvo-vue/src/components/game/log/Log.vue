@@ -40,7 +40,13 @@ export default {
             return (isValid(this.data)) ? this.data.turn : '';
         },
         getDate: function() {
-            return (isValid(this.data)) ? this.data.date : '';
+            if (!isValid(this.data.date)) {
+                return '';
+            }
+
+            let date = new Date(this.data.date);
+
+            return date.getDay() + '/' + date.getMonth() + '/' + date.getFullYear();
         }
     },
     methods: {
@@ -57,5 +63,17 @@ export default {
 .log {
     padding: var(--padding);
     background-color: var(--color-06);
+    border-radius: var(--border-radius);
+    border-width: calc(var(--border-width) / 2);
+    border-color: var(--color-00);
+    border-style: solid;
+    text-align: justify;
+}
+
+.log span:last-of-type {
+    position: absolute;
+    width: calc(100% - (var(--padding) * 3.5));
+    text-align: right;
+    left: calc(var(--padding) * 2);
 }
 </style>

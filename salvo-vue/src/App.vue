@@ -1,6 +1,6 @@
 <template>
   <div id='app' class='container'>
-    <!--<MusicPlayer />-->
+    <MusicPlayer />
     <BackgroundPattern />
     <Footer />
     <router-view/>
@@ -78,6 +78,7 @@ export default {
   --color-09: #799FCB;
   --color-10: #85DE77;
   --color-11: #77DD77;
+  --color-12: rgb(221, 221, 221);
 
   --box-shadow: 0em 0em 1em var(--color-4);
 
@@ -188,7 +189,6 @@ button[selected=true], .btn[selected=true] {
   height: 100%;
   margin: 0;
   padding: 0;
-
   z-index: var(--layer-middle);
 }
 

@@ -1,8 +1,8 @@
 <template>
     <div>
         <div id='log-panel'>
-            <button v-on:click='switchNotifications'>{{ getQueueCount }} ⚡</button>
-            <button v-on:click='switchLog'>🗨️</button>
+            <button id='btn-notification' selected='true' v-on:click='switchNotifications'>{{ getQueueCount }} ⚡</button>
+            <button id='btn-logs' v-on:click='switchLog'>🗨️</button>
         </div>
         <LogPopup v-if='showNotifications' :logs='logQueue' :gamePlayers='gamePlayers' />
         <LogContainer v-if='showLog' :gamePlayers='gamePlayers' :logs='logs' />
@@ -23,7 +23,8 @@ export default {
             logQueue: [],
             gamePlayers: [],
             showNotifications: true,
-            showLog: false
+            showLog: false,
+            btnNotification: null
         };
     },
     components: {
@@ -67,7 +68,9 @@ export default {
 
             if (!this.showNotifications) {
                 this.closeNotification();
+                unselect(this.btnNotification);
             } else {
+                select(this.btnNotification);
                 bus.$emit('notification-open');
             }
         },
@@ -96,6 +99,9 @@ export default {
         }
     },
     mounted: function() {
+        this.btnNotification = this.$el.querySelector('#btn-notification');
+        select(this.btnNotification);
+
         this.setGamePlayers((isValid(this.data)) ? this.data.gamePlayers : null);
         this.logQueue = (isValid(this.logs)) ? this.logs : [];
         
@@ -117,18 +123,26 @@ export default {
 #log-panel {
     box-sizing: border-box;
     text-align: right;
+    position: absolute;
+    top: 0;
     width: 100vw;
     padding: calc(var(--padding) / 2);
-    background-color: var(--color-06);
-    border-width: 0;
-    border-top-width: var(--border-width);
-    border-bottom-width: var(--border-width);
-    border-color: var(--color-00);
-    border-style: solid;
 }
 
 #log-panel * {
     margin-left: var(--margin);
     margin-right: var(--margin);
+}
+
+#log-panel, #log-panel * {
+    z-index: var(--layer-popup);
+}
+
+#btn-notification {
+    background-color: var(--color-12);
+}
+
+#btn-notification[selected=true] {
+    background-color: var(--color-08);
 }
 </style>

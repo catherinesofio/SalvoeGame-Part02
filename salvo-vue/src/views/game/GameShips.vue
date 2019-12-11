@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id='container-editor'>
         <div class='container-wrap'>
             <DummyShipContainer :callback='selectShip' />
             <button v-on:click='triggerSubmit' :disabled='!allShipsPlaced'>SUBMIT</button>
@@ -184,5 +184,9 @@ export default {
 #player-table tfoot td:last-child {
     border-bottom-right-radius: var(--border-radius);
     border-right-width: var(--border-width);
+}
+
+#container-editor {
+    overflow: visible;
 }
 </style>

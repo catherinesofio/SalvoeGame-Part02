@@ -82,14 +82,26 @@ export default {
 .notification {
     position: absolute;
     left: calc(0vw - (var(--padding)));
-    bottom: calc(var(--padding) * -1);/*calc(var(--margin) * 3);*/
-    width: 100vw;;
+    bottom: calc(var(--padding) * -1);
+    width: 100vw;
     padding: var(--padding);
 }
 
 .notification button {
     position: absolute;
-    left: calc(100vw - (var(--padding)));
-    top: calc(var(--padding) * 2);
+    width: calc(var(--cell-size) * 2);
+    height: calc(var(--cell-size) * 2);
+    right: 1em;
+    top: 1em;
+    margin: 0;
+    padding: 0;
+    border-radius: var(--cell-size);
+    text-align: center;
+}
+
+.notification .log { 
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-width: 0;
 }
 </style>

@@ -50,7 +50,7 @@ export default {
     position: absolute;
     top: 0;
     left: 0;
-    background-color: rgba(1, 1, 1, 0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     z-index: var(--layer-popup);
     text-align: center;
     overflow: visible;
