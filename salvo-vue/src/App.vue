@@ -177,7 +177,7 @@ button[selected=true], .btn[selected=true] {
   font-size: var(--text-size-03);
   background-color: var(--color-05);
   border-width: calc(var(--border-width) / 2);
-  border-radius: 2em;
+  border-radius: 50%;
 }
 
 .view {
@@ -293,5 +293,23 @@ button[selected=true], .btn[selected=true] {
 .custom-table tfoot  td:last-child {
   border-bottom-right-radius: var(--border-radius);
   border-right-width: calc(var(--border-width) / 2);
+}
+
+.container-wrap {
+  margin-top: calc(var(--spacer-height) / 6);
+  box-sizing: border-box;
+  width: 100vw;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.container-wrap button {
+  padding: 0;
+  height: 50%;
+  margin-left: var(--margin);
+  margin-right: var(--margin);
+  padding: var(--padding);
+  text-align: center;
 }
 </style>

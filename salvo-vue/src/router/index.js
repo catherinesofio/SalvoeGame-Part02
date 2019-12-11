@@ -7,8 +7,6 @@ import MenuMatches from '../views/menu/MenuMatches.vue';
 import MenuUserMatches from '../views/menu/MenuUserMatches.vue';
 import MenuLeaderboards from '../views/menu/MenuLeaderboards.vue';
 import Game from '../views/game/Game.vue';
-import GameView from '../views/game/GameView.vue';
-import GameShips from '../views/game/GameShips.vue';
 
 Vue.use(VueRouter);
 
@@ -45,12 +43,12 @@ const routes = [
     children: [
       {
         path: 'ships',
-        component: GameShips
+        component: () => import('@/views/game/GameShips.vue')
       },
       {
         path: 'view',
         name: 'view',
-        component: GameView
+        component: () => import('@/views/game/GameView.vue')
       }
     ]
   }

@@ -18,6 +18,7 @@ export default {
     position: absolute;
     width: var(--cell-size);
     height: var(--cell-size);
+    border-radius: 50%;
     z-index: var(--layer-foreground-btn);
 }
 

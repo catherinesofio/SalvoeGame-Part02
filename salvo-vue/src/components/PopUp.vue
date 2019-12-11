@@ -81,16 +81,16 @@ export default {
     text-align: justify;
 }
 
-#popup-content .btn {
+#popup-content a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     box-sizing: content-box;
-    width: calc(var(--cell-size) * 1.5);
-    height: calc(var(--cell-size) * 1.5);
     position: absolute;
     top: -1em;
     right: -1em;
     margin: 0;
     padding: 0;
-    border-radius: calc(var(--cell-size) * 2);
-    text-align: center; 
+    border-radius: 50%;
 }
 </style>

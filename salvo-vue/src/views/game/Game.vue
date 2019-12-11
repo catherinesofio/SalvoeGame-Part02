@@ -176,11 +176,29 @@ export default {
             }
         },
         triggerPopUp: function(state) {
+            let title = '';
+            let details = '';
+            
+            switch (state) {
+                case 'FINISHED_WON':
+                    title = 'You Won';
+                    details = 'Congratulations!';
+                    break;
+                case 'FINISHED_LOST':
+                    title = 'You Lost';
+                    details = 'Better luck next time!';
+                    break;
+                case 'FINISHED_TIED':
+                    title = "IT'S A TIE!";
+                    details = 'Well played!';
+                    break;
+            }
+
             bus.$emit('open-popUp', {
-                title: state,
-                details: 'juejue',
+                title: title,
+                details: details,
                 direction: '/menu/matches',
-                button: 'K cool'
+                button: 'X'
             });
         },
         setFinalData: function(data) {
@@ -221,7 +239,7 @@ export default {
 <style>
 .ship {
     position: relative;
-    background-color: gainsboro;
+    background-color: var(--color-01);
     z-index: var(--layer-foreground-ships);
 }
 
@@ -290,11 +308,11 @@ export default {
 }
 
 .ship[isDown='true'] {
-    background-color: red;
+    background-color: var(--color-05);
 }
 
 .ship[isDown='false'] {
-    background-color: gainsboro;
+    background-color: var(--color-01);
 }
 
 .cell {
@@ -304,22 +322,7 @@ export default {
     background-color: var(--color-09);
     border-width: 0;
     overflow: visible;
-}
-
-.cell[isOccupied='true'] {
-    background-color: grey;
-}
-
-.cell[isSelected='true'] {
-    background-color: whitesmoke;
-}
-
-.cell[success='true'] {
-    background-color: green;
-}
-
-.cell[success='false'] {
-    background-color: lightcoral;
+    text-align: center;
 }
 
 .cell .ship {

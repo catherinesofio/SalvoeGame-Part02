@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div>
+    <div class='player-gui'>
+        <div class='td-join'>
             <IconOnline :isOnline='getIsOnline' />
             <span>{{ getName }} {{ getState }}</span>
         </div>
@@ -49,3 +49,10 @@ export default {
     }
 };
 </script>
+
+<style>
+.player-gui {
+    display: flexbox;
+    width: 100%;
+}
+</style>

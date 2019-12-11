@@ -1,8 +1,8 @@
 <template>
-    <div v-if='isTurn'>
-        <p>Salvoes: {{ salvoesLeft }}</p>
-        <button v-if='canPlaceSalvoes' v-on:click='submitSalvoes'>SUBMIT</button>
-    </div>
+    <span v-if='isTurn'>
+        <span>Salvoes: {{ salvoesLeft }}</span>
+        <button id='btn-salvoes' v-if='canPlaceSalvoes' v-on:click='submitSalvoes'>✔</button>
+    </span>
 </template>
 
 <script>
@@ -81,3 +81,12 @@ export default {
     }
 };
 </script>
+
+<style>
+#btn-salvoes {
+    width: 2.5em;
+    height: 2.5em;
+    padding: 0;
+    border-radius: 50%;
+}
+</style>

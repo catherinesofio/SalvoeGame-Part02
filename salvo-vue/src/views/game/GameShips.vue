@@ -94,24 +94,6 @@ export default {
 </script>
 
 <style>
-.container-wrap {
-  margin-top: calc(var(--spacer-height) / 6);
-  box-sizing: border-box;
-  width: 100vw;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-}
-
-.container-wrap button {
-  padding: 0;
-  height: 50%;
-  margin-left: var(--margin);
-  margin-right: var(--margin);
-  padding: var(--padding);
-  text-align: center;
-}
-
 #player-table {
     margin: var(--margin);
     width: calc(100vw - (var(--margin) * 2));
@@ -124,6 +106,8 @@ export default {
     background-color: var(--color-00);
     color: var(--color-09);
     border-width: 0;
+    margin: 0;
+    padding: 0;
     border-color: var(--color-04);
     border-style: solid;
 }

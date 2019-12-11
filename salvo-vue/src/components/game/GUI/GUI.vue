@@ -1,10 +1,10 @@
 <template>
-    <div>
+    <ul>
         <PlayerGUI :id='player.id' :state='player.state' :activeShips='player.activeShips' />
         <PlayerGUI v-if='opponentExists' :id='opponent.id' :state='opponent.state' :activeShips='opponent.activeShips' />
         <p v-if='!opponentExists'>Waiting for player...</p>
         <SalvoesManager :isTurn='isTurn' :gp='gp' :turn='turn' />
-    </div>
+    </ul>
 </template>
 
 <script>
