@@ -12,8 +12,8 @@ footer, footer * {
 }
 
 footer {
-    position: absolute;
-    bottom: 0;
+    position: fixed;
+    bottom: -0.5em;
     width: 100vw;
     font-weight: bold;
     text-align: center;

@@ -1,8 +1,8 @@
 <template>
     <div class='player-gui'>
         <div class='td-join'>
-            <IconOnline :isOnline='getIsOnline' />
-            <span>{{ getName }} {{ getState }}</span>
+            <IconOnline :isOnline='getIsOnline' v-if='!isPlayer' />
+            <span>{{ getName }}: {{ getState }}</span>
         </div>
         <p>Kittens left: {{ activeShips }}</p>
     </div>
@@ -13,7 +13,7 @@ import IconOnline from '@/components/IconOnline.vue';
 import { mapGetters } from 'vuex';
 
 export default {
-    props: ['id', 'state', 'activeShips'],
+    props: ['id', 'state', 'activeShips', 'isPlayer'],
     data: function() {
         return {
             states: ['🐈', '💖', '⏳', '🕒']
@@ -28,7 +28,7 @@ export default {
             return (this.id > -1) ? this.userIsOnline(this.id): false;
         },
         getName: function() {
-            return (this.id > -1) ? this.getUserName(this.id): '';
+            return (this.id > -1 && !this.isPlayer) ? this.getUserName(this.id) : 'You';
         },
         getState: function() {
             switch(this.state) {

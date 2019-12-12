@@ -123,7 +123,7 @@ export default {
 #log-panel {
     box-sizing: border-box;
     text-align: right;
-    position: absolute;
+    position: fixed;
     top: 0;
     width: 100vw;
     padding: calc(var(--padding) / 2);

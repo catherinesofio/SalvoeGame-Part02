@@ -1,7 +1,7 @@
 <template>
     <ul>
-        <PlayerGUI :id='player.id' :state='player.state' :activeShips='player.activeShips' />
-        <PlayerGUI v-if='opponentExists' :id='opponent.id' :state='opponent.state' :activeShips='opponent.activeShips' />
+        <PlayerGUI :id='player.id' :state='player.state' :activeShips='player.activeShips' :isPlayer='true' />
+        <PlayerGUI v-if='opponentExists' :id='opponent.id' :state='opponent.state' :activeShips='opponent.activeShips' :isPlayer='false' />
         <p v-if='!opponentExists'>Waiting for player...</p>
         <SalvoesManager :isTurn='isTurn' :gp='gp' :turn='turn' />
     </ul>

@@ -5,7 +5,7 @@
             <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
         </td>
         <td v-if='showCurrent'>
-            <p>{{ this.getPlayerState('player') }} You</p>
+            <p>{{ this.getPlayerState('player') }}</p>
         </td>
         <td v-if='showCurrent'>
             <button v-on:click='triggerLoadMatch'>🐾</button>
@@ -14,7 +14,7 @@
             <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
         </td>
         <td v-if='!showCurrent'>
-            <p>{{ this.getPlayerState('player') }} You</p>
+            <p>{{ this.getPlayerState('player') }}</p>
         </td>
     </tr>
 </template>

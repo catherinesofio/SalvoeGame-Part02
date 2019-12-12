@@ -80,7 +80,7 @@ export default {
 }
 
 .notification {
-    position: absolute;
+    position: fixed;
     left: calc(0vw - (var(--padding)));
     bottom: calc(var(--padding) * -1);
     width: 100vw;

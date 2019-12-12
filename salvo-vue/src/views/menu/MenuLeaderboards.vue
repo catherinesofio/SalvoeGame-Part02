@@ -8,7 +8,7 @@
                 <th>POINTS</th>
             </thead>
             <tbody>
-                <LeaderboardInfo v-for='(user, index) in this.leaderboards' :key='index' :position='index + 1' :username='getName(index + 1)' :points='user.points' :isPlayer='getIsPlayer(user.id)' />
+                <LeaderboardInfo v-for='(user, index) in this.leaderboards' :key='index' :position='index + 1' :username='getName(user.id)' :points='user.points' :isPlayer='getIsPlayer(user.id)' />
             </tbody>
             <tfoot>
                 <td></td>
@@ -36,7 +36,7 @@ export default {
             return this.getUserName(id);
         },
         getIsPlayer: function (id) {
-            return (this.user.id == id) ? true : false;
+            return (this.user.id == id);
         }
     }
 };
@@ -57,7 +57,7 @@ tr[size=3] td {
 }
 
 tr[size=2], tr[size=2] td {
-    height: 10em !important;/*calc(var(--padding) * 3);*/
+    height: 10em !important;
     font-size: calc(var(--text-size-03) * 3);
 }
 

@@ -63,8 +63,10 @@ const store = new Vuex.Store({
           return a.id - b.id;
         });
         state.users = users;
-        state.matches = data.matches;
+        state.matches = sortByMostRecent(data.matches);
         state.userMatches = data.userMatches;
+        state.userMatches.current = sortByMostRecent(state.userMatches.current);
+        state.userMatches.history = sortByMostRecent(state.userMatches.history);
         state.leaderboards = users.map(function(user) {
           let scores = user.scores;
           
@@ -73,7 +75,7 @@ const store = new Vuex.Store({
           
           return { id: user.id, points: points };
         }).sort(function(a, b) {
-          return a.points - b.points;
+          return b.points - a.points;
         });
       });
     }
@@ -145,4 +147,8 @@ function checkUser(user) {
 
     router.push({ name: 'menu', replace: true }).catch(err => {});
   }
+}
+
+function sortByMostRecent(array) {
+  return array.sort((a, b) => new Date(b.id) - new Date(a.id));
 }

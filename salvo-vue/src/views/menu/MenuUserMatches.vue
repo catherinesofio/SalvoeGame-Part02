@@ -8,7 +8,7 @@
         <table class='custom-table'>
             <thead>
                 <th>CHALLENGER</th>
-                <th></th>
+                <th><span>YOU</span></th>
                 <th v-if='showCurrent'>
                     <button class='help' v-on:click='triggerIconHelp'>?</button>
                 </th>

@@ -283,6 +283,7 @@ export default {
     border-radius: var(--border-radius);
     background-color: var(--color-04);
     text-align: justify;
+    font-size: calc(var(--text-size-02) / 1.35);
 }
 
 .panel p, .panel * span {

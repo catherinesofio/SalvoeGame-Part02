@@ -27,11 +27,11 @@ export default {
 
 #log-container {
     box-sizing: border-box;
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     margin: 0;
     padding: var(--padding);
     background-color: rgba(0, 0, 0, 0.5);

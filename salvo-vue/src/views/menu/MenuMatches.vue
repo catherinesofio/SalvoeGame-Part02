@@ -50,7 +50,7 @@ export default {
         triggerIconHelp: function() {
             bus.$emit('open-popUp', {
                 title: 'Icon Guide',
-                details: "🕒: waiting for player to join the fun!\n\n🐈: player is still placing their kittens.\n\n💖: player is sending love to the opponents' kittens.\n\n⏳: player is waiting for it's opponent to send the love back.",
+                details: "🕒: waiting for player to join the fun!\n\n🐈: player is still placing their kittens.",
                 direction: ''
             });
         }
