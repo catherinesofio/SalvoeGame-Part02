@@ -4,7 +4,7 @@
             <IconOnline :isOnline='getIsOnline' />
             <span>{{ getName }} {{ getState }}</span>
         </div>
-        <p>Ships: {{ activeShips }}</p>
+        <p>Kittens left: {{ activeShips }}</p>
     </div>
 </template>
 

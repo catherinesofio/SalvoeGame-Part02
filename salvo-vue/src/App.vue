@@ -39,7 +39,7 @@ export default {
   /* MIDDLE: 5-9 */
   --layer-middle-nav: 5;
   /*--layer-middle: 6;*/
-  --layer-middle-footer: 9;
+  --layer-middle-footer: 14;
   /* FOREGROUND: 10-14 */
   --layer-foreground: 10;
   --layer-foreground-gizmo: 11;
@@ -251,6 +251,18 @@ button[selected=true], .btn[selected=true] {
   border-bottom-width: calc(var(--border-width) / 2);
   border-color: var(--color-00);
   border-style: solid;
+}
+
+.custom-table tr[state='won'] td { 
+    background-color: var(--color-10) !important;
+}
+
+.custom-table tr[state='lost'] td { 
+    background-color: var(--color-05) !important;
+}
+
+.custom-table tr[state='tied'] td { 
+    background-color: var(--color-12) !important;
 }
 
 .custom-table tbody tr td:first-child, .custom-table thead th:first-child {

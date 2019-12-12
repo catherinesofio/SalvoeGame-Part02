@@ -1,6 +1,6 @@
 <template>
     <span v-if='isTurn'>
-        <span>Salvoes: {{ salvoesLeft }}</span>
+        <span>Love Shots: {{ salvoesLeft }}</span>
         <button id='btn-salvoes' v-if='canPlaceSalvoes' v-on:click='submitSalvoes'>✔</button>
     </span>
 </template>

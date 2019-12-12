@@ -1,10 +1,10 @@
 <template>
-    <button class='btn' :type='type' v-on:click='triggerCallback' isBlocked='false'></button>
+    <button class='btn' :type='type' v-on:click='triggerCallback' isBlocked='false'>{{ content }}</button>
 </template>
 
 <script>
 export default {
-    props: ['type', 'callback'],
+    props: ['type', 'callback', 'content'],
     methods: {
         triggerCallback: function() {
             this.disable = this.callback(this.type, this.setDisabled);
@@ -15,11 +15,13 @@ export default {
 
 <style>
 .btn {
-    position: absolute;
-    width: var(--cell-size);
-    height: var(--cell-size);
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
     border-radius: 50%;
-    z-index: var(--layer-foreground-btn);
+    z-index: var(--layer-foreground-btn) !important;
 }
 
 .btn[isBlocked=false] {
@@ -44,30 +46,30 @@ export default {
 }
 
 .btn[type='rotate'] {
-    top: calc(-1 * var(--cell-size));
-    right: calc(-1 * var(--cell-size));
+    top: calc(-2 * var(--cell-size));
+    right: calc(-2 * var(--cell-size));
 }
 
 .btn[type='east'] {
     top: 50%;
-    right: calc(-1 * var(--cell-size));
+    right: calc(-2 * var(--cell-size));
     transform: translateY(-50%);
 }
 
 .btn[type='west'] {
     top: 50%;
-    left: calc(-1 * var(--cell-size));
+    left: calc(-2 * var(--cell-size));
     transform: translateY(-50%);
 }
 
 .btn[type='north'] {
-    top: calc(-1 * var(--cell-size));
+    top: calc(-2 * var(--cell-size));
     left: 50%;
     transform: translateX(-50%);
 }
 
 .btn[type='south'] {
-    bottom: calc(-1 * var(--cell-size));
+    bottom: calc(-2 * var(--cell-size));
     left: 50%;
     transform: translateX(-50%);
 }

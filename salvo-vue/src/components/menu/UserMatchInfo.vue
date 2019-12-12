@@ -1,14 +1,20 @@
 <template>
-    <tr>
-        <td class='td-join'>
+    <tr :state='getState'>
+        <td class='td-join' v-if='showCurrent'>
            <IconOnline v-if='this.showCurrent && opponentExist' v-bind:isOnline='this.isOnline' />
             <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
         </td>
-        <td>
+        <td v-if='showCurrent'>
             <p>{{ this.getPlayerState('player') }} You</p>
         </td>
         <td v-if='showCurrent'>
             <button v-on:click='triggerLoadMatch'>🐾</button>
+        </td>
+        <td class='td-join' v-if='!showCurrent'>
+            <p>{{ this.getPlayerState('opponent') }} {{ this.getOpponentName }}</p>
+        </td>
+        <td v-if='!showCurrent'>
+            <p>{{ this.getPlayerState('player') }} You</p>
         </td>
     </tr>
 </template>
@@ -26,8 +32,27 @@ export default {
         opponentExist: function() {
             return this.opponent != '';
         },
-        getOpponentName() {
+        getOpponentName: function() {
             return (this.opponent != '') ? this.opponent : 'Waiting for player...';
+        },
+        getState: function() {
+            if (this.showCurrent) {
+                return false;
+            }
+            
+            let state = this.state.player;
+            
+            switch (state) {
+                case 'FINISHED_WON':
+                    return 'won';
+                    break;
+                case 'FINISHED_LOST':
+                    return 'lost';
+                    break;
+                case 'FINISHED_TIED':
+                    return 'tied';
+                    break;
+            }
         }
     },
     methods: {
@@ -47,6 +72,15 @@ export default {
                     break;
                 case 'PLAYING_TURN':
                     return '💖';
+                    break;
+                case 'FINISHED_WON':
+                    return '🏆';
+                    break;
+                case 'FINISHED_LOST':
+                    return '🥈';
+                    break;
+                case 'FINISHED_TIED':
+                    return '🏳️';
                     break;
                 default:
                     return '🕒';

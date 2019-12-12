@@ -1,6 +1,6 @@
 <template>
     <ul id='log-container'>
-        <Log v-for='(log, i) in logs' :key='i' :data='log' :gamePlayers='gamePlayers' />
+        <Log v-for='(log, i) in getLogs' :key='i' :data='log' :gamePlayers='gamePlayers' />
     </ul>
 </template>
 
@@ -11,6 +11,11 @@ export default {
     props: ['gamePlayers', 'logs'],
     components: {
         Log
+    },
+    computed: {
+        getLogs: function() {
+            return this.logs.reverse();
+        }
     }
 };
 </script>

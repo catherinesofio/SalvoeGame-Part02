@@ -58,7 +58,7 @@ export default {
 
 #popup-content {
     position: absolute;
-    width: 50vw;
+    min-width: 75vw;
     top: 50%;
     left: 50%;
     transform: translate(-55%, -55%);
@@ -90,7 +90,7 @@ export default {
     top: -1em;
     right: -1em;
     margin: 0;
-    padding: 0;
+    padding: calc(var(--padding) / 2);
     border-radius: 50%;
 }
 </style>

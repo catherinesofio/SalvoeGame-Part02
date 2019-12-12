@@ -1,12 +1,12 @@
 <template>
     <div id='gizmo-obj'>
-        <GizmoButton type='accept' :callback='triggerPlace' />
-        <GizmoButton type='cancel' :callback='triggerUnselect' />
-        <GizmoButton type='rotate' :callback='rotate' />
-        <GizmoButton type='east' :callback='move' />
-        <GizmoButton type='west' :callback='move' />
-        <GizmoButton type='north' :callback='move' />
-        <GizmoButton type='south' :callback='move' />
+        <GizmoButton type='accept' :callback='triggerPlace' content='✔' />
+        <GizmoButton type='cancel' :callback='triggerUnselect' content='✘' />
+        <GizmoButton type='rotate' :callback='rotate' content='⭮' />
+        <GizmoButton type='east' :callback='move' content='🡲' />
+        <GizmoButton type='west' :callback='move' content='🡰' />
+        <GizmoButton type='north' :callback='move' content='🡱' />
+        <GizmoButton type='south' :callback='move' content='🡳' />
     </div>
 </template>
 
@@ -300,7 +300,6 @@ export default {
     width: calc(var(--gizmo-width) * var(--cell-size));
     height: calc(var(--gizmo-height) * var(--cell-size));
     padding: var(--padding);
-    z-index: var(--layer-foreground-gizmo);
     overflow: visible;
 }
 

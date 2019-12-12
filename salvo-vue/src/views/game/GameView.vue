@@ -8,7 +8,7 @@
         </div>
         <GridSelectable id='opponent' :occupiedCells='opponent.occupiedCells' :salvoes='opponent.salvoes' :isTurn='isTurn' />
         <Ship v-for='ship in opponent.ships' :key='ship.type' :id='opponent' :type='ship.type' :size='ship.size' :locations='ship.locations' :isDown='true' />
-        <button class='help'>?</button>
+        <button class='help' v-on:click='triggerHelp'>?</button>
     </div>
 </template>
 
@@ -113,6 +113,13 @@ export default {
 
             this.player = Object.assign({}, this.player, { salvoes: this.opponent.salvoes });
             this.opponent = Object.assign({}, this.opponent, { salvoes: temp });
+        },
+        triggerHelp: function() {
+            bus.$emit('open-popUp', {
+                title: 'Game Guide',
+                details: "This is just like any other Salvoe Game but, instead of sinking ships, you steal your opponents' cats by sending them love!\n\n🕒: waiting for player to join the fun!\n\n🐈: player is still placing their kittens.\n\n💖: player is sending love to the opponents' kittens.\n\n⏳: player is waiting for it's opponent to send the love back.",
+                direction: ''
+            });
         }
     },
     mounted: function() {
@@ -121,153 +128,3 @@ export default {
     }
 };
 </script>
-
-<style>
-.container-wrap {
-    width: 100vw;
-}
-
-.wrap-content {
-    min-width: 40vw;
-    margin: var(--margin);
-    display: flexbox;
-}
-
-.panel {
-    padding: calc(var(--padding) / 2);
-    border-width: var(--border-width);
-    border-color: var(--color-00);
-    border-style: solid;
-    border-radius: var(--border-radius);
-    background-color: var(--color-05);
-    text-align: justify;
-}
-
-#player-gui-table {
-    width: 40vw;
-    height: 40vw;
-    overflow: visible;
-}
-
-#player-gui-table td {
-    width: 4vw;
-    height: 4vw;
-    border-width: calc(var(--border-width) / 4);
-    border-color: var(--color-00);
-    border-style: solid;
-    background-color: var(--color-08);
-}
-
-#player-gui-table thead th, #player-gui-table th, #player-gui-table tfoot td {
-    width: 0;
-    height: 0;
-    visibility: hidden;
-    display: none;
-}
-
-#opponent-table {
-    margin: var(--margin);
-    width: calc(100vw - (var(--margin) * 2));
-    overflow: visible;
-}
-
-#opponent-table th {
-    width: var(--cell-size);
-    height: var(--cell-size);
-    background-color: var(--color-00);
-    color: var(--color-09);
-    border-width: 0;
-    border-color: var(--color-04);
-    border-style: solid;
-}
-
-#opponent-table thead th {
-    border-top-width: var(--border-width);
-}
-
-#opponent-table thead th:first-of-type {
-    border-left-width: var(--border-width);
-}
-
-#opponent-table thead th:last-of-type {
-    border-right-width: var(--border-width);
-}
-
-#opponent-table tbody th {
-    border-left-width: var(--border-width);
-}
-
-#opponent-table td {
-    width: var(--cell-size);
-    height: var(--cell-size);
-    border-right-width: calc(var(--border-width) / 2);
-    border-bottom-width: calc(var(--border-width) / 2);
-    border-color: var(--color-00);
-    border-style: solid;
-}
-
-#opponent-table tbody tr td:last-of-type {
-    border-right-width: var(--border-width);
-    border-right-color: var(--color-04);
-    border-style: solid;
-}
-
-#opponent-table thead :first-child {
-    border-top-left-radius: var(--border-radius);
-}
-
-#opponent-table thead :last-child {
-    border-top-right-radius: var(--border-radius);
-}
-
-#opponent-table tfoot td {
-    width: calc(var(--cell-size) / 2);
-    background-color: var(--color-05);
-    border-width: 0;
-    border-bottom-width: var(--border-width);
-    border-color: var(--color-04);
-    border-style: solid;
-}
-
-#opponent-table tfoot td:first-of-type {
-    border-bottom-left-radius: var(--border-radius);
-    border-left-width: var(--border-width);
-}
-
-#opponent-table tfoot td:last-child {
-    border-bottom-right-radius: var(--border-radius);
-    border-right-width: var(--border-width);
-}
-
-#container-editor {
-    overflow: visible;
-}
-
-#opponent-table .cell[isOccupied='true'] {
-    background-color: var(--color-02);
-}
-
-#opponent-table .cell[isSelected='true'] {
-    background-color: var(--color-12);
-}
-
-#opponent-table .cell[success='true'] {
-    background-color: var(--color-11);
-}
-
-#opponent-table .cell[success='false'] {
-    background-color: var(--color-05);
-}
-
-#player-gui-table .cell[isOccupied='true'] {
-    background-color: var(--color-00);
-}
-
-#player-gui-table .cell[success='true'] {
-    background-color: var(--color-05);
-}
-
-#player-gui-table .cell[success='false'] {
-    background-color: var(--color-12);
-}
-</style>

@@ -15,7 +15,7 @@
 <style scoped>
 div {
     width: 100vw;
-    position: absolute;
+    position: fixed;
     align-items: baseline;
     bottom: calc(var(--text-size-03) + (var(--padding) * 2.75));
     text-align: center;

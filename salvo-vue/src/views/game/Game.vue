@@ -1,9 +1,10 @@
 <template>
-    <div class='view'>
+    <div id='game-container' class='view'>
         <Nav :user='this.user' />
         <Spacer />
         <LogManager :data='data' :logs='logs' />
         <router-view :gp='gp' :turn='turn' :data='data' />
+        <Spacer />
     </div>
 </template>
 
@@ -237,6 +238,192 @@ export default {
 </script>
 
 <style>
+@media (orientation: landscape) {
+  #game-container {
+    overflow: scroll;
+  }
+}
+
+@media (orientation: portrait) {
+  #game-container {
+    overflow: hidden;
+  }
+}
+
+#container-view .help {
+    position: absolute;
+    top: calc(var(--spacer-height) + 42.5vw);
+    right: var(--margin);
+}
+
+#container-editor {
+    overflow: visible;
+}
+
+.container-wrap {
+    width: 100vw;
+    margin-top: 0;
+}
+
+.wrap-content {
+    min-width: 40vw;
+    margin: var(--margin);
+    margin-bottom: 0;
+    display: flexbox;
+}
+
+.panel {
+    box-sizing: border-box;
+    width: 50vw;
+    height: 45vw;
+    padding: calc(var(--padding) / 2);
+    border-width: var(--border-width);
+    border-color: var(--color-00);
+    border-style: solid;
+    border-radius: var(--border-radius);
+    background-color: var(--color-04);
+    text-align: justify;
+}
+
+.panel p, .panel * span {
+    margin-top: var(--margin);
+    font-size: calc(var(--text-size-03) * 0.75);
+}
+
+.grid {
+    border-spacing: 0;
+}
+
+.grid * {
+    overflow: visible;
+}
+
+#player-table, #opponent-table {
+    margin: calc(var(--margin) * 2);
+    padding: 0;
+    overflow: visible;
+}
+
+#player-table th, #opponent-table th  {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    background-color: var(--color-00);
+    color: var(--color-09);
+    border-width: 0;
+    margin: 0;
+    padding: 0;
+    border-color: var(--color-04);
+    border-style: solid;
+}
+
+#player-table thead th, #opponent-table thead th {
+    border-top-width: var(--border-width);
+}
+
+#player-table thead th:first-of-type, #opponent-table thead th:first-of-type {
+    border-left-width: var(--border-width);
+}
+
+#player-table thead th:last-of-type, #opponent-table thead th:last-of-type {
+    border-right-width: var(--border-width);
+}
+
+#player-table tbody th, #opponent-table tbody th {
+    border-left-width: var(--border-width);
+}
+
+#player-table td, #opponent-table td {
+    width: var(--cell-size);
+    height: var(--cell-size);
+    border-right-width: calc(var(--border-width) / 2);
+    border-bottom-width: calc(var(--border-width) / 2);
+    border-color: var(--color-00);
+    border-style: solid;
+}
+
+#player-table tbody tr td:last-of-type, #opponent-table tbody tr td:last-of-type {
+    border-right-width: var(--border-width);
+    border-right-color: var(--color-04);
+    border-style: solid;
+}
+
+#player-table thead :first-child, #opponent-table thead :first-child {
+    border-top-left-radius: var(--border-radius);
+}
+
+#player-table thead :last-child, #opponent-table thead :last-child {
+    border-top-right-radius: var(--border-radius);
+}
+
+#player-table tfoot td, #opponent-table tfoot td {
+    width: calc(var(--cell-size) / 2);
+    background-color: var(--color-05);
+    border-width: 0;
+    border-bottom-width: var(--border-width);
+    border-color: var(--color-04);
+    border-style: solid;
+}
+
+#player-table tfoot td:first-of-type, #opponent-table tfoot td:first-of-type {
+    border-bottom-left-radius: var(--border-radius);
+    border-left-width: var(--border-width);
+}
+
+#player-table tfoot td:last-child, #opponent-table tfoot td:last-child {
+    border-bottom-right-radius: var(--border-radius);
+    border-right-width: var(--border-width);
+}
+
+#player-gui-table .cell[isOccupied='true'] {
+    background-color: var(--color-00);
+}
+
+#player-gui-table .cell[success='true'] {
+    background-color: var(--color-05);
+}
+
+#player-gui-table .cell[success='false'] {
+    background-color: var(--color-12);
+}
+
+#player-gui-table {
+    width: 40vw;
+    height: 40vw;
+    overflow: visible;
+}
+
+#player-gui-table td {
+    width: 4vw;
+    height: 4vw;
+    border-width: calc(var(--border-width) / 4);
+    border-color: var(--color-00);
+    border-style: solid;
+    background-color: var(--color-08);
+}
+
+#player-gui-table thead th, #player-gui-table th, #player-gui-table tfoot td {
+    width: 0;
+    height: 0;
+    visibility: hidden;
+    display: none;
+}
+
+#opponent-table .cell[isOccupied='true'] {
+    background-color: var(--color-02);
+}
+
+#opponent-table .cell[isSelected='true'] {
+    background-color: var(--color-12);
+}
+
+#opponent-table .cell[success='true'] {
+    background-color: var(--color-11);
+}
+
+#opponent-table .cell[success='false'] {
+    background-color: var(--color-05);
+}
+
 .ship {
     position: relative;
     background-color: var(--color-01);
@@ -245,66 +432,42 @@ export default {
 
 .ship[size='2'][orientation='vertical'] {
     width: var(--cell-size);
-    height: calc(2 * var(--cell-size));
-    padding: 0.25em;
-    padding-bottom: 0.3em;
-    padding-top: 0.3em;
+    height: calc((var(--cell-size) * 2) + (var(--border-width)));
 }
 
 .ship[size='2'][orientation='horizontal'] {
-    width: calc(2 * var(--cell-size));
+    width: calc((var(--cell-size) * 2) + var(--border-width));
     height: var(--cell-size);
-    padding: 0.25em;
-    padding-right: 0.3em;
-    padding-left: 0.3em;
 }
 
 .ship[size='3'][orientation='vertical'] {
     width: var(--cell-size);
-    height: calc(3 * var(--cell-size));
-    padding: 0.25em;
-    padding-bottom: 0.3em;
-    padding-top: 0.3em;
+    height: calc((var(--cell-size) * 3) + var(--border-width));
 }
 
 .ship[size='3'][orientation='horizontal'] {
-    width: calc(3 * var(--cell-size));
+    width: calc((var(--cell-size) * 3) + var(--border-width));
     height: var(--cell-size);
-    padding: 0.25em;
-    padding-right: 0.3em;
-    padding-left: 0.3em;
 }
 
 .ship[size='4'][orientation='vertical'] {
     width: var(--cell-size);
-    height: calc(4 * var(--cell-size));
-    padding: 0.25em;
-    padding-bottom: 0.3em;
-    padding-top: 0.3em;
+    height: calc((var(--cell-size) * 4) + (var(--border-width) * 2));
 }
 
 .ship[size='4'][orientation='horizontal'] {
-    width: calc(4 * var(--cell-size));
+    width: calc((var(--cell-size) * 4) + (var(--border-width) * 2));
     height: var(--cell-size);
-    padding: 0.25em;
-    padding-right: 0.3em;
-    padding-left: 0.3em;
 }
 
 .ship[size='5'][orientation='vertical'] {
     width: var(--cell-size);
-    height: calc(5 * var(--cell-size));
-    padding: 0.25em;
-    padding-bottom: 0.3em;
-    padding-top: 0.3em;
+    height: calc((var(--cell-size) * 5) + (var(--border-width) * 2));
 }
 
 .ship[size='5'][orientation='horizontal'] {
-    width: calc(5 * var(--cell-size));
+    width: calc((var(--cell-size) * 5) + (var(--border-width) * 2));
     height: var(--cell-size);
-    padding: 0.25em;
-    padding-right: 0.3em;
-    padding-left: 0.3em;
 }
 
 .ship[isDown='true'] {
@@ -330,13 +493,5 @@ export default {
     top: 0;
     left: 0;
     z-index: var(--layer-foreground-ships);
-}
-
-.grid {
-    border-spacing: 0;
-}
-
-.grid * {
-    overflow: visible;
 }
 </style>
