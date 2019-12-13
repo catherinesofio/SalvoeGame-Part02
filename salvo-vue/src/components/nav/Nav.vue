@@ -1,21 +1,32 @@
 <template>
     <nav>
         <NavTop :user='user' />
-        <NavBottom />
-        <!--button id='btn-expand' v-on:click='triggerExpand'>▲</button>
-        <button id='btn-hide' v-on:click='triggerHide'>▼</button-->
+        <NavBottom v-if='show' />
+        <button id='btn-expand' v-if='!show' v-on:click='setShow(true)'>▲</button>
+        <button id='btn-hide' v-if='show' v-on:click='setShow(false)'>▼</button>
     </nav>
 </template>
 
 <script>
 import NavTop from '@/components/nav/NavTop.vue';
 import NavBottom from '@/components/nav/NavBottom.vue';
+import { map } from '@/main.js';
 
 export default {
     props: ['user'],
+    data: function() {
+        return {
+            show: true
+        };
+    },
     components: {
         NavTop,
         NavBottom
+    },
+    methods: {
+        setShow: function(value) {
+            this.show = value
+        }
     }
 };
 </script>
@@ -26,22 +37,15 @@ nav * {
 }
 
 #btn-expand, #btn-hide {
-    position: fixed;
-    left: 50%;
+    position: absolute;
+    top: calc(65vh + (var(--spacer-height) * 1.15) + (var(--margin) * 2) + 3.5em);
+    right: 50%;
+    transform: translateX(50%);
     margin: 0;
-    padding: 0;
-    transform: translate(-55%, 55%);
-    border-width: 0;
-    background-color: rgba(0,0,0,0);
-    font-size: calc(var(--text-size-03) * 2);
-    color: var(--color-00);
-}
-
-#btn-hide {
-    bottom: calc(var(--text-size-03) + (var(--padding) * 2.5));
+    padding: calc(var(--padding) / 2);
 }
 
 #btn-expand {
-    bottom: calc((var(--text-size-03) + (var(--padding) * 2.5)));
+    top: calc(65vh + (var(--spacer-height) * 1.75) + (var(--margin) * 2));
 }
 </style>

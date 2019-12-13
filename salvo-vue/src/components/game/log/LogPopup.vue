@@ -98,10 +98,4 @@ export default {
     border-radius: var(--cell-size);
     text-align: center;
 }
-
-.notification .log { 
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-width: 0;
-}
 </style>
