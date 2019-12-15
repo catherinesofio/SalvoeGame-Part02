@@ -1,9 +1,9 @@
 package com.codeoftheweb.salvo.utils;
 
 public enum Ships {
-    AIRCRAFT_CARRIER,
-    BATTLESHIP,
-    SUBMARINE,
-    DESTROYER,
-    PATROL_BOAT
+    LONG_BOI,
+    SCRATCHER,
+    BATHED_BOI,
+    FURNITURE_ENDER,
+    SNACK_PATROLlER
 }

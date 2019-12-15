@@ -1,12 +1,10 @@
 module.exports = {
-    devServer: {
-      host: "localhost",
-      port: 8081,
-      proxy: {
-        "/api": {
-          target: "http://localhost:8080",
-          changeOrigin: true
-        }
+  devServer: {
+    proxy: {
+      "/api": {
+        target: "https://neko-voe.herokuapp.com/",
+        changeOrigin: true
       }
     }
+  }
 }
