@@ -96,11 +96,13 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.formLogin()
 				.usernameParameter("email")
 				.passwordParameter("password")
-				.loginPage("/api/login");
+				.loginProcessingUrl("/api/login")
+				.loginPage("/api/login")
+				.permitAll();
 
 		http.logout().logoutUrl("/api/logout").permitAll();
 
-		http.headers().frameOptions().sameOrigin();
+		//http.headers().frameOptions().sameOrigin();
 
 		http.cors();
 
@@ -121,12 +123,15 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
 		configuration.applyPermitDefaultValues();
-		configuration.addAllowedOrigin("*");
+		configuration.addAllowedOrigin("https://neko-voe.web.app");
+		configuration.addAllowedOrigin("https://neko-voe.firebaseapp.com/");
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.setAllowCredentials(true);
+
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
+		source.registerCorsConfiguration("/api/**", configuration);
+
 		return source;
 	}
 

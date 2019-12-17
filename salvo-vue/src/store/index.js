@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import axios from 'axios';
 import router from '@/router/index.js';
 import { bus } from '@/main.js';
 
@@ -34,7 +33,7 @@ const store = new Vuex.Store({
     INIT_USER: state => {
       bus.$emit('start-load');
       fetch(backend + '/user').then(response => response.json()).then(data => {
-        data = (isValid(data.name)) ? null : data;
+        data = isValid(data.name) ? data : null;
         
         state.user = data;
       }).finally(() => {
@@ -83,19 +82,19 @@ const store = new Vuex.Store({
   },
   actions: {
     register: ({ context, dispatch }, params) => {
-      fetch(backend + '/register', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json"  }).then(() => { dispatch('login', { email: params.email, password: params.password }); });
+      fetch(backend + '/register', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text", contentType: "application/json"  }).then(() => { dispatch('login', { email: params.email, password: params.password }); });
     },
     login: (context, params) => {
-      fetch(backend + '/login', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('INIT_USER'); });
+      fetch(backend + '/login', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('INIT_USER'); });
     },
     logout: (context) => {
-      fetch(backend + '/logout', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('SET_USER', null); });
+      fetch(backend + '/logout', { method: 'POST', mode: 'cors', credentials: "include", dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('SET_USER', null); });
     },
     createMatch: (context) => {
-      fetch(backend + '/games', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
+      fetch(backend + '/games', { method: 'POST', mode: 'cors', credentials: "include", dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     joinMatch: (context, gm) => {
-      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
+      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', credentials: "include", dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     loadMatch: (context, gp) => {
       bus.$emit('start-load');
@@ -108,10 +107,10 @@ const store = new Vuex.Store({
       fetch(backend + '/templates/salvoes').then(response => response.json()).then(data => { callback(data); });
     },
     setShips: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
+      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
     },
     setSalvoes: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json" }).finally(() => { bus.$emit('trigger-instant-refresh'); });
+      fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text", contentType: "application/json" }).finally(() => { bus.$emit('trigger-instant-refresh'); });
     },
     getMatchData: (context, { gp, callback }) => {
       bus.$emit('start-load');
