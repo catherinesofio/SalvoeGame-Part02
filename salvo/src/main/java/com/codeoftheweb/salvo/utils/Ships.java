@@ -5,5 +5,5 @@ public enum Ships {
     SCRATCHER,
     BATHED_BOI,
     FURNITURE_ENDER,
-    SNACK_PATROLlER
+    SNACK_PATROLLER
 }

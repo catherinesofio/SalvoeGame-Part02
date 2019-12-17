@@ -17,7 +17,7 @@ public final class Consts {
         add(new HashMap<String, Object>() {{ put("type", Ships.SCRATCHER.toString()); put("size", 4); }});
         add(new HashMap<String, Object>() {{ put("type", Ships.FURNITURE_ENDER.toString()); put("size", 3); }});
         add(new HashMap<String, Object>() {{ put("type", Ships.BATHED_BOI.toString()); put("size", 3); }});
-        add(new HashMap<String, Object>() {{ put("type", Ships.SNACK_PATROLlER.toString()); put("size", 2); }});
+        add(new HashMap<String, Object>() {{ put("type", Ships.SNACK_PATROLLER.toString()); put("size", 2); }});
     }};
 
     public static final Map<PlayerStates, Float> SCORES = new HashMap<PlayerStates, Float>() {{
