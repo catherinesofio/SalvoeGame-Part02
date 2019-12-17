@@ -9,7 +9,8 @@ This project consists on the development of an online Salvo game. It is divided 
 
 Technologies used:
 * Back End: Java & Spring Boot
-* Front End: Vue CLI, Heroku and Firebase for hosting (none of those were required)
+* Front End: Vue CLI (not required)
+* Hosting; Heroku (back end), Firebase (front end) (none of these were required)
 
 This and the following projects done during the course are organized by tasks, each with set requisites and goals, that represent different instances of the development. You can browse these instances by switching the branches of the repository.
 
