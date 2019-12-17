@@ -34,23 +34,13 @@ const store = new Vuex.Store({
     INIT_USER: state => {
       bus.$emit('start-load');
       fetch(backend + '/user').then(response => response.json()).then(data => {
-        data = (data.name == null) ? null : data;
+        data = (isValid(data.name)) ? null : data;
         
         state.user = data;
       }).finally(() => {
         checkUser(state.user);
         bus.$emit('end-load');
       });
-      
-      /*axios.get('/api/user').then(response => { 
-        let data = JSON.parse(JSON.stringify(response.data));
-        data = (data.name == null) ? null : data;
-        
-        state.user = data;
-      }).finally(() => {
-        checkUser(state.user);
-        bus.$emit('end-load');
-      });*/
     },
     SET_USER: (state, value) => {
       state.user = value;
@@ -67,7 +57,7 @@ const store = new Vuex.Store({
         return;
       }
       
-      fetch(backend + '/matches').then(response => response.json()).then(data => {
+      fetch(backend + '/matches').then(data => {
         data = JSON.parse(JSON.stringify(data));
         
         let users = data.users.sort(function(a, b) {
@@ -89,72 +79,23 @@ const store = new Vuex.Store({
           return b.points - a.points;
         });
       });
-
-      /*axios.get(backend + '/matches').then(response => {
-        let data = JSON.parse(JSON.stringify(response.data));
-        
-        let users = data.users.sort(function(a, b) {
-          return a.id - b.id;
-        });
-        state.users = users;
-        state.matches = sortByMostRecent(data.matches);
-        state.userMatches = data.userMatches;
-        state.userMatches.current = sortByMostRecent(state.userMatches.current);
-        state.userMatches.history = sortByMostRecent(state.userMatches.history);
-        state.leaderboards = users.map(function(user) {
-          let scores = user.scores;
-          
-          let points = (scores.won + (scores.lost / 2)) * 100 / (scores.won + scores.lost + scores.tied);
-          points = (Number.isNaN(points)) ? 0 : points;
-          
-          return { id: user.id, points: points };
-        }).sort(function(a, b) {
-          return b.points - a.points;
-        });
-      });*/
     }
   },
   actions: {
     register: ({ context, dispatch }, params) => {
-      fetch(backend + '/register', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json" }).then(() => { dispatch('login', { email: params.email, password: params.password }); });
-      
-      /*fetch(backend + '/register', { method: 'POST', body: JSON.stringify(params), mode: 'cors', credentials: 'include', headers: { 'Content-Type': 'application/json' } }).then(() => {
-        dispatch('login', { email: params.email, password: params.password });
-      });
-      axios.post({ url: '/api/register', params: new URLSearchParams(params), withCredentials: true }).then(() => {
-        dispatch('login', { email: params.email, password: params.password });
-      });*/
+      fetch(backend + '/register', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json"  }).then(() => { dispatch('login', { email: params.email, password: params.password }); });
     },
     login: (context, params) => {
-      fetch(backend + '/login', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json" }).finally(() => { context.commit('INIT_USER'); });
-      
-      /*fetch(backend + '/login', { method: 'POST', body: JSON.stringify(params), mode: 'cors', credentials: 'include', headers: { 'Content-Type': 'application/json' } }).finally(() => {
-        context.commit('INIT_USER');
-      });axios.post({ url: 'https://neko-voe.herokuapp.com/api/login', params: new URLSearchParams(params), withCredentials: true }).finally(() => {
-        context.commit('INIT_USER');
-      });*/
+      fetch(backend + '/login', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('INIT_USER'); });
     },
     logout: (context) => {
-      fetch(backend + '/logout', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json" }).finally(() => { context.commit('SET_USER', null); });
-      
-      /*fetch(backend + '/logout', { method: 'POST', mode: 'cors', credentials: 'include', headers: { 'Content-Type': 'application/json' } }).finally(() => { context.commit('SET_USER', null); });
-
-      axios.post('/api/logout').finally(() => { 
-        context.commit('SET_USER', null)});*/
+      fetch(backend + '/logout', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('SET_USER', null); });
     },
     createMatch: (context) => {
-      fetch(backend + '/games', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json" }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
-
-      /*axios.post('/api/games').then(response => {
-        router.push({ name: 'game', params: { gp: response.data } });
-      });*/
+      fetch(backend + '/games', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     joinMatch: (context, gm) => {
-      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json" }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
-      
-      /*axios.post('/api/game/' + gm + '/players').then(response => {
-        router.push({ name: 'game', params: { gp: response.data } });
-      });*/
+      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     loadMatch: (context, gp) => {
       bus.$emit('start-load');
@@ -162,20 +103,12 @@ const store = new Vuex.Store({
     },
     getShipsTemplate: (context, callback) => {
       fetch(backend + '/templates/ships').then(response => response.json()).then(data => { callback(data); });
-      
-      //axios.get('/api/templates/ships').then(response => callback(response.data));
     },
     getSalvoesTemplate: (context, callback) => {
       fetch(backend + '/templates/salvoes').then(response => response.json()).then(data => { callback(data); });
-      
-      //axios.get('/api/templates/salvoes').then(response => callback(response.data));
     },
     setShips: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
-      
-      /*fetch('/api/games/players/' + gp + '/ships', { method: 'POST', body: JSON.stringify(params), mode: 'cors', headers: { 'Content-Type': 'application/json' } }).then(response => {
-        router.push({ name: 'view', params: { gp: gp } });
-      });*/
+      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
     },
     setSalvoes: (context, { gp, params }) => {
       fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', data: JSON.stringify(params), dataType: "text", contentType: "application/json" }).finally(() => { bus.$emit('trigger-instant-refresh'); });
@@ -183,15 +116,9 @@ const store = new Vuex.Store({
     getMatchData: (context, { gp, callback }) => {
       bus.$emit('start-load');
       fetch(backend + '/game_view/' + gp).then(response => response.json()).then(data => { callback(data); }).finally(() => { bus.$emit('end-load'); });
-      
-      //axios.get('/api/game_view/' + gp).then(response => { callback(response.data); }).finally(() => { bus.$emit('end-load'); });
     },
     getTurnData: (context, { gp, tn, callback }) => {
       fetch(backend + '/game_view/' + gp + '/turns/' + tn).then(response => response.json()).then(data => { callback(data); });
-
-      /*axios.get('/api/game_view/' + gp + '/turns/' + tn).then(response => {
-        callback(response.data);
-      });*/
     }
   }
 });

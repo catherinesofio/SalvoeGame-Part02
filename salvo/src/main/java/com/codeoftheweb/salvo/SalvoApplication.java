@@ -121,8 +121,7 @@ class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public CorsConfigurationSource corsConfigurationSource() {
 		final CorsConfiguration configuration = new CorsConfiguration();
 		configuration.applyPermitDefaultValues();
-		configuration.addAllowedOrigin("https://neko-voe.web.app");
-		configuration.addAllowedOrigin("https://neko-voe.firebaseapp.com");
+		configuration.addAllowedOrigin("*");
 		configuration.addAllowedMethod("*");
 		configuration.addAllowedHeader("*");
 		configuration.setAllowCredentials(true);

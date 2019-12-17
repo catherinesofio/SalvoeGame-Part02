@@ -57,7 +57,7 @@ public class SalvoController {
     private Map<String, Object> getPlayer(Authentication authentication) {
         Player user = getUser(authentication);
 
-        return (user == null) ? null : user.getMappedData();
+        return (user == null) ? new HashMap<>() : user.getMappedData();
     }
 
     @RequestMapping(path = "/register", method = RequestMethod.POST)
