@@ -31,6 +31,15 @@ const store = new Vuex.Store({
   mutations: {
     INIT_USER: state => {
       bus.$emit('start-load');
+      /*fetch('/api/user', 
+      { method: 'GET', mode: 'cors', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' } }).then(response => response.json()).then(data => {
+        data = (data.name == null) ? null : data;
+        
+        state.user = data;
+      }).finally(() => {
+        checkUser(state.user);
+        bus.$emit('end-load');
+      });*/
       axios.get('/api/user').then(response => { 
         let data = JSON.parse(JSON.stringify(response.data));
         data = (data.name == null) ? null : data;
@@ -56,7 +65,7 @@ const store = new Vuex.Store({
         return;
       }
       
-      axios.get('/api/matches').then(response => {
+      axios.get('https://neko-voe.herokuapp.com/api/matches').then(response => {
         let data = JSON.parse(JSON.stringify(response.data));
         
         let users = data.users.sort(function(a, b) {
@@ -82,12 +91,15 @@ const store = new Vuex.Store({
   },
   actions: {
     register: ({ context, dispatch }, params) => {
-      axios.post('/api/register', new URLSearchParams(params)).then(() => {
+      axios.post({ url: '/api/register', params: new URLSearchParams(params), withCredentials: true }).then(() => {
         dispatch('login', { email: params.email, password: params.password });
       });
     },
     login: (context, params) => {
-      axios.post('/api/login', new URLSearchParams(params)).finally(() => {
+      /*fetch('/api/login', { method: 'POST', body: JSON.stringify(params), mode: 'cors', credentials: 'include', headers: { 'Content-Type': 'application/json' } }).finally(() => {
+        context.commit('INIT_USER');
+      });*/
+      axios.post({ url: 'https://neko-voe.herokuapp.com/api/login', params: new URLSearchParams(params), withCredentials: true }).finally(() => {
         context.commit('INIT_USER');
       });
     },
