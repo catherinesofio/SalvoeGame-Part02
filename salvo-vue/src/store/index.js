@@ -103,7 +103,7 @@ const store = new Vuex.Store({
       fetch(backend + '/games', { method: 'POST', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     joinMatch: (context, gm) => {
-      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
+      fetch(backend + '/game/' + gm + '/players', { method: 'POST', mode: 'cors', credentials: "include", headers: { 'Content-Type': 'application/json' } }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     loadMatch: (context, gp) => {
       bus.$emit('start-load');
@@ -116,10 +116,10 @@ const store = new Vuex.Store({
       fetch(backend + '/templates/salvoes', { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { callback(data); });
     },
     setShips: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', body: JSON.stringify(params), credentials: "include" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
+      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', body: JSON.stringify(params), credentials: "include", headers: { 'Content-Type': 'application/json' } }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
     },
     setSalvoes: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', body: JSON.stringify(params), credentials: "include" }).finally(() => { bus.$emit('trigger-instant-refresh'); });
+      fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', body: JSON.stringify(params), credentials: "include", headers: { 'Content-Type': 'application/json' } }).finally(() => { bus.$emit('trigger-instant-refresh'); });
     },
     getMatchData: (context, { gp, callback }) => {
       bus.$emit('start-load');
