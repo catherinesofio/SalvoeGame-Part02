@@ -32,7 +32,7 @@ const store = new Vuex.Store({
   mutations: {
     INIT_USER: state => {
       bus.$emit('start-load');
-      fetch(backend + '/user').then(response => response.json()).then(data => {
+      fetch(backend + '/user', { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => {
         data = isValid(data.name) ? data : null;
         
         state.user = data;
@@ -56,7 +56,7 @@ const store = new Vuex.Store({
         return;
       }
       
-      fetch(backend + '/matches').then(data => {
+      fetch(backend + '/matches', { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => {
         data = JSON.parse(JSON.stringify(data));
         
         let users = data.users.sort(function(a, b) {
@@ -82,42 +82,51 @@ const store = new Vuex.Store({
   },
   actions: {
     register: ({ context, dispatch }, params) => {
-      fetch(backend + '/register', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text", contentType: "application/json"  }).then(() => { dispatch('login', { email: params.email, password: params.password }); });
+      let data = new URLSearchParams();
+      data.set('name', params.name);
+      data.set('email', params.email);
+      data.set('password', params.password);
+      
+      fetch(backend + '/register', { method: 'POST', mode: 'cors', body: data, credentials: "include" }).then(() => { dispatch('login', { email: params.email, password: params.password }); });
     },
     login: (context, params) => {
-      fetch(backend + '/login', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('INIT_USER'); });
+      let data = new URLSearchParams();
+      data.set('email', params.email);
+      data.set('password', params.password);
+
+      fetch(backend + '/login', { method: 'POST', mode: 'cors', body: data, credentials: "include" }).finally(() => { context.commit('INIT_USER'); });
     },
     logout: (context) => {
-      fetch(backend + '/logout', { method: 'POST', mode: 'cors', credentials: "include", dataType: "text", contentType: "application/json"  }).finally(() => { context.commit('SET_USER', null); });
+      fetch(backend + '/logout', { method: 'POST', mode: 'cors', credentials: "include" }).finally(() => { context.commit('INIT_USER'); }).finally(() => { context.commit('SET_USER', null); });
     },
     createMatch: (context) => {
-      fetch(backend + '/games', { method: 'POST', mode: 'cors', credentials: "include", dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
+      fetch(backend + '/games', { method: 'POST', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     joinMatch: (context, gm) => {
-      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', credentials: "include", dataType: "text", contentType: "application/json"  }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
+      fetch(backend + '/game' + gm + '/players', { method: 'POST', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { router.push({ name: 'game', params: { gp: data } }); });
     },
     loadMatch: (context, gp) => {
       bus.$emit('start-load');
       router.push({ name: 'game', params: { gp: gp } }).finally(() => { bus.$emit('end-load'); });
     },
     getShipsTemplate: (context, callback) => {
-      fetch(backend + '/templates/ships').then(response => response.json()).then(data => { callback(data); });
+      fetch(backend + '/templates/ships', { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { callback(data); });
     },
     getSalvoesTemplate: (context, callback) => {
-      fetch(backend + '/templates/salvoes').then(response => response.json()).then(data => { callback(data); });
+      fetch(backend + '/templates/salvoes', { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { callback(data); });
     },
     setShips: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
+      fetch(backend + '/games/players/' + gp + '/ships', { method: 'POST', mode: 'cors', body: JSON.stringify(params), credentials: "include" }).then(response => { router.push({ name: 'view', params: { gp: gp } }); });
     },
     setSalvoes: (context, { gp, params }) => {
-      fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', data: JSON.stringify(params), credentials: "include", dataType: "text", contentType: "application/json" }).finally(() => { bus.$emit('trigger-instant-refresh'); });
+      fetch(backend + '/games/players/' + gp + '/salvoes', { method: 'POST', mode: 'cors', body: JSON.stringify(params), credentials: "include" }).finally(() => { bus.$emit('trigger-instant-refresh'); });
     },
     getMatchData: (context, { gp, callback }) => {
       bus.$emit('start-load');
-      fetch(backend + '/game_view/' + gp).then(response => response.json()).then(data => { callback(data); }).finally(() => { bus.$emit('end-load'); });
+      fetch(backend + '/game_view/' + gp, { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { callback(data); }).finally(() => { bus.$emit('end-load'); });
     },
     getTurnData: (context, { gp, tn, callback }) => {
-      fetch(backend + '/game_view/' + gp + '/turns/' + tn).then(response => response.json()).then(data => { callback(data); });
+      fetch(backend + '/game_view/' + gp + '/turns/' + tn, { method: 'GET', mode: 'cors', credentials: "include" }).then(response => response.json()).then(data => { callback(data); });
     }
   }
 });

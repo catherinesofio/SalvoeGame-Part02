@@ -64,7 +64,7 @@ export default {
 
                     data.push({ type: ship.getAttribute('type'), locations: locations });
                 }
-                
+
                 this.setShips({ gp: '' + this.$route.params.gp + '', params: data });
             }
         },
